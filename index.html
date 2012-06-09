@@ -38,10 +38,13 @@ $(document).ready(function() {
         <div id="wrapper">
             <h1>Dynamic Playlist Generator</h1>
             <p class="description">Play dynamic radio</p>
-			<input type="text" id="_session_id" placeholder="EN Session ID" size="50" /><br />
+			<label for="_session_id">Echo Nest Session ID</label><input type="text" id="_session_id" placeholder="EN Session ID" size="50" /><br />
 
-			<h2>Details<h2>
-			Artist: <input type="text" id="_artist" placeholder="Seed artist" size="50"/><br /><br />
+			<h2>Parameters<h2>
+			<label for="_artist">Artist:</label><input type="text" id="_artist" placeholder="Seed artist" size="50"/><br />
+			<label for="_artist_hot">Artist Hot Min:</label><input type="text" id="_artist_hot" placeholder="0.0" size="4"/><br />
+			<label for="_song_hot">Song Hot Min:</label><input type="text" id="_song_hot" placeholder="0.0" size="4"/><br />
+			<label for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/><br />
 			
 			<button class="button" id="_play" onclick="makePlaylist()">Let's go</button></br>
 			<br /><br /><br />

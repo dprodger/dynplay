@@ -11,6 +11,9 @@ var sessionID;
 
 function makePlaylist() {
 	var artist = $("#_artist").val();
+	var artistHot = $("#_artist_hot").val();
+	var songHot = $("#_song_hot").val();
+	var variety = $("#_variety").val();
 	
 	var url = "http://developer.echonest.com/api/v4/playlist/dynamic/create?api_key=" + apiKey + "&callback=?";
 
@@ -20,6 +23,9 @@ function makePlaylist() {
 			"format": "jsonp",
 			'bucket': ['tracks', 'id:spotify-WW'],
 			"limit": true,
+			"artist_min_hotttnesss": artistHot,
+			"song_min_hotttnesss": songHot,
+			"variety": variety,
 			"type": "artist-radio"
 		},
 		function(data) {
