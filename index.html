@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <style>
+            @import url('sp://import/css/eve.css');
+            @import url('sp://dynplay/css/main.css');
+            @import url('sp://dynplay/css/github.css');
+        </style>
+
+        <script src="sp://dynplay/js/jquery.min.js"></script>
+        <script src="sp://dynplay/js/rainbow-custom.min.js"></script>
+        <script src="sp://dynplay/js/enplayer.js"></script>
+
+
+<script>
+jQuery.ajaxSettings.traditional = true;  
+
+var sp;
+var models;
+var views;
+
+var player;
+
+$(document).ready(function() {
+	/* Instantiate the global sp object; include models & views */
+	sp = getSpotifyApi(1);
+	models = sp.require('sp://import/scripts/api/models');
+    views = sp.require("sp://import/scripts/api/views");
+
+	player = models.player;
+});
+
+
+        </script>
+    </head>
+    <body>
+        <div id="wrapper">
+            <h1>Dynamic Playlist Generator</h1>
+            <p class="description">Play dynamic radio</p>
+			<input type="text" id="_session_id" placeholder="EN Session ID" size="50" /><br />
+
+			<h2>Details<h2>
+			Artist: <input type="text" id="_artist" placeholder="Seed artist" size="50"/><br /><br />
+			
+			<button class="button" id="_play" onclick="makePlaylist()">Let's go</button></br>
+			<br /><br /><br />
+
+			<h2>Now Playing</h2>
+			<div id="nowplaying">
+				<p id="np_artist">Artist: </p>
+				<p id="np_song">Song:</p>
+				<p id="np_year">Year:</p>
+			</div>
+			<div id="controls">
+				<button class="button" id="_skip" onclick="skipTrack();">Skip</button>
+				<button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button>
+				<button class="button" id="_bansong" onclick="banSong();">Ban Song</button>
+			</div>
+			
+        </div><!-- /wrapper -->
+
+    </body>
+</html>
