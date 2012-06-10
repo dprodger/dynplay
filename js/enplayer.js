@@ -9,6 +9,9 @@ var pl;
 
 var sessionID;
 
+var currentArtistID;
+var currentArtistName;
+
 function makePlaylist() {
 	var artist = $("#_artist").val();
 	var artistHot = $("#_artist_hot").val();
@@ -56,6 +59,9 @@ function getNextSong() {
 			getSpotifyTracks( song.id, tracks );
 			
 			// alert("title = " + song.title + " artist: " + song.artist_name);
+			currentArtistID = song.artist_id;
+			currentArtistName = song.artist_name;
+			
 			updateNowPlaying( song.artist_name, song.title, "n/a");
 		})
 	
@@ -107,6 +113,13 @@ function banArtist() {
 		},
 		function(data) {
 			console.log("artist banned");
+			
+			var list = document.getElementById("banned_artists");
+            var listitem = document.createElement("li");
+            listitem.setAttribute('id', currentArtistID );
+            listitem.innerHTML = currentArtistName;
+            list.appendChild( listitem );
+			
 		})
 }
 
