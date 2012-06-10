@@ -15,4 +15,8 @@ Installation
 Notes
 =====
 
-None yet
+1. need to correctly deal with finding the best (earliest) track; also, with what if first track (or all tracks) are not found
+2. need to figure out how to auto-chain and play the "next" track
+3. decide whether "Ban Artist" should also skip the currently playing song
+4. implement UI to confirm banning of art/song
+5. hook up rating and favoriting

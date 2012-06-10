@@ -16,6 +16,26 @@ var currentTrackSpotifyID;
 var currentTrackTitle;
 var currentTrackYear;
 
+var activePlaylist;
+
+var sp;
+var models;
+var views;
+
+var player;
+
+
+function initialize() {
+	sp = getSpotifyApi(1);
+	models = sp.require('sp://import/scripts/api/models');
+    views = sp.require("sp://import/scripts/api/views");
+
+	player = models.player;
+	
+	setUpObserve();
+	myplaylist = models.Playlist.fromURI();
+}
+
 function setUpObserve() {
 	player.observe(models.EVENT.CHANGE, function(event) {
 		console.log( "in observe; event.data.curtrack is " + event.data.curtrack );
@@ -95,7 +115,7 @@ function getSpotifyTracks( _soid, _tracks ) {
 		if( track.playable ) {
 			console.log( "+++ it's good; playing it!");
 
-			player.play(track);
+			player.play( track );
 		} else {
 			console.log( "--- not valid.  Wha wha whaaa...");
 		}
