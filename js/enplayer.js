@@ -11,6 +11,20 @@ var sessionID;
 
 var currentArtistID;
 var currentArtistName;
+var currenSongENID;
+var currentTrackSpotifyID;
+var currentTrackTitle;
+var currentTrackYear;
+
+function setUpObserve() {
+	player.observe(models.EVENT.CHANGE, function(event) {
+		console.log( "in observe; event.data.curtrack is " + event.data.curtrack );
+		if( event.data.curtrack == true ) {
+			console.log( "+++++ track has changed.");
+//			getNextSong();
+		}
+	})
+}
 
 function makePlaylist() {
 	var artist = $("#_artist").val();
@@ -19,6 +33,7 @@ function makePlaylist() {
 	var variety = $("#_variety").val();
 	
 	var url = "http://developer.echonest.com/api/v4/playlist/dynamic/create?api_key=" + apiKey + "&callback=?";
+	
 
 	$.getJSON( url, 
 		{
@@ -61,6 +76,9 @@ function getNextSong() {
 			// alert("title = " + song.title + " artist: " + song.artist_name);
 			currentArtistID = song.artist_id;
 			currentArtistName = song.artist_name;
+			currentSongENID = song.id;
+			currentTrackSpotifyID = "";
+			currentTrackTitle = song.title;
 			
 			updateNowPlaying( song.artist_name, song.title, "n/a");
 		})
