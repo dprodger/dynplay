@@ -41,11 +41,28 @@ function initialize() {
 function setUpObserve() {
 	player.observe(models.EVENT.CHANGE, function(event) {
 		console.log( "in observe; event.data.curtrack is " + event.data.curtrack );
+		var curPos = player.position;
+		var endPos = player.track.data.duration;
+		
+		console.log( "in observe; curPos is " + curPos + " and endPos is " + endPos );
 		if( event.data.curtrack == true ) {
 			console.log( "+++++ track has changed.");
 //			getNextSong();
 		}
 	})
+
+	player.observe(models.EVENT.STATECHANGE, function(event) {
+		console.log( "in observe--STATECHANGE; event.data.curtrack is " + event.data.curtrack );
+		var curPos = player.position;
+		var endPos = player.track.data.duration;
+
+		console.log( "in observe; curPos is " + curPos + " and endPos is " + endPos );
+		if( event.data.curtrack == true ) {
+			console.log( "+++++ track has changed.");
+//			getNextSong();
+		}
+	})
+	
 }
 
 function makePlaylist() {
@@ -100,35 +117,6 @@ function getNextSong() {
 
 function getSpotifyTracks( song, _soid, _tracks ) {
 	findValidTrack( song, _soid, _tracks );
-	
-/*
-	var track = _tracks[0];
-	var trackID = track.foreign_id.replace("spotify-WW", "spotify");
-	
-	var spT = models.Track.fromURI( trackID, function( track ) {
-		console.log( "*** in getSpotifyTracks; checking track...")
-		if( track.playable ) {
-			console.log( "+++ it's good; playing it!");
-*/
-/*
-			player.play( track );
-			
-			// alert("title = " + song.title + " artist: " + song.artist_name);
-			currentArtistID = song.artist_id;
-			currentArtistName = song.artist_name;
-			currentSongENID = song.id;
-			currentTrackSpotifyID = "";
-			currentTrackTitle = song.title;
-			
-			updateNowPlaying( song.artist_name, song.title, track.album.year);
-*/
-/*			actuallyPlayTrack( track, song );
-		} else {
-			console.log( "--- not valid.  Wha wha whaaa...");
-			updateNowPlaying( song.artist_name, song.title, "Can't find valid track!");
-		}
- 	})
-*/
 }
 
 function actuallyPlayTrack( track, song ) {
