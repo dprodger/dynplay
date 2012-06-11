@@ -173,6 +173,13 @@ function banSong() {
 		},
 		function(data) {
 			console.log("song banned");
+
+			var list = document.getElementById("banned_songs");
+            var listitem = document.createElement("li");
+            listitem.setAttribute('id', currenSongENID );
+            listitem.innerHTML = currentTrackTitle + " by " + currentArtistName;
+            list.appendChild( listitem );
+			
 		})
 }
 
