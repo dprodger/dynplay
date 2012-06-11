@@ -16,6 +16,8 @@ var currentTrackSpotifyID;
 var currentTrackTitle;
 var currentTrackYear;
 
+var currentSong;
+
 var activePlaylist;
 
 var sp;
@@ -88,10 +90,28 @@ function getNextSong() {
 			console.log("=== in getNextSong; received a response");
 			var response = data.response;
 			var songs = response.songs;
-			var song = songs[0];
-			var tracks = song.tracks;
+			currentSong = songs[0];
+			var tracks = currentSong.tracks;
 			
-			getSpotifyTracks( song.id, tracks );
+			getSpotifyTracks( currentSong, currentSong.id, tracks );
+		})
+}
+
+
+function getSpotifyTracks( song, _soid, _tracks ) {
+	findValidTrack( song, _soid, _tracks );
+	
+/*
+	var track = _tracks[0];
+	var trackID = track.foreign_id.replace("spotify-WW", "spotify");
+	
+	var spT = models.Track.fromURI( trackID, function( track ) {
+		console.log( "*** in getSpotifyTracks; checking track...")
+		if( track.playable ) {
+			console.log( "+++ it's good; playing it!");
+*/
+/*
+			player.play( track );
 			
 			// alert("title = " + song.title + " artist: " + song.artist_name);
 			currentArtistID = song.artist_id;
@@ -100,28 +120,28 @@ function getNextSong() {
 			currentTrackSpotifyID = "";
 			currentTrackTitle = song.title;
 			
-			updateNowPlaying( song.artist_name, song.title, "n/a");
-		})
-	
-}
-
-
-function getSpotifyTracks( _soid, _tracks ) {
-	var track = _tracks[0];
-	var trackID = track.foreign_id.replace("spotify-WW", "spotify");
-	
-	var spT = models.Track.fromURI( trackID, function( track ) {
-		console.log( "*** in getSpotifyTracks; checking track...")
-		if( track.playable ) {
-			console.log( "+++ it's good; playing it!");
-
-			player.play( track );
+			updateNowPlaying( song.artist_name, song.title, track.album.year);
+*/
+/*			actuallyPlayTrack( track, song );
 		} else {
 			console.log( "--- not valid.  Wha wha whaaa...");
+			updateNowPlaying( song.artist_name, song.title, "Can't find valid track!");
 		}
  	})
+*/
 }
 
+function actuallyPlayTrack( track, song ) {
+	player.play( track );
+	
+	currentArtistID = song.artist_id;
+	currentArtistName = song.artist_name;
+	currentSongENID = song.id;
+	currentTrackSpotifyID = "";
+	currentTrackTitle = song.title;
+	
+	updateNowPlaying( song.artist_name, song.title, track.album.year);
+}
 
 function skipTrack() {
 	console.log("in skipTrack");
@@ -192,54 +212,26 @@ function updateNowPlaying( _artist, _title, _year ) {
 	np.find( "#np_year").text( _year );
 }
 
-function lookupSpotifyID( _song ) {
-	var url = "http://developer.echonest.com/api/v4/song/profile?api_key=N6E4NIOVYMTHNDM8J&callback=?";
-	
-	$.getJSON( url, 
-		{
-			"id": _song,
-			"format": "jsonp",
-			'bucket': ['tracks', 'id:spotify-WW'],
-			"limit": true
-		},
-		function(data) {
-//			console.log("=== in function for lookupSpotifyID for id " + _song );
-			var response = data.response;
-			var songs = response.songs;
-			if(!songs[0] ) {
-				var plItem = document.getElementById( _song );
-				plItem.innerHTML = "EN: " + _song + " has no Spotify tracks at all.";
-				console.log("ERROR: no songs returned for id " + _song);
-			} else {
-				var tracks = songs[0].tracks;
-				findValidTrack( songs[ 0 ].id, tracks );
-			}
-			--counts;
-		})
-}
-
 var trackCount = [];
 var validTracks = [];
 
-function findValidTrack( songID, tracks ) {
-//	console.log("* in findValidTrack for " + songID + " and I have " + tracks.length + " tracks to check" );
+function findValidTrack( song, songID, tracks ) {
+	console.log("* in findValidTrack for " + songID + " and I have " + tracks.length + " tracks to check" );
 	trackCount[ songID ] = 0;
 	
 	// set default so we know if none found
-	var plItem = document.getElementById( songID );
-	plItem.innerHTML = "<b><i>Song: " + songID + "; no valid tracks found yet.</i></b>";
 	enToSpotIds[ songID ] = null;
 	
 	for( i = 0; i < tracks.length; i++ ) {
 		trackCount[ songID ]++;
-//		console.log( "*** songID = " + songID + "; trackCount is " + trackCount[ songID ] );
+		console.log( "*** songID = " + songID + "; trackCount is " + trackCount[ songID ] );
 		var _trackID = tracks[i].foreign_id.replace("spotify-WW", "spotify");
     	
 		var t = models.Track.fromURI( _trackID, function(track) {
-//			console.log( "--- in inner function for songID = " + songID + "; trackCount is " + trackCount[ songID ] );
+			console.log( "--- in inner function for songID = " + songID + "; trackCount is " + trackCount[ songID ] );
 
 			trackCount[ songID ]--;
-//			console.log( "track " + track.uri + "; is playable? " + track.playable + "; album year is " + track.album.year );
+			console.log( "track " + track.uri + "; is playable? " + track.playable + "; album year is " + track.album.year );
 			
 			if( track.playable) {
 				var _uri = track.uri;
@@ -249,19 +241,40 @@ function findValidTrack( songID, tracks ) {
 				
 				if( validTracks[songID] ) {
 					if( validTracks[songID].year > track.album.year) {
-						validTracks[songID] = { "id":_uri, "year":_year , "title":_title, "album":_album};
-//						console.log("track: " + track.uri + "is the new best track for song " + songID );
+						validTracks[songID] = { "id":_uri, "year":_year , "title":_title, "album":_album, "spot_track":track };
+						console.log("track: " + track.uri + "is the new best track for song " + songID );
 					}
 				
 				} else {
-					validTracks[songID] = { "id":_uri, "year":_year , "title":_title, "album":_album};
-//					console.log("track: " + track.uri + "is the new best track for song " + songID );
+					validTracks[songID] = { "id":_uri, "year":_year , "title":_title, "album":_album, "spot_track":track };
+					console.log("track: " + track.uri + "is the new best track for song " + songID );
 				}
-				var plItem = document.getElementById( songID );
-				plItem.innerHTML = "<b>" + validTracks[songID].title + " (" +validTracks[songID].album + ", " + validTracks[songID].year + ")</b> <i>[" + songID + ";" + validTracks[songID].id + "]</i>";
-//				plItem.innerHTML = "EN: " + songID + " SP: " + validTracks[songID].id + " ; Title: " + validTracks[songID].title + " (" +validTracks[songID].year + ", " + validTracks[songID].album + ")";
 				enToSpotIds[ songID ] = validTracks[songID].id;
 			}
 		} );
+	}
+	
+	// wait for the finish
+	waitForTrackCompletion( song, songID );
+}
+
+function waitForTrackCompletion( song, songID ) {
+	if( trackCount[ songID ] < 1 ) {
+		return processAllTracksComplete( song, songID );
+	}
+	
+	setTimeout( function(){ waitForTrackCompletion( song, songID )}, 500 );
+}
+
+function processAllTracksComplete( _song, _songID ) {
+	console.log( "all tracks have been processed");
+	if( validTracks[ _songID ]) {
+		var trackID = validTracks[ _songID ].id;
+		console.log( "--------------- best track is " + trackID + " for song " + _songID );
+
+		 actuallyPlayTrack( validTracks[ _songID ].spot_track, _song );
+	} else {
+		console.log( "--------------- No tracks are available and valid for that song; getting the next one...");
+		getNextSong();
 	}
 }
