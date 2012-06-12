@@ -11,6 +11,21 @@
 	"BundleIdentifier": "dynplay",
 	"BundleType": "Application",
 	"BundleVersion": "0.1",
+	"DefaultTabs": [
+		{
+			"arguments": "index",
+			"title": {
+				"en": "Home"
+			}
+		},
+		{
+			"arguments": "config",
+			"title": {
+				"en": "Configuration"
+			}
+        }
+	],
+	
 	"RequiredInterface": 1,
 	"RequiredPermissions": [
 	    "http://api.twitter.com",
@@ -24,7 +39,8 @@
 	    "http://search.twitter.com/",
 	    "http://amsterdam.last.fm",
 	    "http://ws.audioscrobbler.com/",
-	    "http://developer.echonest.com"
+	    "http://developer.echonest.com",
+		"http://dogfoodsimilar.sandpit.us"
 	],
 	"SupportedLanguages": [
 		"en"

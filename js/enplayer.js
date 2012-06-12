@@ -2,7 +2,7 @@ var enSongs = [];
 var enToSpotIds = {};
 
 var apiKey = "N6E4NIOVYMTHNDM8J";
-
+var apiHost = "dogfoodsimilar.sandpit.us"
 var counts = 0; // spinlock
 
 var pl;
@@ -23,6 +23,7 @@ var activePlaylist;
 var sp;
 var models;
 var views;
+var application;
 
 var player;
 
@@ -32,12 +33,44 @@ function initialize() {
 	sp = getSpotifyApi(1);
 	models = sp.require('sp://import/scripts/api/models');
     views = sp.require("sp://import/scripts/api/views");
+	application = models.application;
 
 	player = models.player;
 	
 	setUpObserve();
 	activePlaylist = new models.Playlist();
 	console.log( "activePlaylist now exists; it's " + activePlaylist.length + " long ");
+	
+	application.observe(models.EVENT.ARGUMENTSCHANGED, handleArgs);
+
+	$("#_api_key").val(apiKey);
+	$("#_host").val(apiHost);
+}
+
+function updateConfig() {
+	apiKey = $("#_api_key").val();
+	apiHost = $("#_host").val();
+
+	console.log( "changing apiKey to " + apiKey + " and host to: " + apiHost );
+}
+
+function handleArgs() {
+	var args = application.arguments;
+	$(".section").hide();	// Hide all sections
+	$("#"+args[0]).show();	// Show current section
+	console.log(args);
+
+	// If there are multiple arguments, handle them accordingly
+	if(args[1]) {		
+		switch(args[0]) {
+			case "search":
+				searchInput(args);
+				break;
+			case "social":
+				socialInput(args[1]);
+				break;
+		}
+	}
 }
 
 function setUpObserve() {
@@ -61,7 +94,7 @@ function makePlaylist() {
 	
 	// disable the makePlaylist button
 	$("#_play").attr("disabled",true);
-	var url = "http://developer.echonest.com/api/v4/playlist/dynamic/create?api_key=" + apiKey + "&callback=?";
+	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/create?api_key=" + apiKey + "&callback=?";
 	
 	clearPlaylist( activePlaylist );
 
@@ -87,7 +120,7 @@ function makePlaylist() {
 }
 
 function getNextSong() {
-	var url = "http://developer.echonest.com/api/v4/playlist/dynamic/next?api_key=" + apiKey + "&callback=?";
+	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/next?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
 		{
@@ -137,7 +170,7 @@ function actuallyPlayTrack( track, song ) {
 
 function skipTrack() {
 	console.log("in skipTrack");
-	var url = "http://developer.echonest.com/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
+	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
 		{
@@ -153,7 +186,7 @@ function skipTrack() {
 
 function banArtist() {
 	console.log("in banArtist");
-	var url = "http://developer.echonest.com/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
+	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
 		{
@@ -175,7 +208,7 @@ function banArtist() {
 
 function banSong() {
 	console.log("in banSong");
-	var url = "http://developer.echonest.com/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
+	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
 		{

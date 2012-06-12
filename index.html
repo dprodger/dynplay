@@ -25,7 +25,8 @@ $(document).ready(function() {
         </script>
     </head>
     <body>
-        <div id="wrapper">
+		<div id="wrapper">
+        <div id="index" class="section">
             <h1>Dynamic Playlist Generator</h1>
             <p class="description">Play dynamic radio</p>
 
@@ -62,7 +63,18 @@ $(document).ready(function() {
 				<ul id="banned_songs"></ul>
 			</div>
 			</div>
-        </div><!-- /wrapper -->
+        </div><!-- /index -->
 
+        <div id="config" class="section" style="display:none;">
+			<h1>Dynamic Playlist Configuration</h1>
+			<p>Here is where parameters on the overall configuration can be changed</p>
+			
+			<label for="_api_key">API Key:</label><input type="text" id="_api_key" placeholder="" size="36"/><br />
+			<label for="_host">Host:</label><input type="text" id="_host" placeholder="" size="50"/>
+			<br /><br />
+			<button class="button" id="_save_config" onclick="updateConfig();">Update Configuration!</button>
+			
+		</div>	
+		</div><!-- /wrapper>
     </body>
 </html>
