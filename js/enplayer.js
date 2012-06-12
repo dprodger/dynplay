@@ -28,6 +28,7 @@ var player;
 
 
 function initialize() {
+	console.log("-=-=- In initialize() ");
 	sp = getSpotifyApi(1);
 	models = sp.require('sp://import/scripts/api/models');
     views = sp.require("sp://import/scripts/api/views");
@@ -35,34 +36,21 @@ function initialize() {
 	player = models.player;
 	
 	setUpObserve();
-	myplaylist = models.Playlist.fromURI();
+	activePlaylist = new models.Playlist();
+	console.log( "activePlaylist now exists; it's " + activePlaylist.length + " long ");
 }
 
 function setUpObserve() {
 	player.observe(models.EVENT.CHANGE, function(event) {
-		console.log( "in observe; event.data.curtrack is " + event.data.curtrack );
-		var curPos = player.position;
-		var endPos = player.track.data.duration;
-		
-		console.log( "in observe; curPos is " + curPos + " and endPos is " + endPos );
-		if( event.data.curtrack == true ) {
-			console.log( "+++++ track has changed.");
-//			getNextSong();
+		console.log( "[[[ in observe" );
+
+		if( !player.curPos && !player.track ) {
+			console.log( "Maybe this is the right time to get a new track!");
+			getNextSong();
+		} else {
+			console.log( "I'm not yet ready for a new track");
 		}
 	})
-
-	player.observe(models.EVENT.STATECHANGE, function(event) {
-		console.log( "in observe--STATECHANGE; event.data.curtrack is " + event.data.curtrack );
-		var curPos = player.position;
-		var endPos = player.track.data.duration;
-
-		console.log( "in observe; curPos is " + curPos + " and endPos is " + endPos );
-		if( event.data.curtrack == true ) {
-			console.log( "+++++ track has changed.");
-//			getNextSong();
-		}
-	})
-	
 }
 
 function makePlaylist() {
@@ -71,8 +59,11 @@ function makePlaylist() {
 	var songHot = $("#_song_hot").val();
 	var variety = $("#_variety").val();
 	
+	// disable the makePlaylist button
+	$("#_play").attr("disabled",true);
 	var url = "http://developer.echonest.com/api/v4/playlist/dynamic/create?api_key=" + apiKey + "&callback=?";
 	
+	clearPlaylist( activePlaylist );
 
 	$.getJSON( url, 
 		{
@@ -119,8 +110,17 @@ function getSpotifyTracks( song, _soid, _tracks ) {
 	findValidTrack( song, _soid, _tracks );
 }
 
+function clearPlaylist(playlist) {
+	console.log( "About to clear a playlist; currently it is " + playlist.length );
+	while (playlist.data.length > 0) {
+		playlist.data.remove(0);
+	}
+}
+
+
 function actuallyPlayTrack( track, song ) {
-	player.play( track );
+	activePlaylist.add( track );
+	player.play( track.data.uri, activePlaylist, 0 );
 	
 	currentArtistID = song.artist_id;
 	currentArtistName = song.artist_name;
@@ -129,6 +129,10 @@ function actuallyPlayTrack( track, song ) {
 	currentTrackTitle = song.title;
 	
 	updateNowPlaying( song.artist_name, song.title, track.album.year);
+
+	// re-enable the make new playlist button
+	$("#_play").attr("disabled",false);
+	
 }
 
 function skipTrack() {
