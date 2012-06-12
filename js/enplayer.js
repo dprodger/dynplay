@@ -133,7 +133,8 @@ function getNextSong() {
 			var songs = response.songs;
 			currentSong = songs[0];
 			var tracks = currentSong.tracks;
-			
+
+			console.log("=== Looking for song " + currentSong.id + "; title" + currentSong.title + " by artist: " + currentSong.artist_name );
 			getSpotifyTracks( currentSong, currentSong.id, tracks );
 		})
 }
@@ -249,14 +250,14 @@ function findValidTrack( song, songID, tracks ) {
 	
 	for( i = 0; i < tracks.length; i++ ) {
 		trackCount[ songID ]++;
-		console.log( "*** songID = " + songID + "; trackCount is " + trackCount[ songID ] );
+//		console.log( "*** songID = " + songID + "; trackCount is " + trackCount[ songID ] );
 		var _trackID = tracks[i].foreign_id.replace("spotify-WW", "spotify");
     	
 		var t = models.Track.fromURI( _trackID, function(track) {
-			console.log( "--- in inner function for songID = " + songID + "; trackCount is " + trackCount[ songID ] );
+//			console.log( "--- in inner function for songID = " + songID + "; trackCount is " + trackCount[ songID ] );
 
 			trackCount[ songID ]--;
-			console.log( "track " + track.uri + "; is playable? " + track.playable + "; album year is " + track.album.year );
+//			console.log( "track " + track.uri + "; is playable? " + track.playable + "; album year is " + track.album.year );
 			
 			if( track.playable) {
 				var _uri = track.uri;
