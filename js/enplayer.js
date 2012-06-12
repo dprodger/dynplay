@@ -229,6 +229,13 @@ function banSong() {
 		})
 }
 
+function spotifyStar() {
+	console.log("in spotifyStar");
+	
+	player.track.starred = true;
+}
+
+
 function updateNowPlaying( _artist, _title, _year ) {
 	console.log( "in updateNowPlaying, artist is " + _artist );
 	var np = $("#nowplaying");
