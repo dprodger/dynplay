@@ -50,7 +50,21 @@ $(document).ready(function() {
 				<button class="button" id="_skip" onclick="skipTrack();">Skip</button>
 				<button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button>
 				<button class="button" id="_bansong" onclick="banSong();">Ban Song</button>
-				<button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button>
+				<button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button><br />
+
+				<button class="button" id="_favartist" onclick="favoriteArtist();">Favorite Artist</button>
+				<button class="button" id="_favsong" onclick="favoriteSong();">Favorite Song</button><br />
+				<br />Rate this song?<br />
+				<input type="radio" value="1" id="_ratesong1" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">1 (low)</input>
+				<input type="radio" value="2" id="_ratesong2" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">2</input>
+				<input type="radio" value="3" id="_ratesong3" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">3</input>
+				<input type="radio" value="4" id="_ratesong4" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">4</input>
+				<input type="radio" value="5" id="_ratesong5" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">5 (medium)</input>
+				<input type="radio" value="6" id="_ratesong6" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">6</input>
+				<input type="radio" value="7" id="_ratesong7" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">7</input>
+				<input type="radio" value="8" id="_ratesong8" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">8</input>
+				<input type="radio" value="9" id="_ratesong9" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">9</input>
+				<input type="radio" value="10" id="_ratesong10" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">10 (high)</input>
 			</div>
 			</div>
 			<div id="_diagnostics">
@@ -63,6 +77,15 @@ $(document).ready(function() {
 				<br /><br /><b>Banned Songs:</b><br />
 				<ul id="banned_songs"></ul>
 			</div>
+			<div id="favorited">
+				<b>Favorite Artists:</b><br />
+				<ul id="favorite_artists"></ul>
+				<br /><br /><b>Favorite Songs:</b><br />
+				<ul id="favorite_songs"></ul>
+				<br /><br /><b>Rated Songs:</b><br />
+				<ul id="rated_songs"></ul>
+			</div>
+
 			</div>
         </div><!-- /index -->
 

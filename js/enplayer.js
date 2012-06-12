@@ -177,7 +177,7 @@ function skipTrack() {
 		{
 			"session_id": sessionId,
 			"format": "jsonp",
-			"skip_song": "last"	// ban the most-recently returned artist
+			"skip_song": "last"	// skip the current track
 		},
 		function(data) {
 			console.log("song skipped");
@@ -207,6 +207,29 @@ function banArtist() {
 		})
 }
 
+function favoriteArtist() {
+	console.log("in favoriteArtist");
+	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url, 
+		{
+			"session_id": sessionId,
+			"format": "jsonp",
+			"favorite_artist": "last"	// ban the most-recently returned artist
+		},
+		function(data) {
+			console.log("artist favorited");
+			
+			var list = document.getElementById("favorite_artists");
+            var listitem = document.createElement("li");
+            listitem.setAttribute('id', currentArtistID );
+            listitem.innerHTML = currentArtistName;
+            list.appendChild( listitem );
+			
+		})
+}
+
+
 function banSong() {
 	console.log("in banSong");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
@@ -229,11 +252,62 @@ function banSong() {
 		})
 }
 
+function favoriteSong() {
+	console.log("in favoriteSong");
+	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url, 
+		{
+			"session_id": sessionId,
+			"format": "jsonp",
+			"favorite_song": "last"	// ban the most-recently returned artist
+		},
+		function(data) {
+			console.log("song favorited");
+
+			var list = document.getElementById("favorite_song_songs");
+            var listitem = document.createElement("li");
+            listitem.setAttribute('id', currenSongENID );
+            listitem.innerHTML = currentTrackTitle + " by " + currentArtistName;
+            list.appendChild( listitem );
+			
+		})
+}
+
 function spotifyStar() {
 	console.log("in spotifyStar");
 	
 	player.track.starred = true;
 }
+
+function rateSong() {
+	console.log("in rateSong");
+
+	var rating = $('input:radio[name=_rategroup]:checked').val();
+	var rateVal = "last^" + rating;
+	
+	console.log( "sending rateVal" + rateVal );
+	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url, 
+		{
+			"session_id": sessionId,
+			"format": "jsonp",
+			"rate_song": rateVal	// set the rating value
+			
+		},
+		function(data) {
+			console.log("song rated");
+
+			var list = document.getElementById("rated_songs");
+            var listitem = document.createElement("li");
+            listitem.setAttribute('id', currenSongENID );
+            listitem.innerHTML = currentTrackTitle + " by " + currentArtistName + " rated " + rating;
+            list.appendChild( listitem );
+		})
+
+}
+
 
 
 function updateNowPlaying( _artist, _title, _year ) {
@@ -311,3 +385,23 @@ function processAllTracksComplete( _song, _songID ) {
 		getNextSong();
 	}
 }
+
+function updatePlayerControls( state ) {	
+	$("#_skip").attr("disabled",state);
+	$("#_banartist").attr("disabled",state);
+	$("#_bansong").attr("disabled",state);
+	$("#_spotstar").attr("disabled",state);
+
+	$("#_favartist").attr("disabled",state);
+	$("#_favsong").attr("disabled",state);
+	$("#_ratestar").attr("disabled",state);	
+}
+
+function enablePlayerControls() {
+	updatePlayerControls( true );
+}
+
+function disablePlayerControls() {
+	updatePlayerControls( false );
+}
+
