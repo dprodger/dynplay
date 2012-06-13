@@ -2,7 +2,7 @@ var enSongs = [];
 var enToSpotIds = {};
 
 var apiKey = "N6E4NIOVYMTHNDM8J";
-var apiHost = "developer.echonest.com"
+var apiHost = "developer.echonest.com";
 var counts = 0; // spinlock
 
 var pl;
@@ -56,11 +56,11 @@ function initialize() {
 	application.observe(models.EVENT.ARGUMENTSCHANGED, handleArgs);
 
 	if( !localStorage["apiKey"]) {
-		localStorage["apiKey"] = apiKey
+		localStorage["apiKey"] = apiKey;
 	}
 	
 	if( !localStorage["apiHost"]) {
-		localStorage["apiHost"] = apiHost
+		localStorage["apiHost"] = apiHost;
 	}
 	$("#_api_key").val(localStorage["apiKey"]);
 	$("#_host").val(localStorage["apiHost"]);
@@ -108,7 +108,7 @@ function setUpObserve() {
 		} else {
 			console.log( "I'm not yet ready for a new track");
 		}
-	})
+	});
 }
 
 function makePlaylist() {
@@ -187,9 +187,9 @@ function innerGeneratePlaylist( artist, songID, artistHot, songHot, variety ) {
 			var response = data.response;
 			sessionId = response.session_id;
 			$("#_session_id").val(sessionId);
-			console.log( "got a session; it's " + sessionId )
+			console.log( "got a session; it's " + sessionId );
 			getNextSong();
-		})
+		});
 }
 
 function getNextSong() {
@@ -198,8 +198,8 @@ function getNextSong() {
 	$.getJSON( url, 
 		{
 			"session_id": sessionId,
-			"format": "jsonp",
-		},
+			"format": "jsonp"
+        },
 		function(data) {
 			console.log("=== in getNextSong; received a response");
 			var response = data.response;
@@ -209,7 +209,7 @@ function getNextSong() {
 
 			console.log("=== Looking for song " + currentSong.id + "; title" + currentSong.title + " by artist: " + currentSong.artist_name );
 			getSpotifyTracks( currentSong, currentSong.id, tracks );
-		})
+		});
 }
 
 
@@ -260,7 +260,7 @@ function skipTrack() {
 		function(data) {
 			console.log("song skipped");
 			getNextSong();
-		})
+		});
 }
 
 function banArtist() {
@@ -285,7 +285,7 @@ function banArtist() {
             list.appendChild( listitem );
 			
 			enablePlayerControls();
-		})
+		});
 }
 
 function favoriteArtist() {
@@ -310,7 +310,7 @@ function favoriteArtist() {
             list.appendChild( listitem );
 			
 			enablePlayerControls();
-		})
+		});
 }
 
 
@@ -336,7 +336,7 @@ function banSong() {
             list.appendChild( listitem );
 			
 			enablePlayerControls();
-		})
+		});
 }
 
 function favoriteSong() {
@@ -361,7 +361,7 @@ function favoriteSong() {
             list.appendChild( listitem );
 
 			enablePlayerControls();			
-		})
+		});
 }
 
 // used when a song has to be marked as "not played"
@@ -379,7 +379,7 @@ function unplaySong( _song ) {
 		},
 		function(data) {
 			console.log("song unplayed for id " + _song.id );
-		})
+		});
 }
 
 function spotifyStar() {
@@ -404,7 +404,6 @@ function rateSong() {
 			"session_id": sessionId,
 			"format": "jsonp",
 			"rate_song": rateVal	// set the rating value
-			
 		},
 		function(data) {
 			console.log("song rated");
@@ -416,7 +415,7 @@ function rateSong() {
             list.appendChild( listitem );
 
 			enablePlayerControls();
-		})
+		});
 
 }
 
