@@ -10,10 +10,21 @@
             @import url('sp://import/css/api.css');
             .sp-list { height: 400px; }
             #cover_placeholder {
-                width: 75px;
-                height: 75px;
+                width: 85px;
+                height: 85px;
                 margin-left: 10px;
-                margin-bottom: 10px
+                margin-bottom: 10px;
+            }
+            #trackinfo p {
+                max-width: 275px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+            #control_buttons .button {
+                line-height: 12px;
+                font-size: 9px;
+                padding: 1px;
             }
         </style>
 
@@ -58,17 +69,24 @@
                         <div id="np_cover" style="float: left;">
                             <div id="cover_placeholder"></div>
                         </div>
+                        <div id="control_buttons" style="float: left; margin-left: 10px;">
+                            <button class="button" id="_skip" onclick="skipTrack();">Skip</button><br />
+                            <button class="button" id="_favsong" onclick="favoriteSong();">Favorite Song</button><br />
+                            <button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button><br />
+                            <button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button><br />
+                            <button class="button" id="_bansong" onclick="banSong();">Ban Song</button><br />
+                        </div>
                         <div style="clear:both;"></div>
                     </div>
                     <div id="controls">
-                        <button class="button" id="_skip" onclick="skipTrack();">Skip</button>
-                        <button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button>
-                        <button class="button" id="_bansong" onclick="banSong();">Ban Song</button>
-                        <button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button><br />
-
-                        <button class="button" id="_favartist" onclick="favoriteArtist();">Favorite Artist</button>
+                        <!--button class="button" id="_skip" onclick="skipTrack();">Skip</button><br />
                         <button class="button" id="_favsong" onclick="favoriteSong();">Favorite Song</button><br />
-                        <br />Rate this song?<br />
+                        <button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button><br />
+                        <button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button><br />
+                        <button class="button" id="_bansong" onclick="banSong();">Ban Song</button><br />
+
+                        <button class="button" id="_favartist" onclick="favoriteArtist();">Favorite Artist</button-->
+                        Rate this song?<br />
                         <input type="radio" value="1" id="_ratesong1" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong1">1 (low)</label>
                         <input type="radio" value="2" id="_ratesong2" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong2">2</label>
                         <input type="radio" value="3" id="_ratesong3" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong3">3</label>
