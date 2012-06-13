@@ -67,6 +67,9 @@ $(document).ready(function() {
 				<input type="radio" value="10" id="_ratesong10" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">10 (high)</input>
 			</div>
 			</div>
+        </div><!-- /index -->
+		
+		<div id="history" class="section" style="display:none;">
 			<div id="_diagnostics">
 			<br /><br /><h2>Summary/Diagnostic Information</h2>
 			<label for="_session_id">Echo Nest Session ID</label><input type="text" id="_session_id" placeholder="EN Session ID" size="50" /><br />
@@ -87,14 +90,14 @@ $(document).ready(function() {
 			</div>
 
 			</div>
-        </div><!-- /index -->
+		</div> <!-- /history -->
 
         <div id="config" class="section" style="display:none;">
 			<h1>Dynamic Playlist Configuration</h1>
 			<p>Here is where parameters on the overall configuration can be changed</p>
 			
-			<label for="_api_key">API Key:</label><input type="text" id="_api_key" placeholder="" size="36"/><br />
-			<label for="_host">Host:</label><input type="text" id="_host" placeholder="" size="50"/>
+			<label for="_api_key" style="width:200px;border-width:3px;border-color:red;">API Key:</label><input type="text" id="_api_key" placeholder="" size="36"/><br />
+			<label for="_host" style="width:200px;border:1px red;">Host:</label><input type="text" id="_host" placeholder="" size="50"/>
 			<br /><br />
 			<button class="button" id="_save_config" onclick="updateConfig();">Update Configuration!</button>
 			

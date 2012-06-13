@@ -19,6 +19,12 @@
 			}
 		},
 		{
+			"arguments": "history",
+			"title": {
+				"en": "Session History"
+			}
+		},
+		{
 			"arguments": "config",
 			"title": {
 				"en": "Configuration"

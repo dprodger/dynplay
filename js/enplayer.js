@@ -2,7 +2,7 @@ var enSongs = [];
 var enToSpotIds = {};
 
 var apiKey = "N6E4NIOVYMTHNDM8J";
-var apiHost = "dogfoodsimilar.sandpit.us"
+var apiHost = "developer.echonest.com"
 var counts = 0; // spinlock
 
 var pl;
@@ -27,6 +27,9 @@ var application;
 
 var player;
 
+function supportsLocalStorage() {
+    return ('localStorage' in window) && window['localStorage'] !== null;
+}
 
 function initialize() {
 	console.log("-=-=- In initialize() ");
@@ -43,15 +46,28 @@ function initialize() {
 	
 	application.observe(models.EVENT.ARGUMENTSCHANGED, handleArgs);
 
-	$("#_api_key").val(apiKey);
-	$("#_host").val(apiHost);
+	if( !localStorage["apiKey"]) {
+		localStorage["apiKey"] = apiKey
+	}
+	
+	if( !localStorage["apiHost"]) {
+		localStorage["apiHost"] = apiHost
+	}
+	$("#_api_key").val(localStorage["apiKey"]);
+	$("#_host").val(localStorage["apiHost"]);
 }
 
 function updateConfig() {
 	apiKey = $("#_api_key").val();
 	apiHost = $("#_host").val();
 
+	apiKey = $.trim( apiKey );
+	apiHost = $.trim( apiHost );
+	// TODO figure out how to trim uuencoded strings
 	console.log( "changing apiKey to " + apiKey + " and host to: " + apiHost );
+	
+	localStorage["apiKey"] = apiKey;
+	localStorage["apiHost"] = apiHost;
 }
 
 function handleArgs() {
@@ -170,6 +186,7 @@ function actuallyPlayTrack( track, song ) {
 }
 
 function skipTrack() {
+	disablePlayerControls();
 	console.log("in skipTrack");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
@@ -186,6 +203,8 @@ function skipTrack() {
 }
 
 function banArtist() {
+	disablePlayerControls();
+	
 	console.log("in banArtist");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
@@ -204,10 +223,13 @@ function banArtist() {
             listitem.innerHTML = currentArtistName;
             list.appendChild( listitem );
 			
+			enablePlayerControls();
 		})
 }
 
 function favoriteArtist() {
+	disablePlayerControls();
+	
 	console.log("in favoriteArtist");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
@@ -226,11 +248,14 @@ function favoriteArtist() {
             listitem.innerHTML = currentArtistName;
             list.appendChild( listitem );
 			
+			enablePlayerControls();
 		})
 }
 
 
 function banSong() {
+	disablePlayerControls();
+	
 	console.log("in banSong");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
@@ -249,10 +274,13 @@ function banSong() {
             listitem.innerHTML = currentTrackTitle + " by " + currentArtistName;
             list.appendChild( listitem );
 			
+			enablePlayerControls();
 		})
 }
 
 function favoriteSong() {
+	disablePlayerControls();
+	
 	console.log("in favoriteSong");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
@@ -265,12 +293,13 @@ function favoriteSong() {
 		function(data) {
 			console.log("song favorited");
 
-			var list = document.getElementById("favorite_song_songs");
+			var list = document.getElementById("favorite_songs");
             var listitem = document.createElement("li");
             listitem.setAttribute('id', currenSongENID );
             listitem.innerHTML = currentTrackTitle + " by " + currentArtistName;
             list.appendChild( listitem );
-			
+
+			enablePlayerControls();			
 		})
 }
 
@@ -281,6 +310,8 @@ function spotifyStar() {
 }
 
 function rateSong() {
+	disablePlayerControls();
+	
 	console.log("in rateSong");
 
 	var rating = $('input:radio[name=_rategroup]:checked').val();
@@ -304,6 +335,8 @@ function rateSong() {
             listitem.setAttribute('id', currenSongENID );
             listitem.innerHTML = currentTrackTitle + " by " + currentArtistName + " rated " + rating;
             list.appendChild( listitem );
+
+			enablePlayerControls();
 		})
 
 }
@@ -317,6 +350,8 @@ function updateNowPlaying( _artist, _title, _year ) {
 	np.find( "#np_artist").text( _artist );
 	np.find( "#np_song").text( _title );
 	np.find( "#np_year").text( _year );
+	
+	enablePlayerControls();
 }
 
 var trackCount = [];
@@ -398,10 +433,10 @@ function updatePlayerControls( state ) {
 }
 
 function enablePlayerControls() {
-	updatePlayerControls( true );
+	updatePlayerControls( false );
 }
 
 function disablePlayerControls() {
-	updatePlayerControls( false );
+	updatePlayerControls( true );
 }
 
