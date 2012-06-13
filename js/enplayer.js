@@ -228,6 +228,9 @@ function actuallyPlayTrack( track, song ) {
 	
 	updateNowPlaying( song.artist_name, song.title, track.album.year);
 
+	// reset the rating field
+	$("input:radio").removeAttr("checked");
+
 	// re-enable the make new playlist button
 	$("#_play").attr("disabled",false);
 	
