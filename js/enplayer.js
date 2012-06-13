@@ -104,18 +104,66 @@ function setUpObserve() {
 
 function makePlaylist() {
 	var artist = $("#_artist").val();
+	var songTitle = $("#_song_title").val();
 	var artistHot = $("#_artist_hot").val();
 	var songHot = $("#_song_hot").val();
 	var variety = $("#_variety").val();
 	
+	if( songTitle ) {
+		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety );
+	} else {
+		innerGeneratePlaylist( artist, null, artistHot, songHot, variety );
+	}
+}
+
+function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety ) {
+	var url = "http://" + apiHost + "/api/v4/song/search?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url, 
+		{
+			'artist': artist,
+			'title': songTitle,
+			'format':'jsonp',
+			'bucket': ['tracks', 'id:spotify-WW'],
+			'limit': true,
+		}, function(data) {
+				console.log("=== in getSongIDFromTitle; received a response");
+				var response = data.response;
+				var songs = response.songs;
+				var song = songs[0];
+
+				console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")"  );
+				
+				innerGeneratePlaylist( artist, song.id, artistHot, songHot, variety );
+			});
+	
+	return;
+}
+
+function innerGeneratePlaylist( artist, songID, artistHot, songHot, variety ) {
 	// disable the makePlaylist button
 	$("#_play").attr("disabled",true);
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/create?api_key=" + apiKey + "&callback=?";
 	
 	clearPlaylist( activePlaylist );
 
+	var parms = {
+		"artist": artist,
+		"format": "jsonp",
+		'bucket': ['tracks', 'id:spotify-WW'],
+		"limit": true,
+		"artist_min_hotttnesss": artistHot,
+		"song_min_hotttnesss": songHot,
+		"variety": variety,
+		"type": songID ? "song-radio" : "artist-radio"
+	};
+	if( songID ) {
+		parms['song_id'] = songID;
+	}
+	
 	$.getJSON( url, 
-		{
+		parms,
+/*		{
 			"artist": artist,
 			"format": "jsonp",
 			'bucket': ['tracks', 'id:spotify-WW'],
@@ -123,9 +171,9 @@ function makePlaylist() {
 			"artist_min_hotttnesss": artistHot,
 			"song_min_hotttnesss": songHot,
 			"variety": variety,
-			"type": "artist-radio"
+			"type": songID ? "song-radio" : "artist-radio"
 		},
-		function(data) {
+*/		function(data) {
 			console.log("=== in makePlaylist callback; received a response");
 			var response = data.response;
 			sessionId = response.session_id;
