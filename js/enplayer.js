@@ -19,8 +19,11 @@ var currentTrackYear;
 var currentSong;
 
 var activePlaylist;
+//AaronD testing
+var playedList;
 
 var sp;
+var ui;
 var models;
 var views;
 var application;
@@ -34,6 +37,7 @@ function supportsLocalStorage() {
 function initialize() {
 	console.log("-=-=- In initialize() ");
 	sp = getSpotifyApi(1);
+    ui = sp.require("sp://import/scripts/ui");
 	models = sp.require('sp://import/scripts/api/models');
     views = sp.require("sp://import/scripts/api/views");
 	application = models.application;
@@ -43,7 +47,12 @@ function initialize() {
 	setUpObserve();
 	activePlaylist = new models.Playlist();
 	console.log( "activePlaylist now exists; it's " + activePlaylist.length + " long ");
-	
+
+    //AaronD: testing playlist view...
+    playedList = new views.List(activePlaylist);
+    playedList.node.classList.add("sp-light");
+    document.getElementById("played-list").appendChild(playedList.node);
+
 	application.observe(models.EVENT.ARGUMENTSCHANGED, handleArgs);
 
 	if( !localStorage["apiKey"]) {
@@ -218,6 +227,7 @@ function clearPlaylist(playlist) {
 
 function actuallyPlayTrack( track, song ) {
 	activePlaylist.add( track );
+
 	player.play( track.data.uri, activePlaylist, 0 );
 	
 	currentArtistID = song.artist_id;
@@ -225,8 +235,8 @@ function actuallyPlayTrack( track, song ) {
 	currentSongENID = song.id;
 	currentTrackSpotifyID = "";
 	currentTrackTitle = song.title;
-	
-	updateNowPlaying( song.artist_name, song.title, track.album.year);
+
+	updateNowPlaying( song.artist_name, song.title, track.data.album.year, track.data.album.name, track.data.album.cover);
 
 	// reset the rating field
 	$("input:radio").removeAttr("checked");
@@ -412,13 +422,21 @@ function rateSong() {
 
 
 
-function updateNowPlaying( _artist, _title, _year ) {
+function updateNowPlaying( _artist, _title, _year, _album, _cover) {
 	console.log( "in updateNowPlaying, artist is " + _artist );
-	var np = $("#nowplaying");
-	
-	np.find( "#np_artist").text( _artist );
-	np.find( "#np_song").text( _title );
-	np.find( "#np_year").text( _year );
+	//var np = $("#nowplaying");
+    document.getElementById("np_artist").innerText = "Artist: " + _artist;
+    document.getElementById("np_song").innerText = "Song: " + _title;
+    document.getElementById("np_year").innerText = "Year: " + ((_year == 0) ? "Unknown" : _year);
+    document.getElementById("np_album").innerText = "Album: " + _album;
+
+    var coverImg = new ui.SPImage(_cover);
+    coverImg.node.setAttribute("id", "cover_placeholder");
+    document.getElementById("np_cover").replaceChild(coverImg.node, document.getElementById("cover_placeholder"));
+
+    //np.find( "#np_artist").text( _artist );
+	//np.find( "#np_song").text( _title );
+	//np.find( "#np_year").text( _year );
 	
 	enablePlayerControls();
 }

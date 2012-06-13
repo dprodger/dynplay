@@ -3,7 +3,8 @@
 		"en": "Dynamic playlist generator"
 	},
 	"AppIcon": {
-		"36x18": "tutorial.png"
+		"36x18": "EN36x18.png",
+        "64x64": "EN64x64.png"
 	},
 	"AppName": {
 		"en": "Echo Nest Dynamic Radio"
@@ -31,7 +32,7 @@
 			}
         }
 	],
-	
+
 	"RequiredInterface": 1,
 	"RequiredPermissions": [
 	    "http://api.twitter.com",
