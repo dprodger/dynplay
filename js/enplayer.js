@@ -303,6 +303,24 @@ function favoriteSong() {
 		})
 }
 
+// used when a song has to be marked as "not played"
+function unplaySong( _song ) {
+//	disablePlayerControls();
+	
+	console.log("in unplaySong for song id " + _song.id );
+	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url, 
+		{
+			"session_id": sessionId,
+			"format": "jsonp",
+			"unplay_song": _song.id	// unplay the most-recently played song
+		},
+		function(data) {
+			console.log("song unplayed for id " + _song.id );
+		})
+}
+
 function spotifyStar() {
 	console.log("in spotifyStar");
 	
@@ -417,6 +435,7 @@ function processAllTracksComplete( _song, _songID ) {
 		 actuallyPlayTrack( validTracks[ _songID ].spot_track, _song );
 	} else {
 		console.log( "--------------- No tracks are available and valid for that song; getting the next one...");
+		unplaySong( _song );
 		getNextSong();
 	}
 }
