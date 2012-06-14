@@ -6,11 +6,12 @@ Spotify App that uses Echo Nest dynamic playlists
 Installation
 ============
 
-1. ensure you have a ~/Spotify directory
-2. clone this repo into ~/Spotify/dynplay
-3. edit index.html to put in your own EN ID
-4. Open Spotify
-5. Navigate to spotify:app:dynplay
+1. Ensure you have a Developer account: https://developer.spotify.com/technologies/apps/#developer-account
+1. Ensure you have a ~/Spotify directory
+1. Clone this repo into ~/Spotify/dynplay
+1. Edit index.html to put in your own EN ID
+1. Open Spotify
+1. Navigate to spotify:app:dynplay
 
 Notes
 =====
@@ -20,4 +21,5 @@ Notes
 3. decide whether "Ban Artist" should also skip the currently playing song
 4. implement UI to confirm banning of art/song
 5. hook up rating and favorite-ing
+6. add lookahead songs to the embedded playlist, need to update these if any steering is done 
 

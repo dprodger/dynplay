@@ -6,103 +6,137 @@
             @import url('sp://import/css/eve.css');
             @import url('sp://dynplay/css/main.css');
             @import url('sp://dynplay/css/github.css');
+            @import url('sp://import/css/shared.css');
+            @import url('sp://import/css/api.css');
+            .sp-list { height: 400px; }
+            #cover_placeholder {
+                width: 85px;
+                height: 85px;
+                margin-left: 10px;
+                margin-bottom: 10px;
+            }
+            #trackinfo p {
+                max-width: 275px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+            #control_buttons .button {
+                line-height: 12px;
+                font-size: 9px;
+                padding: 1px;
+            }
         </style>
 
         <script src="sp://dynplay/js/jquery.min.js"></script>
         <script src="sp://dynplay/js/rainbow-custom.min.js"></script>
         <script src="sp://dynplay/js/enplayer.js"></script>
 
+        <script>
+            jQuery.ajaxSettings.traditional = true;
 
-<script>
-jQuery.ajaxSettings.traditional = true;  
-
-$(document).ready(function() {
-	/* Instantiate the global sp object; include models & views */
-	initialize();
-});
-
-
+            $(document).ready(function () {
+                /* Instantiate the global sp object; include models & views */
+                initialize();
+            });
         </script>
     </head>
     <body>
 		<div id="wrapper">
-        <div id="index" class="section">
-            <h1>Dynamic Playlist Generator</h1>
-            <p class="description">Play dynamic radio</p>
+            <div id="index" class="section">
+                <h1>Dynamic Playlist Generator</h1>
+                <p class="description">Play dynamic radio</p>
 
-			<div id="_controls">
-			<h2>Parameters<h2>
-			<label for="_artist">Artist:</label><input type="text" id="_artist" placeholder="Seed artist" size="50"/><br />
-			<label for="_song_title">Song Title (optional):</label><input type="text" id="_song_title" placeholder="Seed song"size="50"/><br />
-			<label for="_artist_hot">Artist Hot Min:</label><input type="text" id="_artist_hot" placeholder="0.0" size="4"/>
-			<label for="_song_hot">Song Hot Min:</label><input type="text" id="_song_hot" placeholder="0.0" size="4"/>
-			<label for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/><br />
-			
-			<button class="button" id="_play" onclick="makePlaylist()">Let's go</button></br>
-			<br /><br /><br />
+                <div id="_controls">
+                    <h2>Parameters</h2>
+                    <label for="_artist">Artist:</label><input type="text" id="_artist" placeholder="Seed artist" size="50"/><br />
+                    <label for="_song_title">Song Title (optional):</label><input type="text" id="_song_title" placeholder="Seed song" size="50"/><br />
+                    <label for="_artist_hot">Artist Hot Min:</label><input type="text" id="_artist_hot" placeholder="0.0" size="4"/>
+                    <label for="_song_hot">Song Hot Min:</label><input type="text" id="_song_hot" placeholder="0.0" size="4"/>
+                    <label for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/><br />
 
-			<h2>Now Playing</h2>
-			<div id="nowplaying">
-				<p id="np_artist">Artist: </p>
-				<p id="np_song">Song:</p>
-				<p id="np_year">Year:</p>
-			</div>
-			<div id="controls">
-				<button class="button" id="_skip" onclick="skipTrack();">Skip</button>
-				<button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button>
-				<button class="button" id="_bansong" onclick="banSong();">Ban Song</button>
-				<button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button><br />
+                    <button class="button" id="_play" onclick="makePlaylist()">Let's go</button>
+                    <br /><br /><br />
 
-				<button class="button" id="_favartist" onclick="favoriteArtist();">Favorite Artist</button>
-				<button class="button" id="_favsong" onclick="favoriteSong();">Favorite Song</button><br />
-				<br />Rate this song?<br />
-				<input type="radio" value="1" id="_ratesong1" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">1 (low)</input>
-				<input type="radio" value="2" id="_ratesong2" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">2</input>
-				<input type="radio" value="3" id="_ratesong3" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">3</input>
-				<input type="radio" value="4" id="_ratesong4" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">4</input>
-				<input type="radio" value="5" id="_ratesong5" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">5 (medium)</input>
-				<input type="radio" value="6" id="_ratesong6" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">6</input>
-				<input type="radio" value="7" id="_ratesong7" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">7</input>
-				<input type="radio" value="8" id="_ratesong8" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">8</input>
-				<input type="radio" value="9" id="_ratesong9" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">9</input>
-				<input type="radio" value="10" id="_ratesong10" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio">10 (high)</input>
-			</div>
-			</div>
-        </div><!-- /index -->
-		
-		<div id="history" class="section" style="display:none;">
-			<div id="_diagnostics">
-			<br /><br /><h2>Summary/Diagnostic Information</h2>
-			<label for="_session_id">Echo Nest Session ID</label><input type="text" id="_session_id" placeholder="EN Session ID" size="50" /><br />
-			<br /><br /><h2>Banned Items</h2>
-			<div id="banned">
-				<b>Banned Artists:</b><br />
-				<ul id="banned_artists"></ul>
-				<br /><br /><b>Banned Songs:</b><br />
-				<ul id="banned_songs"></ul>
-			</div>
-			<div id="favorited">
-				<b>Favorite Artists:</b><br />
-				<ul id="favorite_artists"></ul>
-				<br /><br /><b>Favorite Songs:</b><br />
-				<ul id="favorite_songs"></ul>
-				<br /><br /><b>Rated Songs:</b><br />
-				<ul id="rated_songs"></ul>
-			</div>
+                    <h2>Now Playing</h2>
+                    <div id="nowplaying">
+                        <div id="trackinfo" style="float: left;">
+                            <p id="np_artist">Artist: </p>
+                            <p id="np_song">Song: </p>
+                            <p id="np_year">Year: </p>
+                            <p id="np_album">Album: </p>
+                        </div>
+                        <div id="np_cover" style="float: left;">
+                            <div id="cover_placeholder"></div>
+                        </div>
+                        <div id="control_buttons" style="float: left; margin-left: 10px;">
+                            <button class="button" id="_skip" onclick="skipTrack();">Skip</button><br />
+                            <button class="button" id="_favsong" onclick="favoriteSong();">Favorite Song</button><br />
+                            <button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button><br />
+                            <button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button><br />
+                            <button class="button" id="_bansong" onclick="banSong();">Ban Song</button><br />
+                        </div>
+                        <div style="clear:both;"></div>
+                    </div>
+                    <div id="controls">
+                        <!--button class="button" id="_skip" onclick="skipTrack();">Skip</button><br />
+                        <button class="button" id="_favsong" onclick="favoriteSong();">Favorite Song</button><br />
+                        <button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button><br />
+                        <button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button><br />
+                        <button class="button" id="_bansong" onclick="banSong();">Ban Song</button><br />
 
-			</div>
-		</div> <!-- /history -->
+                        <button class="button" id="_favartist" onclick="favoriteArtist();">Favorite Artist</button-->
+                        Rate this song?<br />
+                        <input type="radio" value="1" id="_ratesong1" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong1">1 (low)</label>
+                        <input type="radio" value="2" id="_ratesong2" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong2">2</label>
+                        <input type="radio" value="3" id="_ratesong3" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong3">3</label>
+                        <input type="radio" value="4" id="_ratesong4" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong4">4</label>
+                        <input type="radio" value="5" id="_ratesong5" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong5">5 (medium)</label>
+                        <input type="radio" value="6" id="_ratesong6" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong6">6</label>
+                        <input type="radio" value="7" id="_ratesong7" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong7">7</label>
+                        <input type="radio" value="8" id="_ratesong8" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong8">8</label>
+                        <input type="radio" value="9" id="_ratesong9" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong9">9</label>
+                        <input type="radio" value="10" id="_ratesong10" name="_rategroup" onclick="rateSong();" style="-webkit-appearance:radio" /><label for="_ratesong10">10 (high)</label>
+                    </div>
 
-        <div id="config" class="section" style="display:none;">
-			<h1>Dynamic Playlist Configuration</h1>
-			<p>Here is where parameters on the overall configuration can be changed</p>
-			
-			<label for="_api_key" style="width:200px;border-width:3px;border-color:red;">API Key:</label><input type="text" id="_api_key" placeholder="" size="36"/><br />
-			<label for="_host" style="width:200px;border:1px red;">Host:</label><input type="text" id="_host" placeholder="" size="50"/>
-			<br /><br />
-			<button class="button" id="_save_config" onclick="updateConfig();">Update Configuration!</button>
-			
-		</div>	
-		</div><!-- /wrapper>
+                    <br /><br />
+                    <h2>Playlist</h2>
+                    <div id="played-list">
+                    </div>
+                </div>
+            </div><!-- /index -->
+
+            <div id="history" class="section" style="display:none;">
+                <div id="_diagnostics">
+                    <br /><br /><h2>Summary/Diagnostic Information</h2>
+                    <label for="_session_id">Echo Nest Session ID</label><input type="text" id="_session_id" placeholder="EN Session ID" size="50" /><br />
+                    <br /><br /><h2>Banned Items</h2>
+                    <div id="banned">
+                        <b>Banned Artists:</b><br />
+                        <ul id="banned_artists"></ul>
+                        <br /><br /><b>Banned Songs:</b><br />
+                        <ul id="banned_songs"></ul>
+                    </div>
+                    <div id="favorited">
+                        <b>Favorite Artists:</b><br />
+                        <ul id="favorite_artists"></ul>
+                        <br /><br /><b>Favorite Songs:</b><br />
+                        <ul id="favorite_songs"></ul>
+                        <br /><br /><b>Rated Songs:</b><br />
+                        <ul id="rated_songs"></ul>
+                    </div>
+                </div>
+            </div> <!-- /history -->
+
+            <div id="config" class="section" style="display:none;">
+                <h1>Dynamic Playlist Configuration</h1>
+                <p>Here is where parameters on the overall configuration can be changed</p>
+
+                <label for="_api_key" style="width:200px;border-width:3px;border-color:red;">API Key:</label><input type="text" id="_api_key" placeholder="" size="36"/><br />
+                <label for="_host" style="width:200px;border:1px red;">Host:</label><input type="text" id="_host" placeholder="" size="50"/>
+                <br /><br />
+                <button class="button" id="_save_config" onclick="updateConfig();">Update Configuration!</button>
+            </div>
+		</div><!-- /wrapper-->
     </body>
 </html>

@@ -2,7 +2,7 @@ var enSongs = [];
 var enToSpotIds = {};
 
 var apiKey = "N6E4NIOVYMTHNDM8J";
-var apiHost = "developer.echonest.com"
+var apiHost = "developer.echonest.com";
 var counts = 0; // spinlock
 
 var pl;
@@ -19,8 +19,11 @@ var currentTrackYear;
 var currentSong;
 
 var activePlaylist;
+//AaronD testing
+var playedList;
 
 var sp;
+var ui;
 var models;
 var views;
 var application;
@@ -34,6 +37,7 @@ function supportsLocalStorage() {
 function initialize() {
 	console.log("-=-=- In initialize() ");
 	sp = getSpotifyApi(1);
+    ui = sp.require("sp://import/scripts/ui");
 	models = sp.require('sp://import/scripts/api/models');
     views = sp.require("sp://import/scripts/api/views");
 	application = models.application;
@@ -43,15 +47,20 @@ function initialize() {
 	setUpObserve();
 	activePlaylist = new models.Playlist();
 	console.log( "activePlaylist now exists; it's " + activePlaylist.length + " long ");
-	
+
+    //AaronD: testing playlist view...
+    playedList = new views.List(activePlaylist);
+    playedList.node.classList.add("sp-light");
+    document.getElementById("played-list").appendChild(playedList.node);
+
 	application.observe(models.EVENT.ARGUMENTSCHANGED, handleArgs);
 
 	if( !localStorage["apiKey"]) {
-		localStorage["apiKey"] = apiKey
+		localStorage["apiKey"] = apiKey;
 	}
 	
 	if( !localStorage["apiHost"]) {
-		localStorage["apiHost"] = apiHost
+		localStorage["apiHost"] = apiHost;
 	}
 	$("#_api_key").val(localStorage["apiKey"]);
 	$("#_host").val(localStorage["apiHost"]);
@@ -99,7 +108,7 @@ function setUpObserve() {
 		} else {
 			console.log( "I'm not yet ready for a new track");
 		}
-	})
+	});
 }
 
 function makePlaylist() {
@@ -178,9 +187,9 @@ function innerGeneratePlaylist( artist, songID, artistHot, songHot, variety ) {
 			var response = data.response;
 			sessionId = response.session_id;
 			$("#_session_id").val(sessionId);
-			console.log( "got a session; it's " + sessionId )
+			console.log( "got a session; it's " + sessionId );
 			getNextSong();
-		})
+		});
 }
 
 function getNextSong() {
@@ -189,8 +198,8 @@ function getNextSong() {
 	$.getJSON( url, 
 		{
 			"session_id": sessionId,
-			"format": "jsonp",
-		},
+			"format": "jsonp"
+        },
 		function(data) {
 			console.log("=== in getNextSong; received a response");
 			var response = data.response;
@@ -200,7 +209,7 @@ function getNextSong() {
 
 			console.log("=== Looking for song " + currentSong.id + "; title" + currentSong.title + " by artist: " + currentSong.artist_name );
 			getSpotifyTracks( currentSong, currentSong.id, tracks );
-		})
+		});
 }
 
 
@@ -218,6 +227,7 @@ function clearPlaylist(playlist) {
 
 function actuallyPlayTrack( track, song ) {
 	activePlaylist.add( track );
+
 	player.play( track.data.uri, activePlaylist, 0 );
 	
 	currentArtistID = song.artist_id;
@@ -225,8 +235,8 @@ function actuallyPlayTrack( track, song ) {
 	currentSongENID = song.id;
 	currentTrackSpotifyID = "";
 	currentTrackTitle = song.title;
-	
-	updateNowPlaying( song.artist_name, song.title, track.album.year);
+
+	updateNowPlaying( song.artist_name, song.title, track.data.album.year, track.data.album.name, track.data.album.cover);
 
 	// reset the rating field
 	$("input:radio").removeAttr("checked");
@@ -250,7 +260,7 @@ function skipTrack() {
 		function(data) {
 			console.log("song skipped");
 			getNextSong();
-		})
+		});
 }
 
 function banArtist() {
@@ -275,7 +285,7 @@ function banArtist() {
             list.appendChild( listitem );
 			
 			enablePlayerControls();
-		})
+		});
 }
 
 function favoriteArtist() {
@@ -300,7 +310,7 @@ function favoriteArtist() {
             list.appendChild( listitem );
 			
 			enablePlayerControls();
-		})
+		});
 }
 
 
@@ -326,7 +336,7 @@ function banSong() {
             list.appendChild( listitem );
 			
 			enablePlayerControls();
-		})
+		});
 }
 
 function favoriteSong() {
@@ -351,7 +361,7 @@ function favoriteSong() {
             list.appendChild( listitem );
 
 			enablePlayerControls();			
-		})
+		});
 }
 
 // used when a song has to be marked as "not played"
@@ -369,7 +379,7 @@ function unplaySong( _song ) {
 		},
 		function(data) {
 			console.log("song unplayed for id " + _song.id );
-		})
+		});
 }
 
 function spotifyStar() {
@@ -394,7 +404,6 @@ function rateSong() {
 			"session_id": sessionId,
 			"format": "jsonp",
 			"rate_song": rateVal	// set the rating value
-			
 		},
 		function(data) {
 			console.log("song rated");
@@ -406,19 +415,27 @@ function rateSong() {
             list.appendChild( listitem );
 
 			enablePlayerControls();
-		})
+		});
 
 }
 
 
 
-function updateNowPlaying( _artist, _title, _year ) {
+function updateNowPlaying( _artist, _title, _year, _album, _cover) {
 	console.log( "in updateNowPlaying, artist is " + _artist );
-	var np = $("#nowplaying");
-	
-	np.find( "#np_artist").text( _artist );
-	np.find( "#np_song").text( _title );
-	np.find( "#np_year").text( _year );
+	//var np = $("#nowplaying");
+    document.getElementById("np_artist").innerText = "Artist: " + _artist;
+    document.getElementById("np_song").innerText = "Song: " + _title;
+    document.getElementById("np_year").innerText = "Year: " + ((_year == 0) ? "Unknown" : _year);
+    document.getElementById("np_album").innerText = "Album: " + _album;
+
+    var coverImg = new ui.SPImage(_cover);
+    coverImg.node.setAttribute("id", "cover_placeholder");
+    document.getElementById("np_cover").replaceChild(coverImg.node, document.getElementById("cover_placeholder"));
+
+    //np.find( "#np_artist").text( _artist );
+	//np.find( "#np_song").text( _title );
+	//np.find( "#np_year").text( _year );
 	
 	enablePlayerControls();
 }
