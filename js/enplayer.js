@@ -172,21 +172,16 @@ function innerGeneratePlaylist( artist, songID, artistHot, songHot, variety ) {
 	
 	$.getJSON( url, 
 		parms,
-/*		{
-			"artist": artist,
-			"format": "jsonp",
-			'bucket': ['tracks', 'id:spotify-WW'],
-			"limit": true,
-			"artist_min_hotttnesss": artistHot,
-			"song_min_hotttnesss": songHot,
-			"variety": variety,
-			"type": songID ? "song-radio" : "artist-radio"
-		},
-*/		function(data) {
+		function(data) {
 			console.log("=== in makePlaylist callback; received a response");
 			var response = data.response;
 			sessionId = response.session_id;
 			$("#_session_id").val(sessionId);
+			// update helper link to show session Info
+			var siteURL = "http://"+apiHost+"/api/v4/playlist/dynamic/info?api_key=" + apiKey + "&session_id=" + sessionId ;
+			$('._en_site').show().children().attr('href', siteURL );
+	
+			$("a._history_url").attr("href", "http://developer.echonest.com");
 			console.log( "got a session; it's " + sessionId );
 			getNextSong();
 		});
