@@ -233,6 +233,7 @@ function actuallyPlayTrack( track, song ) {
 
 	updateNowPlaying( song.artist_name, song.title, track.data.album.year, track.data.album.name, track.data.album.cover);
 
+	gatherArtistLinks( song.artist_id );
 	// reset the rating field
 	$("input:radio").removeAttr("checked");
 
@@ -241,6 +242,47 @@ function actuallyPlayTrack( track, song ) {
 	
 }
 
+function gatherArtistLinks( _artistID ) {
+	var url = "http://" + apiHost + "/api/v4/artist/profile?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url, 
+		{
+			"id": _artistID,
+			"format": "jsonp",
+			'bucket': ['id:twitter', 'id:facebook'],
+		},
+		function(data) {
+			console.log("retrieved artist data");
+			
+			var artist = data.response.artist;
+			var forIDs = artist.foreign_ids;
+
+			var url = "#"
+			$("#_links").find("#_twiturl").attr("href", url);
+			$("#_links").find("#_twiturl").text("None" );
+			$("#_links").find("#_fburl").attr("href", url);
+			$("#_links").find("#_fburl").text("None" );
+			
+			if( forIDs ) {
+				for( var i = 0; i < forIDs.length; i++ ) {
+					var idBlock = forIDs[i];
+					console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
+					if( "twitter" == idBlock.catalog ) {
+						var url = "http://www.twitter.com/" + idBlock.foreign_id.substring(15);
+						$("#_links").find("#_twiturl").attr("href", url);
+						$("#_links").find("#_twiturl").text(url );
+					}
+					if( "facebook" == idBlock.catalog ) {
+						var url = "http://www.facebook.com/pages/music/" + idBlock.foreign_id.substring(16);
+						$("#_links").find("#_fburl").attr("href", url);
+						$("#_links").find("#_fburl").text(url );
+					}
+				}
+			}
+
+	});
+	
+}
 function skipTrack() {
 	disablePlayerControls();
 	console.log("in skipTrack");
