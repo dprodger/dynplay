@@ -133,23 +133,41 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety ) {
 			'artist': artist,
 			'title': songTitle,
 			'format':'jsonp',
-			'bucket': ['tracks', 'id:spotify-WW'],
-			'limit': true,
+//			'bucket': ['tracks', 'id:spotify-WW'],
+//			'limit': true,
 		}, function(data) {
 				console.log("=== in getSongIDFromTitle; received a response");
 				var response = data.response;
 				var songs = response.songs;
 				var song = songs[0];
-
-				console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")"  );
 				
-				innerGeneratePlaylist( artist, song.id, artistHot, songHot, variety );
+				if( song ) {
+					console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")"  );
+				
+					innerGeneratePlaylist( artist, song.id, artistHot, songHot, variety );
+				} else {
+					alert("We can't find that song");
+				}
 			});
 	
 	return;
 }
 
+function displayEnterNew() {
+	$("#_enter_seeds").attr("style","display:block;");
+	$("#_display_seeds").attr("style","display:none;");	
+}
+
+function displayMakePlaylist( artist ) {
+	$("#_disp_art_name").text( artist );
+	$("#_disp_song_seed").text( "flubber <b> blubber</b>");
+
+	$("#_enter_seeds").attr("style","display:none;");
+	$("#_display_seeds").attr("style","display:block;");
+}
+
 function innerGeneratePlaylist( artist, songID, artistHot, songHot, variety ) {
+	displayMakePlaylist( artist );
 	// disable the makePlaylist button
 	$("#_play").attr("disabled",true);
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/create?api_key=" + apiKey + "&callback=?";

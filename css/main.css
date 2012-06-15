@@ -17,7 +17,8 @@ h1 {font-size:2em;}
 #player .sp-player {float:left;margin-right:10px;}
 #player .sp-list {width:inherit;max-height:inherit;}
 
-#_controls {float:left;width:80%;vertical-align:top;}
+#_controls {float:left;width:100%;vertical-align:top;}
 #_diagnostics {float:left;width:80%;vertical-align:top;}
 
+input[type='range'] {-webkit-appearance: slider-horizontal;]
 
