@@ -22,3 +22,21 @@ h1 {font-size:2em;}
 
 input[type='range'] {-webkit-appearance: slider-horizontal;]
 
+.sp-list { height: 400px; }
+#cover_placeholder {
+    width: 100px;
+    height: 100px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+#trackinfo p {
+    max-width: 275px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+#control_buttons .button {
+    line-height: 12px;
+    font-size: 9px;
+    padding: 1px;
+}

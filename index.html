@@ -8,24 +8,6 @@
             @import url('sp://dynplay/css/github.css');
             @import url('sp://import/css/shared.css');
             @import url('sp://import/css/api.css');
-            .sp-list { height: 400px; }
-            #cover_placeholder {
-                width: 85px;
-                height: 85px;
-                margin-left: 10px;
-                margin-bottom: 10px;
-            }
-            #trackinfo p {
-                max-width: 275px;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-            }
-            #control_buttons .button {
-                line-height: 12px;
-                font-size: 9px;
-                padding: 1px;
-            }
         </style>
 
         <script src="sp://dynplay/js/jquery.min.js"></script>
@@ -50,12 +32,13 @@
                 <div id="_controls">
 					<div id="_enter_seeds">
 	                    <h2>Parameters</h2>
-	                    <label for="_artist">Artist:</label><input type="text" id="_artist" placeholder="Seed artist" size="50"/>
-	                    <label for="_song_title">Song Title (optional):</label><input type="text" id="_song_title" placeholder="Seed song" size="50"/><br />
-	                    <label for="_artist_hot">Artist Hot Min:</label><input type="text" id="_artist_hot" placeholder="0.0" size="4"/>
-	                    <label for="_song_hot">Song Hot Min:</label><input type="text" id="_song_hot" placeholder="0.0" size="4"/>
-	                    <label for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/><br />
-
+	                    <form id="param_form">
+	                        <label for="_artist">Artist:</label><input type="text" id="_artist" placeholder="Seed artist" size="50"/><br />
+	                        <label for="_song_title">Song Title (optional):</label><input type="text" id="_song_title" placeholder="Seed song" size="50"/><br />
+	                        <label for="_artist_hot">Artist Hot Min:</label><input type="text" id="_artist_hot" placeholder="0.0" size="4"/>
+	                        <label for="_song_hot">Song Hot Min:</label><input type="text" id="_song_hot" placeholder="0.0" size="4"/>
+	                        <label for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/><br />
+	                    </form>
 	                    <button class="button" id="_play" onclick="makePlaylist()">Let's go</button>
 	                    <br /><br /><br />
 					</div>
@@ -71,6 +54,8 @@
                             <p id="np_song">Song: </p>
                             <p id="np_year">Year: </p>
                             <p id="np_album">Album: </p>
+                            <p>Twitter: <a id="_twiturl" href="http://www.twitter.com">http://www.twitter.com</a></p>
+                            <p>Facebook: <a id="_fburl" href="http://www.facebook.com">http://www.facebook.com</a></p>
                         </div>
                         <div id="np_cover" style="float: left;">
                             <div id="cover_placeholder"></div>
@@ -85,11 +70,6 @@
                         </div>
                         <div style="clear:both;"></div>
                     </div>
-					<div id="_links">
-						Links<br />
-						Twitter: <a id="_twiturl" href="http://www.twitter.com">www.twitter.com</a><br />
-						Facebook: <a id="_fburl" href="http://www.facebook.com">www.facebook.com</a>
-					</div>
 
                     <div id="controls">
                         Rate this song?<br />
@@ -143,8 +123,8 @@
                 <h1>Dynamic Playlist Configuration</h1>
                 <p>Here is where parameters on the overall configuration can be changed</p>
 
-                <label for="_api_key" style="width:200px;border-width:3px;border-color:red;">API Key:</label><input type="text" id="_api_key" placeholder="" size="36"/><br />
-                <label for="_host" style="width:200px;border:1px red;">Host:</label><input type="text" id="_host" placeholder="" size="50"/>
+                <label for="_api_key" style="width:200px;border: 3px #ff0000;">API Key:</label><input type="text" id="_api_key" placeholder="" size="36"/><br />
+                <label for="_host" style="width:200px;border:1px #ff0000;">Host:</label><input type="text" id="_host" placeholder="" size="50"/>
                 <br /><br />
                 <button class="button" id="_save_config" onclick="updateConfig();">Update Configuration!</button>
             </div>
