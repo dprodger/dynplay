@@ -138,7 +138,7 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety ) {
 		{
 			'artist': artist,
 			'title': songTitle,
-			'format':'jsonp',
+			'format':'jsonp'
 //			'bucket': ['tracks', 'id:spotify-WW'],
 //			'limit': true,
 		}, function(data) {

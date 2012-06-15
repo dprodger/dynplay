@@ -20,7 +20,7 @@ h1 {font-size:2em;}
 #_controls {float:left;width:100%;vertical-align:top;}
 #_diagnostics {float:left;width:80%;vertical-align:top;}
 
-input[type='range'] {-webkit-appearance: slider-horizontal;]
+input[type='range'] {-webkit-appearance: slider-horizontal;}
 
 .sp-list { height: 400px; }
 #cover_placeholder {
