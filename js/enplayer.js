@@ -60,7 +60,7 @@ function initialize() {
 	$("#_api_key").val(localStorage["apiKey"]);
 	$("#_host").val(localStorage["apiHost"]);
 
-    //Submit on Enter
+    //Select the Artist field and allow Enter to Submit - quickstart FTW!
     $(document).ready(function() {
         $("#param_form").keydown(function(event) {
             if(event.keyCode == 13){
@@ -68,6 +68,7 @@ function initialize() {
                 return false;
             }
         });
+        $("#_artist").select();
     });
 }
 
