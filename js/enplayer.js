@@ -1,20 +1,15 @@
-var enSongs = [];
 var enToSpotIds = {};
 
 var apiKey = "N6E4NIOVYMTHNDM8J";
 var apiHost = "developer.echonest.com";
-var counts = 0; // spinlock
 
-var pl;
-
-var sessionID;
+var sessionId;
 
 var currentArtistID;
 var currentArtistName;
-var currenSongENID;
+var currentSongENID;
 var currentTrackSpotifyID;
 var currentTrackTitle;
-var currentTrackYear;
 
 var currentSong;
 
@@ -64,6 +59,17 @@ function initialize() {
 	}
 	$("#_api_key").val(localStorage["apiKey"]);
 	$("#_host").val(localStorage["apiHost"]);
+
+    //Select the Artist field and allow Enter to Submit - quickstart FTW!
+    $(document).ready(function() {
+        $("#param_form").keydown(function(event) {
+            if(event.keyCode == 13){
+                makePlaylist();
+                return false;
+            }
+        });
+        $("#_artist").select();
+    });
 }
 
 function updateConfig() {
@@ -134,7 +140,7 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety ) {
 			'title': songTitle,
 			'format':'jsonp',
 			'bucket': ['tracks', 'id:spotify-WW'],
-			'limit': true,
+			'limit': true
 		}, function(data) {
 				console.log("=== in getSongIDFromTitle; received a response");
 				var response = data.response;
@@ -145,8 +151,6 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety ) {
 				
 				innerGeneratePlaylist( artist, song.id, artistHot, songHot, variety );
 			});
-	
-	return;
 }
 
 function innerGeneratePlaylist( artist, songID, artistHot, songHot, variety ) {
@@ -249,7 +253,7 @@ function gatherArtistLinks( _artistID ) {
 		{
 			"id": _artistID,
 			"format": "jsonp",
-			'bucket': ['id:twitter', 'id:facebook'],
+			'bucket': ['id:twitter', 'id:facebook']
 		},
 		function(data) {
 			console.log("retrieved artist data");
@@ -257,25 +261,27 @@ function gatherArtistLinks( _artistID ) {
 			var artist = data.response.artist;
 			var forIDs = artist.foreign_ids;
 
-			var url = "#"
-			$("#_links").find("#_twiturl").attr("href", url);
-			$("#_links").find("#_twiturl").text("None" );
-			$("#_links").find("#_fburl").attr("href", url);
-			$("#_links").find("#_fburl").text("None" );
+			url = "#";
+            var twitelem = $("#trackinfo").find("#_twiturl");
+            var fbelem = $("#trackinfo").find("#_fburl");
+			twitelem.attr("href", url);
+			twitelem.text("None" );
+			fbelem.attr("href", url);
+			fbelem.text("None" );
 			
 			if( forIDs ) {
 				for( var i = 0; i < forIDs.length; i++ ) {
 					var idBlock = forIDs[i];
 					console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
 					if( "twitter" == idBlock.catalog ) {
-						var url = "http://www.twitter.com/" + idBlock.foreign_id.substring(15);
-						$("#_links").find("#_twiturl").attr("href", url);
-						$("#_links").find("#_twiturl").text(url );
+						url = "http://www.twitter.com/" + idBlock.foreign_id.substring(15);
+						twitelem.attr("href", url);
+						twitelem.text(idBlock.foreign_id.substring(15));
 					}
 					if( "facebook" == idBlock.catalog ) {
-						var url = "http://www.facebook.com/pages/music/" + idBlock.foreign_id.substring(16);
-						$("#_links").find("#_fburl").attr("href", url);
-						$("#_links").find("#_fburl").text(url );
+						url = "http://www.facebook.com/pages/music/" + idBlock.foreign_id.substring(16);
+						fbelem.attr("href", url);
+						fbelem.text("pages/music/" + idBlock.foreign_id.substring(16));
 					}
 				}
 			}
@@ -368,7 +374,7 @@ function banSong() {
 
 			var list = document.getElementById("banned_songs");
             var listitem = document.createElement("li");
-            listitem.setAttribute('id', currenSongENID );
+            listitem.setAttribute('id', currentSongENID );
             listitem.innerHTML = currentTrackTitle + " by " + currentArtistName;
             list.appendChild( listitem );
 			
@@ -393,7 +399,7 @@ function favoriteSong() {
 
 			var list = document.getElementById("favorite_songs");
             var listitem = document.createElement("li");
-            listitem.setAttribute('id', currenSongENID );
+            listitem.setAttribute('id', currentSongENID );
             listitem.innerHTML = currentTrackTitle + " by " + currentArtistName;
             list.appendChild( listitem );
 
@@ -447,7 +453,7 @@ function rateSong() {
 
 			var list = document.getElementById("rated_songs");
             var listitem = document.createElement("li");
-            listitem.setAttribute('id', currenSongENID );
+            listitem.setAttribute('id', currentSongENID );
             listitem.innerHTML = currentTrackTitle + " by " + currentArtistName + " rated " + rating;
             list.appendChild( listitem );
 
@@ -487,11 +493,12 @@ function findValidTrack( song, songID, tracks ) {
 	// set default so we know if none found
 	enToSpotIds[ songID ] = null;
 	
-	for( i = 0; i < tracks.length; i++ ) {
+	for(var i = 0; i < tracks.length; i++ ) {
 		trackCount[ songID ]++;
 //		console.log( "*** songID = " + songID + "; trackCount is " + trackCount[ songID ] );
 		var _trackID = tracks[i].foreign_id.replace("spotify-WW", "spotify");
-    	
+
+        //TODO: should t be used?
 		var t = models.Track.fromURI( _trackID, function(track) {
 //			console.log( "--- in inner function for songID = " + songID + "; trackCount is " + trackCount[ songID ] );
 
@@ -525,10 +532,10 @@ function findValidTrack( song, songID, tracks ) {
 
 function waitForTrackCompletion( song, songID ) {
 	if( trackCount[ songID ] < 1 ) {
-		return processAllTracksComplete( song, songID );
-	}
-	
-	setTimeout( function(){ waitForTrackCompletion( song, songID )}, 500 );
+		processAllTracksComplete( song, songID );
+	} else {
+	    setTimeout( function(){ waitForTrackCompletion( song, songID )}, 500 );
+    }
 }
 
 function processAllTracksComplete( _song, _songID ) {
