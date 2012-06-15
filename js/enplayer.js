@@ -127,7 +127,7 @@ function makePlaylist() {
 	if( songTitle ) {
 		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety );
 	} else {
-		innerGeneratePlaylist( artist, null, artistHot, songHot, variety );
+		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety );
 	}
 }
 
@@ -150,7 +150,7 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety ) {
 				if( song ) {
 					console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")"  );
 				
-					innerGeneratePlaylist( artist, song.id, artistHot, songHot, variety );
+					innerGeneratePlaylist( artist, song.id, song.title, artistHot, songHot, variety );
 				} else {
 					alert("We can't find that song");
 				}
@@ -162,16 +162,21 @@ function displayEnterNew() {
 	$("#_display_seeds").attr("style","display:none;");	
 }
 
-function displayMakePlaylist( artist ) {
+function displayMakePlaylist( artist, songName ) {
 	$("#_disp_art_name").text( artist );
-	$("#_disp_song_seed").text( "flubber <b> blubber</b>");
+	if( songName ) {
+		$("#_disp_song_seed").html( " based on <b>" + songName + "</b>");
+	} else {
+		$("#_disp_song_seed").text( "");
+	}
 
 	$("#_enter_seeds").attr("style","display:none;");
 	$("#_display_seeds").attr("style","display:block;");
 }
 
-function innerGeneratePlaylist( artist, songID, artistHot, songHot, variety ) {
-	displayMakePlaylist( artist );
+//TODO this is gross -- I should rethink how I'm passing shit around -- but I just want to get the titles correct 
+function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety ) {
+	displayMakePlaylist( artist, songTitle );
 	// disable the makePlaylist button
 	$("#_play").attr("disabled",true);
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/create?api_key=" + apiKey + "&callback=?";
