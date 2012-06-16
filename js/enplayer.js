@@ -276,6 +276,9 @@ function actuallyPlayTrack( track, song ) {
 
 	updateNowPlaying( song.artist_name, song.title, track.data.album.year, track.data.album.name, track.data.album.cover);
 
+	if( tpID ) {
+		updateTasteProfileWithPlay( tpID, song.id );
+	}
 	gatherArtistLinks( song.artist_id );
 	// reset the rating field
 	$("input[type=range]").val("5");
@@ -613,27 +616,27 @@ function disablePlayerControls() {
 function createNewCatalog() {
 	console.log( "in createNewCatalog");
 	// create a taste profile and store the resulting Catalog ID in local storage
-		var url = "http://" + apiHost + "/api/v4/catalog/create?api_key=" + apiKey;
-		
-		$.post(url, 
-			{
-				'type':'song',
-				'name':'dynplay_' + models.session.anonymousUserID
-			},
-			function(data) {
-				var response = data.response;
-				console.log("name is " + response.name);
-				console.log("cat id is " + response.id );
-				
-				tpID = response.id;
-				localStorage["tpID"] = tpID;
-				
-				$("#_catalog_id").val( tpID );
-		})
-		.success( function() { console.log( "in success function")})
-		.error( function(){ 
-			console.log( "in error function");
-			console.log( arguments )});
+	var url = "http://" + apiHost + "/api/v4/catalog/create?api_key=" + apiKey;
+	
+	$.post(url, 
+		{
+			'type':'song',
+			'name':'dynplay_' + models.session.anonymousUserID
+		},
+		function(data) {
+			var response = data.response;
+			console.log("name is " + response.name);
+			console.log("cat id is " + response.id );
+			
+			tpID = response.id;
+			localStorage["tpID"] = tpID;
+			
+			$("#_catalog_id").val( tpID );
+	})
+	.success( function() { console.log( "in success function")})
+	.error( function(){ 
+		console.log( "in error function");
+		console.log( arguments )});
 }
 
 function deleteExistingCatalog() {
@@ -660,4 +663,119 @@ function deleteExistingCatalog() {
 			
 			$("#_catalog_id").val( tpID );
 	})
+}
+
+function retrieveTPItem( _tpID, _soID ) {
+	var url = "http://" + apiHost + "/api/v4/catalog/read?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url, 
+		{
+			'id': tpID,
+			'item_id': _soID,
+			'format':'jsonp'
+		}, function(data) {
+			console.log("=== in retrieveTPItem; received a response");
+			var response = data.response;
+			var catalog = response.catalog;
+			var items = catalog.items;
+			
+			if( items && items.length > 0) {
+				var item = items[0];
+				console.log(" item was found");
+				playExistingItem( _tpID, _soID );
+			} else {
+				console.log("item was not found")
+				addNewItem( _tpID, _soID );
+			}});
+}
+
+function playExistingItem( _tpID, _soID ) {
+	console.log( "in updateTasteProfileWithPlay");
+	// create a taste profile and store the resulting Catalog ID in local storage
+	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
+
+	var updateBlock = {};
+	updateBlock.action = "play";
+	updateBlock.item = { 
+		"item_id":_soID,
+	}
+	var thelist = [ updateBlock ];
+
+	$.post(url, 
+		{
+			'id':_tpID,
+			'data_type':'json',
+			'data':JSON.stringify(thelist)
+		},
+		function(data) {
+			var response = data.response;
+			console.log("ticket is " + response.ticket);
+
+	})
+	.error( function(){ 
+		console.log( "in error function");
+		console.log( arguments )});	
+}
+
+function addNewItem( _tpID, _soID ) {
+	console.log( "in addNewItem");
+	// create a taste profile and store the resulting Catalog ID in local storage
+	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
+
+	var updateBlock = {};
+	updateBlock.action = "update";
+	updateBlock.item = { 
+		"item_id":_soID,
+		"song_id":_soID,
+		"play_count":1
+	}
+	var thelist = [ updateBlock ];
+
+	$.post(url, 
+		{
+			'id':_tpID,
+			'data_type':'json',
+			'data':JSON.stringify(thelist)
+		},
+		function(data) {
+			var response = data.response;
+			console.log("ticket is " + response.ticket);
+
+	})
+	.error( function(){ 
+		console.log( "in error function");
+		console.log( arguments )});	
+}
+
+function updateTasteProfileWithPlay( _tpID, _soID ) {
+	/*
+	console.log( "in updateTasteProfileWithPlay");
+	// create a taste profile and store the resulting Catalog ID in local storage
+	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
+	
+	var updateBlock = {};
+	updateBlock.action = "update";
+	updateBlock.item = { 
+		"item_id":_soID,
+		"song_id":_soID,
+//		"play_count":1
+	}
+	var thelist = [ updateBlock ];
+	
+	$.post(url, 
+		{
+			'id':_tpID,
+			'data_type':'json',
+			'data':JSON.stringify(thelist)
+		},
+		function(data) {
+			var response = data.response;
+			console.log("ticket is " + response.ticket);
+			
+	})
+	.error( function(){ 
+		console.log( "in error function");
+		console.log( arguments )});
+	*/
+	retrieveTPItem( _tpID, _soID );
 }
