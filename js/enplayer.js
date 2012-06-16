@@ -69,6 +69,8 @@ function initialize() {
 		tpID = null;
 	} else {
 		tpID = localStorage["tpID"];
+		var siteURL = "http://"+apiHost+"/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID;
+		$('._en_catalog_site').show().children().attr('href', siteURL );
 	}
 	$("#_api_key").val(localStorage["apiKey"]);
 	$("#_host").val(localStorage["apiHost"]);
@@ -211,6 +213,10 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 	};
 	if( songID ) {
 		parms['song_id'] = songID;
+	}
+	
+	if( tpID ) {
+		parms['seed_catalog'] = tpID;
 	}
 	
 	$.getJSON( url, 
@@ -363,6 +369,8 @@ function banArtist() {
 		},
 		function(data) {
 			console.log("artist banned");
+// TODO -- when server support exists, pass through ban artists to Taste Profile
+//			updateTasteProfileWithBan( tpID, currentArtistID );
 			
 			var list = document.getElementById("banned_artists");
             var listitem = document.createElement("li");
@@ -388,6 +396,8 @@ function favoriteArtist() {
 		},
 		function(data) {
 			console.log("artist favorited");
+// TODO -- when server support exists, pass through favorite artists to Taste Profile
+//			updateTasteProfileWithFavorite( tpID, currentArtistID );
 			
 			var list = document.getElementById("favorite_artists");
             var listitem = document.createElement("li");
@@ -414,6 +424,7 @@ function banSong() {
 		},
 		function(data) {
 			console.log("song banned");
+			updateTasteProfileWithBan( tpID, currentSongENID );
 
 			var list = document.getElementById("banned_songs");
             var listitem = document.createElement("li");
@@ -439,6 +450,7 @@ function favoriteSong() {
 		},
 		function(data) {
 			console.log("song favorited");
+			updateTasteProfileWithFavorite( tpID, currentSongENID );
 
 			var list = document.getElementById("favorite_songs");
             var listitem = document.createElement("li");
@@ -494,6 +506,7 @@ function rateSong() {
 		function(data) {
 			console.log("song rated");
 
+			updateTasteProfileWithRating( tpID, currentSongENID, rating );
 			var list = document.getElementById("rated_songs");
             var listitem = document.createElement("li");
             listitem.setAttribute('id', currentSongENID );
@@ -633,6 +646,10 @@ function createNewCatalog() {
 			localStorage["tpID"] = tpID;
 			
 			$("#_catalog_id").val( tpID );
+			
+			var siteURL = "http://"+apiHost+"/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID;
+			$('._en_catalog_site').show().children().attr('href', siteURL );
+			
 	})
 	.success( function() { console.log( "in success function")})
 	.error( function(){ 
@@ -672,6 +689,57 @@ function updateTasteProfileWithPlay( _tpID, _soID ) {
 
 function updateTasteProfileWithSkip( _tpID, _soID ) {
 	skipExistingItem( _tpID, _soID );
+}
+
+function updateTasteProfileWithRating( _tpID, _soID, _rating ) {
+	var url = "http://" + apiHost + "/api/v4/catalog/rate?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url, 
+		{
+			'id': _tpID,
+			'item': _soID,
+			'rating':_rating,
+			'format':'jsonp'
+		}, function(data) {
+			console.log("=== in updateTPWithRating; received a response");
+			var response = data.response;
+			console.log("response.status.code is " + response.status.code );
+			console.log("response.status.message is " + response.status.message );
+		});			
+}
+
+function updateTasteProfileWithBan( _tpID, _itemID ) {
+	var url = "http://" + apiHost + "/api/v4/catalog/ban?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url, 
+		{
+			'id': _tpID,
+			'item': _itemID,
+			'ban':'true',
+			'format':'jsonp'
+		}, function(data) {
+			console.log("=== in updateTPWithBan; received a response");
+			var response = data.response;
+			console.log("response.status.code is " + response.status.code );
+			console.log("response.status.message is " + response.status.message );
+		});			
+}
+
+function updateTasteProfileWithFavorite( _tpID, _itemID ) {
+	var url = "http://" + apiHost + "/api/v4/catalog/favorite?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url, 
+		{
+			'id': _tpID,
+			'item': _itemID,
+			'favorite':'true',
+			'format':'jsonp'
+		}, function(data) {
+			console.log("=== in updateTPWithFavorite; received a response");
+			var response = data.response;
+			console.log("response.status.code is " + response.status.code );
+			console.log("response.status.message is " + response.status.message );
+		});			
 }
 
 function retrieveTPItem( _tpID, _soID, _existFunc, _noExistFunc ) {
