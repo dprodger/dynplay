@@ -25,6 +25,9 @@ var application;
 
 var player;
 
+// taste profile ID for this user
+var tpID;
+
 function supportsLocalStorage() {
     return ('localStorage' in window) && window['localStorage'] !== null;
 }
@@ -52,10 +55,20 @@ function initialize() {
 
 	if( !localStorage["apiKey"]) {
 		localStorage["apiKey"] = apiKey;
+	} else {
+		apiKey = localStorage["apiKey"];
 	}
 	
 	if( !localStorage["apiHost"]) {
 		localStorage["apiHost"] = apiHost;
+	} else {
+		apiHost = localStorage["apiHost"];
+	}
+	
+	if( !localStorage["tpID"]) {
+		tpID = null;
+	} else {
+		tpID = localStorage["tpID"];
 	}
 	$("#_api_key").val(localStorage["apiKey"]);
 	$("#_host").val(localStorage["apiHost"]);
@@ -70,7 +83,10 @@ function initialize() {
         });
         $("#_artist").select();
     });
+
+	$("#_catalog_id").val( tpID );
 }
+
 
 function updateConfig() {
 	apiKey = $("#_api_key").val();
@@ -594,3 +610,54 @@ function disablePlayerControls() {
 	updatePlayerControls( true );
 }
 
+function createNewCatalog() {
+	console.log( "in createNewCatalog");
+	// create a taste profile and store the resulting Catalog ID in local storage
+		var url = "http://" + apiHost + "/api/v4/catalog/create?api_key=" + apiKey;
+		
+		$.post(url, 
+			{
+				'type':'song',
+				'name':'dynplay_' + models.session.anonymousUserID
+			},
+			function(data) {
+				var response = data.response;
+				console.log("name is " + response.name);
+				console.log("cat id is " + response.id );
+				
+				tpID = response.id;
+				localStorage["tpID"] = tpID;
+				
+				$("#_catalog_id").val( tpID );
+		})
+		.success( function() { console.log( "in success function")})
+		.error( function(){ 
+			console.log( "in error function");
+			console.log( arguments )});
+}
+
+function deleteExistingCatalog() {
+	console.log( "in deleteExistingCatalog");
+	console.log( "attempting to delete Catalog with ID: " + tpID );
+	
+	if( !tpID ) {
+		alert("we don't have a current catalog ID; can't delete!");
+		return;
+	}
+
+	var url = "http://" + apiHost + "/api/v4/catalog/delete?api_key=" + apiKey;
+	
+	$.post(url, 
+		{
+			'id':tpID
+		},
+		function(data) {
+			var response = data.response;
+			console.log("deleted catalog ID " + tpID );
+
+			tpID = null;
+			localStorage["tpID"] = null;
+			
+			$("#_catalog_id").val( tpID );
+	})
+}
