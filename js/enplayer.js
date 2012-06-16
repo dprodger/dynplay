@@ -262,7 +262,7 @@ function actuallyPlayTrack( track, song ) {
 
 	gatherArtistLinks( song.artist_id );
 	// reset the rating field
-	$("input:radio").removeAttr("checked");
+	$("input[type=range]").val("5");
 
 	// re-enable the make new playlist button
 	$("#_play").attr("disabled",false);
@@ -459,7 +459,7 @@ function rateSong() {
 	
 	console.log("in rateSong");
 
-	var rating = $('input:radio[name=_rategroup]:checked').val();
+	var rating = $("input[type=range]").val();
 	var rateVal = "last^" + rating;
 	
 	console.log( "sending rateVal" + rateVal );
