@@ -344,6 +344,7 @@ function skipTrack() {
 		},
 		function(data) {
 			console.log("song skipped");
+			updateTasteProfileWithSkip( tpID, currentSongENID );
 			getNextSong();
 		});
 }
@@ -665,7 +666,15 @@ function deleteExistingCatalog() {
 	})
 }
 
-function retrieveTPItem( _tpID, _soID ) {
+function updateTasteProfileWithPlay( _tpID, _soID ) {
+	retrieveTPItem( _tpID, _soID, playExistingItem, addNewItem );
+}
+
+function updateTasteProfileWithSkip( _tpID, _soID ) {
+	skipExistingItem( _tpID, _soID );
+}
+
+function retrieveTPItem( _tpID, _soID, _existFunc, _noExistFunc ) {
 	var url = "http://" + apiHost + "/api/v4/catalog/read?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
@@ -682,10 +691,10 @@ function retrieveTPItem( _tpID, _soID ) {
 			if( items && items.length > 0) {
 				var item = items[0];
 				console.log(" item was found");
-				playExistingItem( _tpID, _soID );
+				_existFunc( _tpID, _soID );
 			} else {
-				console.log("item was not found")
-				addNewItem( _tpID, _soID );
+				console.log("item was not found");
+				_noExistFunc( _tpID, _soID );
 			}});
 }
 
@@ -717,6 +726,35 @@ function playExistingItem( _tpID, _soID ) {
 		console.log( arguments )});	
 }
 
+function skipExistingItem( _tpID, _soID ) {
+	console.log( "in skipExistingItem");
+	// create a taste profile and store the resulting Catalog ID in local storage
+	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
+
+	var updateBlock = {};
+	updateBlock.action = "skip";
+	updateBlock.item = { 
+		"item_id":_soID,
+	}
+	var thelist = [ updateBlock ];
+
+	$.post(url, 
+		{
+			'id':_tpID,
+			'data_type':'json',
+			'data':JSON.stringify(thelist)
+		},
+		function(data) {
+			var response = data.response;
+			console.log("ticket is " + response.ticket);
+
+	})
+	.error( function(){ 
+		console.log( "in error function");
+		console.log( arguments )});	
+}
+
+
 function addNewItem( _tpID, _soID ) {
 	console.log( "in addNewItem");
 	// create a taste profile and store the resulting Catalog ID in local storage
@@ -747,35 +785,3 @@ function addNewItem( _tpID, _soID ) {
 		console.log( arguments )});	
 }
 
-function updateTasteProfileWithPlay( _tpID, _soID ) {
-	/*
-	console.log( "in updateTasteProfileWithPlay");
-	// create a taste profile and store the resulting Catalog ID in local storage
-	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
-	
-	var updateBlock = {};
-	updateBlock.action = "update";
-	updateBlock.item = { 
-		"item_id":_soID,
-		"song_id":_soID,
-//		"play_count":1
-	}
-	var thelist = [ updateBlock ];
-	
-	$.post(url, 
-		{
-			'id':_tpID,
-			'data_type':'json',
-			'data':JSON.stringify(thelist)
-		},
-		function(data) {
-			var response = data.response;
-			console.log("ticket is " + response.ticket);
-			
-	})
-	.error( function(){ 
-		console.log( "in error function");
-		console.log( arguments )});
-	*/
-	retrieveTPItem( _tpID, _soID );
-}
