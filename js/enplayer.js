@@ -358,14 +358,14 @@ function skipTrack() {
 function banArtist() {
 	disablePlayerControls();
 	
-	console.log("in banArtist");
+	console.log("in banArtist, for artist " + currentArtistID + " (" + currentArtistName +")");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
 		{
 			"session_id": sessionId,
 			"format": "jsonp",
-			"ban_artist": "last"	// ban the most-recently returned artist
+			"ban_artist": currentArtistID	// ban the most-recently returned artist
 		},
 		function(data) {
 			console.log("artist banned");
@@ -375,7 +375,7 @@ function banArtist() {
 			var list = document.getElementById("banned_artists");
             var listitem = document.createElement("li");
             listitem.setAttribute('id', currentArtistID );
-            listitem.innerHTML = currentArtistName;
+            listitem.innerHTML = currentArtistName + " (" + currentArtistID + ")";
             list.appendChild( listitem );
 			
 			enablePlayerControls();

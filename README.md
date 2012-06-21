@@ -20,6 +20,6 @@ Notes
 2. ~~need to figure out how to auto-chain and play the "next" track~~ - Done
 3. decide whether "Ban Artist" should also skip the currently playing song
 4. implement UI to confirm banning of art/song
-5. hook up rating and favorite-ing
+5. ~~hook up rating and favorite-ing~~ - Done (also, integrated into taste profile)
 6. add lookahead songs to the embedded playlist, need to update these if any steering is done 
 
