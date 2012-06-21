@@ -26,30 +26,26 @@
     <body>
 		<div id="wrapper">
             <div id="index" class="section">
-                <h1>Dynamic Playlist Generator</h1>
-                <p class="description">Play dynamic radio</p>
+                <h1>Echo Nest Dynamic Radio</h1>
 
                 <div id="_controls">
 					<div id="_enter_seeds">
-	                    <h2>Parameters</h2>
 	                    <form id="param_form">
-	                        <label for="_artist">Artist:</label><input type="text" id="_artist" placeholder="Seed artist" size="50"/><br />
+	                        <label for="_artist">Artist:</label><input type="text" id="_artist" placeholder="Seed artist" size="50"/>
 	                        <label for="_song_title">Song Title (optional):</label><input type="text" id="_song_title" placeholder="Seed song" size="50"/><br />
 	                        <label for="_artist_hot">Artist Hot Min:</label><input type="text" id="_artist_hot" placeholder="0.0" size="4"/>
 	                        <label for="_song_hot">Song Hot Min:</label><input type="text" id="_song_hot" placeholder="0.0" size="4"/>
-	                        <label for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/><br />
+	                        <label for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/>
+		                    <button class="button" id="_play" onclick="makePlaylist()">Let's go</button>
 	                    </form>
-	                    <button class="button" id="_play" onclick="makePlaylist()">Let's go</button>
-	                    <br /><br /><br />
 					</div>
 					<div id="_display_seeds" style="display:none;">
-						You're listening to <b id="_disp_art_name">Bonobo</b> radio <span id="_disp_song_seed">, seeded with <b>Flite</b></span><br />
+						<p>You're listening to <b id="_disp_art_name">Bonobo</b> radio <span id="_disp_song_seed">, seeded with <b>Flite</b></span></p>
 	                    <button class="button" id="_enter_new" onclick="displayEnterNew()">Make a new playlist!</button>
-	                    <br /><br /><br />
 					</div>
                     <h2>Now Playing</h2>
                     <div id="nowplaying">
-                        <div id="trackinfo" style="float: left;">
+                        <div id="trackinfo" style="float: left; width:30%">
                             <p id="np_artist">Artist: </p>
                             <p id="np_song">Song: </p>
                             <p id="np_year">Year: </p>
