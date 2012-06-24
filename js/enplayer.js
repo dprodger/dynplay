@@ -33,7 +33,7 @@ function supportsLocalStorage() {
 }
 
 function initialize() {
-	console.log("-=-=- In initialize() ");
+//	console.log("-=-=- In initialize() ");
 	sp = getSpotifyApi(1);
     ui = sp.require("sp://import/scripts/ui");
 	models = sp.require('sp://import/scripts/api/models');
@@ -44,7 +44,7 @@ function initialize() {
 	
 	setUpObserve();
 	activePlaylist = new models.Playlist();
-	console.log( "activePlaylist now exists; it's " + activePlaylist.length + " long ");
+//	console.log( "activePlaylist now exists; it's " + activePlaylist.length + " long ");
 
     //AaronD: testing playlist view...
     playedList = new views.List(activePlaylist);
@@ -107,7 +107,6 @@ function handleArgs() {
 	var args = application.arguments;
 	$(".section").hide();	// Hide all sections
 	$("#"+args[0]).show();	// Show current section
-	console.log(args);
 
 	// If there are multiple arguments, handle them accordingly
 	if(args[1]) {		
@@ -124,13 +123,13 @@ function handleArgs() {
 
 function setUpObserve() {
 	player.observe(models.EVENT.CHANGE, function(event) {
-		console.log( "[[[ in observe" );
+//		console.log( "[[[ in observe" );
 
 		if( !player.curPos && !player.track ) {
-			console.log( "Maybe this is the right time to get a new track!");
+//			console.log( "Maybe this is the right time to get a new track!");
 			getNextSong();
 		} else {
-			console.log( "I'm not yet ready for a new track");
+//			console.log( "I'm not yet ready for a new track");
 		}
 	});
 }
@@ -222,7 +221,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 	$.getJSON( url, 
 		parms,
 		function(data) {
-			console.log("=== in makePlaylist callback; received a response");
+//			console.log("=== in makePlaylist callback; received a response");
 			var response = data.response;
 			sessionId = response.session_id;
 			$("#_session_id").val(sessionId);
@@ -231,7 +230,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 			$('._en_site').show().children().attr('href', siteURL );
 	
 			$("a._history_url").attr("href", "http://developer.echonest.com");
-			console.log( "got a session; it's " + sessionId );
+			console.log( "Session ID = " + sessionId );
 			getNextSong();
 		});
 }
@@ -245,13 +244,13 @@ function getNextSong() {
 			"format": "jsonp"
         },
 		function(data) {
-			console.log("=== in getNextSong; received a response");
+//			console.log("=== in getNextSong; received a response");
 			var response = data.response;
 			var songs = response.songs;
 			currentSong = songs[0];
 			var tracks = currentSong.tracks;
 
-			console.log("=== Looking for song " + currentSong.id + "; title" + currentSong.title + " by artist: " + currentSong.artist_name );
+			console.log("=== Looking for song " + currentSong.id + "; title " + currentSong.title + " by artist: " + currentSong.artist_name );
 			getSpotifyTracks( currentSong, currentSong.id, tracks );
 		});
 }
@@ -262,7 +261,6 @@ function getSpotifyTracks( song, _soid, _tracks ) {
 }
 
 function clearPlaylist(playlist) {
-	console.log( "About to clear a playlist; currently it is " + playlist.length );
 	while (playlist.data.length > 0) {
 		playlist.data.remove(0);
 	}
@@ -304,7 +302,7 @@ function gatherArtistLinks( _artistID ) {
 			'bucket': ['id:twitter', 'id:facebook']
 		},
 		function(data) {
-			console.log("retrieved artist data");
+//			console.log("retrieved artist data");
 			
 			var artist = data.response.artist;
 			var forIDs = artist.foreign_ids;
@@ -320,7 +318,7 @@ function gatherArtistLinks( _artistID ) {
 			if( forIDs ) {
 				for( var i = 0; i < forIDs.length; i++ ) {
 					var idBlock = forIDs[i];
-					console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
+//					console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
 					if( "twitter" == idBlock.catalog ) {
 						url = "http://www.twitter.com/" + idBlock.foreign_id.substring(15);
 						twitelem.attr("href", url);
@@ -339,7 +337,7 @@ function gatherArtistLinks( _artistID ) {
 }
 function skipTrack() {
 	disablePlayerControls();
-	console.log("in skipTrack");
+//	console.log("in skipTrack");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
@@ -349,7 +347,7 @@ function skipTrack() {
 			"skip_song": "last"	// skip the current track
 		},
 		function(data) {
-			console.log("song skipped");
+			console.log("song skipped; EN Song ID: " + currentSongENID );
 			updateTasteProfileWithSkip( tpID, currentSongENID );
 			getNextSong();
 		});
@@ -358,7 +356,7 @@ function skipTrack() {
 function banArtist() {
 	disablePlayerControls();
 	
-	console.log("in banArtist, for artist " + currentArtistID + " (" + currentArtistName +")");
+//	console.log("in banArtist, for artist " + currentArtistID + " (" + currentArtistName +")");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
@@ -368,7 +366,7 @@ function banArtist() {
 			"ban_artist": currentArtistID	// ban the most-recently returned artist
 		},
 		function(data) {
-			console.log("artist banned");
+			console.log("artist banned; EN Artist ID: " + currentArtistID + " (" + currentArtistName + ")");
 // TODO -- when server support exists, pass through ban artists to Taste Profile
 //			updateTasteProfileWithBan( tpID, currentArtistID );
 			
@@ -385,7 +383,7 @@ function banArtist() {
 function favoriteArtist() {
 	disablePlayerControls();
 	
-	console.log("in favoriteArtist");
+//	console.log("in favoriteArtist");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
@@ -395,7 +393,7 @@ function favoriteArtist() {
 			"favorite_artist": "last"	// ban the most-recently returned artist
 		},
 		function(data) {
-			console.log("artist favorited");
+			console.log("artist favorited; EN Artist ID: " + currentArtistID + " (" + currentArtistName + ")");
 // TODO -- when server support exists, pass through favorite artists to Taste Profile
 //			updateTasteProfileWithFavorite( tpID, currentArtistID );
 			
@@ -413,7 +411,6 @@ function favoriteArtist() {
 function banSong() {
 	disablePlayerControls();
 	
-	console.log("in banSong");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
@@ -423,7 +420,7 @@ function banSong() {
 			"ban_song": "last"	// ban the most-recently returned artist
 		},
 		function(data) {
-			console.log("song banned");
+			console.log("song banned; EN Song ID: " + currentSongENID );
 			updateTasteProfileWithBan( tpID, currentSongENID );
 
 			var list = document.getElementById("banned_songs");
@@ -439,7 +436,7 @@ function banSong() {
 function favoriteSong() {
 	disablePlayerControls();
 	
-	console.log("in favoriteSong");
+//	console.log("in favoriteSong");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
@@ -449,7 +446,7 @@ function favoriteSong() {
 			"favorite_song": "last"	// ban the most-recently returned artist
 		},
 		function(data) {
-			console.log("song favorited");
+			console.log("song favorited; EN Song ID: " + currentSongENID );
 			updateTasteProfileWithFavorite( tpID, currentSongENID );
 
 			var list = document.getElementById("favorite_songs");
@@ -481,15 +478,11 @@ function unplaySong( _song ) {
 }
 
 function spotifyStar() {
-	console.log("in spotifyStar");
-	
 	player.track.starred = true;
 }
 
 function rateSong() {
 	disablePlayerControls();
-	
-	console.log("in rateSong");
 
 	var rating = $("input[type=range]").val();
 	var rateVal = "last^" + rating;
@@ -504,7 +497,7 @@ function rateSong() {
 			"rate_song": rateVal	// set the rating value
 		},
 		function(data) {
-			console.log("song rated");
+			console.log("song rated; EN Song ID: " + currentSongENID + "; rating is " + rating );
 
 			updateTasteProfileWithRating( tpID, currentSongENID, rating );
 			var list = document.getElementById("rated_songs");
@@ -521,7 +514,7 @@ function rateSong() {
 
 
 function updateNowPlaying( _artist, _title, _year, _album, _cover) {
-	console.log( "in updateNowPlaying, artist is " + _artist );
+//	console.log( "in updateNowPlaying, artist is " + _artist );
 	//var np = $("#nowplaying");
     document.getElementById("np_artist").innerText = "Artist: " + _artist;
     document.getElementById("np_song").innerText = "Song: " + _title;
@@ -570,12 +563,12 @@ function findValidTrack( song, songID, tracks ) {
 				if( validTracks[songID] ) {
 					if( validTracks[songID].year > track.album.year) {
 						validTracks[songID] = { "id":_uri, "year":_year , "title":_title, "album":_album, "spot_track":track };
-						console.log("track: " + track.uri + "is the new best track for song " + songID );
+//						console.log("track: " + track.uri + "is the new best track for song " + songID );
 					}
 				
 				} else {
 					validTracks[songID] = { "id":_uri, "year":_year , "title":_title, "album":_album, "spot_track":track };
-					console.log("track: " + track.uri + "is the new best track for song " + songID );
+//					console.log("track: " + track.uri + "is the new best track for song " + songID );
 				}
 				enToSpotIds[ songID ] = validTracks[songID].id;
 			}
@@ -595,7 +588,7 @@ function waitForTrackCompletion( song, songID ) {
 }
 
 function processAllTracksComplete( _song, _songID ) {
-	console.log( "all tracks have been processed");
+//	console.log( "all tracks have been processed");
 	if( validTracks[ _songID ]) {
 		var trackID = validTracks[ _songID ].id;
 		console.log( "--------------- best track is " + trackID + " for song " + _songID );
@@ -701,10 +694,8 @@ function updateTasteProfileWithRating( _tpID, _soID, _rating ) {
 			'rating':_rating,
 			'format':'jsonp'
 		}, function(data) {
-			console.log("=== in updateTPWithRating; received a response");
 			var response = data.response;
-			console.log("response.status.code is " + response.status.code );
-			console.log("response.status.message is " + response.status.message );
+			//TODO - deal with errors somehow
 		});			
 }
 
@@ -718,10 +709,8 @@ function updateTasteProfileWithBan( _tpID, _itemID ) {
 			'ban':'true',
 			'format':'jsonp'
 		}, function(data) {
-			console.log("=== in updateTPWithBan; received a response");
 			var response = data.response;
-			console.log("response.status.code is " + response.status.code );
-			console.log("response.status.message is " + response.status.message );
+			//TODO - deal with errors somehow
 		});			
 }
 
@@ -735,10 +724,8 @@ function updateTasteProfileWithFavorite( _tpID, _itemID ) {
 			'favorite':'true',
 			'format':'jsonp'
 		}, function(data) {
-			console.log("=== in updateTPWithFavorite; received a response");
 			var response = data.response;
-			console.log("response.status.code is " + response.status.code );
-			console.log("response.status.message is " + response.status.message );
+			//TODO - deal with errors somehow
 		});			
 }
 
@@ -751,23 +738,23 @@ function retrieveTPItem( _tpID, _soID, _existFunc, _noExistFunc ) {
 			'item_id': _soID,
 			'format':'jsonp'
 		}, function(data) {
-			console.log("=== in retrieveTPItem; received a response");
+//			console.log("=== in retrieveTPItem; received a response");
 			var response = data.response;
 			var catalog = response.catalog;
 			var items = catalog.items;
 			
 			if( items && items.length > 0) {
 				var item = items[0];
-				console.log(" item was found");
+//				console.log(" item was found");
 				_existFunc( _tpID, _soID );
 			} else {
-				console.log("item was not found");
+//				console.log("item was not found");
 				_noExistFunc( _tpID, _soID );
 			}});
 }
 
 function playExistingItem( _tpID, _soID ) {
-	console.log( "in updateTasteProfileWithPlay");
+//	console.log( "in updateTasteProfileWithPlay");
 	// create a taste profile and store the resulting Catalog ID in local storage
 	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
 
@@ -786,7 +773,8 @@ function playExistingItem( _tpID, _soID ) {
 		},
 		function(data) {
 			var response = data.response;
-			console.log("ticket is " + response.ticket);
+			//TODO deal with errors somehow
+//			console.log("ticket is " + response.ticket);
 
 	})
 	.error( function(){ 
@@ -795,7 +783,7 @@ function playExistingItem( _tpID, _soID ) {
 }
 
 function skipExistingItem( _tpID, _soID ) {
-	console.log( "in skipExistingItem");
+//	console.log( "in skipExistingItem");
 	// create a taste profile and store the resulting Catalog ID in local storage
 	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
 
@@ -814,7 +802,9 @@ function skipExistingItem( _tpID, _soID ) {
 		},
 		function(data) {
 			var response = data.response;
-			console.log("ticket is " + response.ticket);
+			//TODO deal with errors somehow
+			
+//			console.log("ticket is " + response.ticket);
 
 	})
 	.error( function(){ 
