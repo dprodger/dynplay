@@ -474,6 +474,8 @@ function unplaySong( _song ) {
 		},
 		function(data) {
 			console.log("song unplayed for id " + _song.id );
+//TODO when server-side locking works, disable this
+			getNextSong();
 		});
 }
 
@@ -597,7 +599,8 @@ function processAllTracksComplete( _song, _songID ) {
 	} else {
 		console.log( "--------------- No tracks are available and valid for that song; getting the next one...");
 		unplaySong( _song );
-		getNextSong();
+//TODO move getNextSong into unplaySong() response, to avoid server-side locking f'ups.	
+//		getNextSong();
 	}
 }
 
@@ -635,14 +638,20 @@ function createNewCatalog() {
 			console.log("name is " + response.name);
 			console.log("cat id is " + response.id );
 			
-			tpID = response.id;
-			localStorage["tpID"] = tpID;
+			if( response.id ) {
+				tpID = response.id;
+				localStorage["tpID"] = tpID;
 			
-			$("#_catalog_id").val( tpID );
+				$("#_catalog_id").val( tpID );
 			
-			var siteURL = "http://"+apiHost+"/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID;
-			$('._en_catalog_site').show().children().attr('href', siteURL );
+				var siteURL = "http://"+apiHost+"/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID + "&results=100";
+				$('._en_catalog_site').show().children().attr('href', siteURL );
 			
+				// add catalog-level custom data
+				attachCustomAttrsToCatalog( tpID );
+			} else {
+				console.log("Error in creating new taste profile");
+			}
 	})
 	.success( function() { console.log( "in success function")})
 	.error( function(){ 
@@ -650,6 +659,38 @@ function createNewCatalog() {
 		console.log( arguments )});
 }
 
+
+function attachCustomAttrsToCatalog( _tpID ) {
+	console.log(" in attachCustomAttrsToCatalog for tpID is " + _tpID );
+	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
+
+	var updateBlock = {};
+	updateBlock.action = "update";
+	updateBlock.catalog_keyvalues = {
+		'customattr1':'red',
+		'customattr2':'54',
+		'customattr3':'true'
+	};
+	
+	var thelist = [ updateBlock ];
+
+	$.post(url, 
+		{
+			'id':_tpID,
+			'data_type':'json',
+			'data':JSON.stringify(thelist)
+		},
+		function(data) {
+			var response = data.response;
+			//TODO deal with errors somehow
+			console.log("ticket is " + response.ticket);
+
+	})
+	.error( function(){ 
+		console.log( "in error function");
+		console.log( arguments )});	
+	
+}
 function deleteExistingCatalog() {
 	console.log( "in deleteExistingCatalog");
 	console.log( "attempting to delete Catalog with ID: " + tpID );
