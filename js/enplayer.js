@@ -69,7 +69,7 @@ function initialize() {
 		tpID = null;
 	} else {
 		tpID = localStorage["tpID"];
-		var siteURL = "http://"+apiHost+"/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID;
+		var siteURL = "http://"+apiHost+"/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID + "&results=100";
 		$('._en_catalog_site').show().children().attr('href', siteURL );
 	}
 	$("#_api_key").val(localStorage["apiKey"]);
@@ -87,8 +87,33 @@ function initialize() {
     });
 
 	$("#_catalog_id").val( tpID );
+	
+	// populate list of taste profiles
+	retrieveListOfProfiles();
 }
 
+function retrieveListOfProfiles() {
+	var url = "http://" + apiHost + "/api/v4/catalog/list?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url, 
+		{
+			'format':'jsonp'
+		}, function(data) {
+				console.log("=== in retrieveListOfProfiles; received a response");
+				var response = data.response;
+				var catalogs = response.catalogs;
+				
+				var catList = $("div._en_tp_list");
+				catList.text("");
+				
+				for( var i = 0; i < catalogs.length; i++ ) {
+					var catalog =catalogs[ i ];
+					
+					console.log( "catalog ID: " + catalog.id + ", named " + catalog.name );
+					catList.html( catList.html() + catalog.name + " (" + catalog.id + ") [" + catalog.type + ", " + catalog.total + "]<br />");
+				}
+		});
+}
 
 function updateConfig() {
 	apiKey = $("#_api_key").val();
@@ -140,11 +165,13 @@ function makePlaylist() {
 	var artistHot = $("#_artist_hot").val();
 	var songHot = $("#_song_hot").val();
 	var variety = $("#_variety").val();
+	var catRadio = $("#_cat_radio").prop('checked');
 	
+	console.log( "catRadio is " + catRadio );
 	if( songTitle ) {
 		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety );
 	} else {
-		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety );
+		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, catRadio );
 	}
 }
 
@@ -167,7 +194,7 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety ) {
 				if( song ) {
 					console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")"  );
 				
-					innerGeneratePlaylist( artist, song.id, song.title, artistHot, songHot, variety );
+					innerGeneratePlaylist( artist, song.id, song.title, artistHot, songHot, variety, false );
 				} else {
 					alert("We can't find that song");
 				}
@@ -192,24 +219,34 @@ function displayMakePlaylist( artist, songName ) {
 }
 
 //TODO this is gross -- I should rethink how I'm passing shit around -- but I just want to get the titles correct 
-function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety ) {
+function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety, catRadio ) {
 	displayMakePlaylist( artist, songTitle );
 	// disable the makePlaylist button
 	$("#_play").attr("disabled",true);
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/create?api_key=" + apiKey + "&callback=?";
 	
 	clearPlaylist( activePlaylist );
+	var type = "";
+	if( catRadio ) {
+		type = 'catalog-radio';
+	} else if( songID ) {
+		type = 'song-radio';
+	} else {
+		type = 'artist-radio';
+	}
 
 	var parms = {
-		"artist": artist,
 		"format": "jsonp",
 		'bucket': ['tracks', 'id:spotify-WW'],
 		"limit": true,
 		"artist_min_hotttnesss": artistHot,
 		"song_min_hotttnesss": songHot,
 		"variety": variety,
-		"type": songID ? "song-radio" : "artist-radio"
+		"type": type
 	};
+	if( !catRadio ) {
+		parms['artist'] = artist;
+	}
 	if( songID ) {
 		parms['song_id'] = songID;
 	}
@@ -218,6 +255,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		parms['seed_catalog'] = tpID;
 	}
 	
+	console.log( "---------------- playlist of type " + type );
 	$.getJSON( url, 
 		parms,
 		function(data) {
@@ -474,7 +512,7 @@ function unplaySong( _song ) {
 		},
 		function(data) {
 			console.log("song unplayed for id " + _song.id );
-//TODO when server-side locking works, disable this
+//TODO when server-side locking works, disable this	
 			getNextSong();
 		});
 }
