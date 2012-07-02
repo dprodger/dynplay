@@ -7,13 +7,7 @@ var apiHost = "developer.echonest.com";
 
 var sessionId;
 
-var currentArtistID;
-var currentArtistName;
-var currentSongENID;
-var currentTrackSpotifyID;
-var currentTrackTitle;
-
-var currentSong;
+var nowPlayingSong;	// song object
 
 var activePlaylist;
 //AaronD testing
@@ -186,15 +180,13 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, cat
             'artist':artist,
             'title':songTitle,
             'format':'jsonp'
-//			'bucket': ['tracks', 'id:spotify-WW'],
-//			'limit': true,
         }, function (data) {
-            console.log("=== in getSongIDFromTitle; received a response");
+            //console.log("=== in getSongIDFromTitle; received a response");
             var response = data.response;
             var songs = response.songs;
             if (songs && songs.length > 0) {
                 var song = songs[0];
-                console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")");
+                //console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")");
                 innerGeneratePlaylist(artist, song.id, song.title, artistHot, songHot, variety, catRadio);
             } else {
                 console.log("=== looking for song: " + songTitle + " and did not get any songs back!");
@@ -287,7 +279,7 @@ function getNextSong() {
 //			console.log("=== in getNextSong; received a response");
 			var response = data.response;
 			var songs = response.songs;
-			currentSong = songs[0];
+			var currentSong = songs[0];
 			var tracks = currentSong.tracks;
 
 			console.log("=== Looking for song " + currentSong.id + "; title " + currentSong.title + " by artist: " + currentSong.artist_name );
@@ -312,13 +304,14 @@ function actuallyPlayTrack( track, song ) {
 
 	player.play( track.data.uri, activePlaylist, 0 );
 	
-	currentArtistID = song.artist_id;
-	currentArtistName = song.artist_name;
-	currentSongENID = song.id;
-	currentTrackSpotifyID = "";
-	currentTrackTitle = song.title;
-
-	updateNowPlaying( song.artist_name, song.title, track.data.album.year, track.data.album.name, track.data.album.cover);
+	nowPlayingSong = new Song;
+	nowPlayingSong.songTitle = song.title;
+	nowPlayingSong.songID = song.id;
+	nowPlayingSong.artistName = song.artist_name;
+	nowPlayingSong.artistID = song.artist_id;
+	nowPlayingSong.spotifyTrackID = "";
+	
+	updateNowPlaying( nowPlayingSong, track.data.album.year, track.data.album.name, track.data.album.cover);
 
 	if( tpID ) {
 		updateTasteProfileWithPlay( tpID, song.id );
@@ -415,8 +408,8 @@ function skipTrack() {
 			"skip_song": "last"	// skip the current track
 		},
 		function(data) {
-			console.log("song skipped; EN Song ID: " + currentSongENID );
-			updateTasteProfileWithSkip( tpID, currentSongENID );
+			console.log("song skipped; EN Song ID: " + nowPlayingSong.songID );
+			updateTasteProfileWithSkip( tpID, nowPlayingSong.songID );
 			getNextSong();
 		});
 }
@@ -424,24 +417,24 @@ function skipTrack() {
 function banArtist() {
 	disablePlayerControls();
 	
-//	console.log("in banArtist, for artist " + currentArtistID + " (" + currentArtistName +")");
+//	console.log("in banArtist, for artist " + currentArtistID + " (" + nowPlayingSong.artistName +")");
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/feedback?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
 		{
 			"session_id": sessionId,
 			"format": "jsonp",
-			"ban_artist": currentArtistID	// ban the most-recently returned artist
+			"ban_artist": nowPlayingSong.artistID	// ban the most-recently returned artist
 		},
 		function(data) {
-			console.log("artist banned; EN Artist ID: " + currentArtistID + " (" + currentArtistName + ")");
+			console.log("artist banned; EN Artist ID: " + nowPlayingSong.artistID + " (" + nowPlayingSong.artistName + ")");
 // TODO -- when server support exists, pass through ban artists to Taste Profile
 //			updateTasteProfileWithBan( tpID, currentArtistID );
 			
 			var list = document.getElementById("banned_artists");
             var listitem = document.createElement("li");
-            listitem.setAttribute('id', currentArtistID );
-            listitem.innerHTML = currentArtistName + " (" + currentArtistID + ")";
+            listitem.setAttribute('id', nowPlayingSong.artistID );
+            listitem.innerHTML = nowPlayingSong.artistName + " (" + nowPlayingSong.artistID + ")";
             list.appendChild( listitem );
 			
 			enablePlayerControls();
@@ -461,14 +454,14 @@ function favoriteArtist() {
 			"favorite_artist": "last"	// ban the most-recently returned artist
 		},
 		function(data) {
-			console.log("artist favorited; EN Artist ID: " + currentArtistID + " (" + currentArtistName + ")");
+			console.log("artist favorited; EN Artist ID: " + nowPlayingSong.artistID + " (" + nowPlayingSong.artistName + ")");
 // TODO -- when server support exists, pass through favorite artists to Taste Profile
 //			updateTasteProfileWithFavorite( tpID, currentArtistID );
 			
 			var list = document.getElementById("favorite_artists");
             var listitem = document.createElement("li");
-            listitem.setAttribute('id', currentArtistID );
-            listitem.innerHTML = currentArtistName;
+            listitem.setAttribute('id', nowPlayingSong.artistID );
+            listitem.innerHTML = nowPlayingSong.artistName;
             list.appendChild( listitem );
 			
 			enablePlayerControls();
@@ -488,13 +481,13 @@ function banSong() {
 			"ban_song": "last"	// ban the most-recently returned artist
 		},
 		function(data) {
-			console.log("song banned; EN Song ID: " + currentSongENID );
-			updateTasteProfileWithBan( tpID, currentSongENID );
+			console.log("song banned; EN Song ID: " + nowPlayingSong.songID );
+			updateTasteProfileWithBan( tpID, nowPlayingSong.songID );
 
 			var list = document.getElementById("banned_songs");
             var listitem = document.createElement("li");
-            listitem.setAttribute('id', currentSongENID );
-            listitem.innerHTML = currentTrackTitle + " by " + currentArtistName;
+            listitem.setAttribute('id', nowPlayingSong.songID );
+            listitem.innerHTML = nowPlayingSong.songTitle + " by " + nowPlayingSong.artistName;
             list.appendChild( listitem );
 			
 			enablePlayerControls();
@@ -514,13 +507,13 @@ function favoriteSong() {
 			"favorite_song": "last"	// ban the most-recently returned artist
 		},
 		function(data) {
-			console.log("song favorited; EN Song ID: " + currentSongENID );
-			updateTasteProfileWithFavorite( tpID, currentSongENID );
+			console.log("song favorited; EN Song ID: " + nowPlayingSong.songID );
+			updateTasteProfileWithFavorite( tpID, nowPlayingSong.songID );
 
 			var list = document.getElementById("favorite_songs");
             var listitem = document.createElement("li");
-            listitem.setAttribute('id', currentSongENID );
-            listitem.innerHTML = currentTrackTitle + " by " + currentArtistName;
+            listitem.setAttribute('id', nowPlayingSong.songID );
+            listitem.innerHTML = nowPlayingSong.songTitle + " by " + nowPlayingSong.artistName;
             list.appendChild( listitem );
 
 			enablePlayerControls();			
@@ -567,13 +560,13 @@ function rateSong() {
 			"rate_song": rateVal	// set the rating value
 		},
 		function(data) {
-			console.log("song rated; EN Song ID: " + currentSongENID + "; rating is " + rating );
+			console.log("song rated; EN Song ID: " + nowPlayingSong.songID + "; rating is " + rating );
 
-			updateTasteProfileWithRating( tpID, currentSongENID, rating );
+			updateTasteProfileWithRating( tpID, nowPlayingSong.songID, rating );
 			var list = document.getElementById("rated_songs");
             var listitem = document.createElement("li");
-            listitem.setAttribute('id', currentSongENID );
-            listitem.innerHTML = currentTrackTitle + " by " + currentArtistName + " rated " + rating;
+            listitem.setAttribute('id', nowPlayingSong.songID );
+            listitem.innerHTML = nowPlayingSong.songTitle + " by " + nowPlayingSong.artistName + " rated " + rating;
             list.appendChild( listitem );
 
 			enablePlayerControls();
@@ -583,11 +576,10 @@ function rateSong() {
 
 
 
-function updateNowPlaying( _artist, _title, _year, _album, _cover) {
-//	console.log( "in updateNowPlaying, artist is " + _artist );
+function updateNowPlaying( _nowPlayingSong, _year, _album, _cover) {
 	//var np = $("#nowplaying");
-    document.getElementById("np_artist").innerText = "Artist: " + _artist;
-    document.getElementById("np_song").innerText = "Song: " + _title;
+    document.getElementById("np_artist").innerText = "Artist: " + _nowPlayingSong.artistName;
+    document.getElementById("np_song").innerText = "Song: " + _nowPlayingSong.songTitle;
     document.getElementById("np_year").innerText = "Year: " + ((_year == 0) ? "Unknown" : _year);
     document.getElementById("np_album").innerText = "Album: " + _album;
 

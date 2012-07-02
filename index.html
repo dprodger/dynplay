@@ -10,14 +10,19 @@
             @import url('sp://import/css/api.css');
         </style>
 
-        <script src="sp://dynplay/js/jquery.min.js"></script>
-        <script src="sp://dynplay/js/rainbow-custom.min.js"></script>
-        <script src="sp://dynplay/js/enplayer.js"></script>
+		<script src="sp://dynplay/js/jquery.min.js"></script>
+		<script src="sp://dynplay/js/underscore/underscore-min.js"></script>
+		<script src="sp://dynplay/js/backbone/backbone-min.js"></script>
+		<script src="sp://dynplay/js/rainbow-custom.min.js"></script>
+		<script src="sp://dynplay/js/enplayer.js"></script>
+		<script src="sp://dynplay/js/models/song.js"></script>
+		
+		</script>
 
         <script>
-            jQuery.ajaxSettings.traditional = true;
-
+        	jQuery.ajaxSettings.traditional = true;
             $(document).ready(function () {
+
                 /* Instantiate the global sp object; include models & views */
                 initialize();
             });
