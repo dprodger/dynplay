@@ -33,11 +33,11 @@
 	                    <form id="param_form">
 	                        <label for="_artist">Artist:</label><input type="text" id="_artist" placeholder="Seed artist" size="50"/>
 	                        <label for="_song_title">Song Title (optional):</label><input type="text" id="_song_title" placeholder="Seed song" size="50"/><br />
-							<input type="checkbox" id="_cat_radio" value="" style="-webkit-appearance: checkbox !important;"/>Just use catalog radio<br />
+							<input type="checkbox" id="_cat_radio" value="" style="-webkit-appearance: checkbox !important;"/><label for="_cat_radio">Just use catalog radio</label><br />
 	                        <label for="_artist_hot">Artist Hot Min:</label><input type="text" id="_artist_hot" placeholder="0.0" size="4"/>
 	                        <label for="_song_hot">Song Hot Min:</label><input type="text" id="_song_hot" placeholder="0.0" size="4"/>
 	                        <label for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/>
-		                    <button class="button" id="_play" onclick="makePlaylist()">Let's go</button>
+		                    <button class="button" id="_play" onclick="makePlaylist(); return false;">Let's go</button>
 	                    </form>
 					</div>
 					<div id="_display_seeds" style="display:none;">
