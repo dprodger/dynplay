@@ -33,7 +33,7 @@ function supportsLocalStorage() {
 }
 
 function initialize() {
-//	console.log("-=-=- In initialize() ");
+	console.log("-=-=- In initialize() ");
 	sp = getSpotifyApi(1);
     ui = sp.require("sp://import/scripts/ui");
 	models = sp.require('sp://import/scripts/api/models');
@@ -109,8 +109,8 @@ function retrieveListOfProfiles() {
 				for( var i = 0; i < catalogs.length; i++ ) {
 					var catalog =catalogs[ i ];
 					
-					console.log( "catalog ID: " + catalog.id + ", named " + catalog.name );
-					catList.html( catList.html() + catalog.name + " (" + catalog.id + ") [" + catalog.type + ", " + catalog.total + "]<br />");
+//					console.log( "catalog ID: " + catalog.id + ", named " + catalog.name );
+//					catList.html( catList.html() + catalog.name + " (" + catalog.id + ") [" + catalog.type + ", " + catalog.total + "]<br />");
 				}
 		});
 }
@@ -160,6 +160,7 @@ function setUpObserve() {
 }
 
 function makePlaylist() {
+	console.log("in makePlaylist");
 	var artist = $("#_artist").val();
 	var songTitle = $("#_song_title").val();
 	var artistHot = $("#_artist_hot").val();
@@ -169,13 +170,15 @@ function makePlaylist() {
 	
 	console.log( "catRadio is " + catRadio );
 	if( songTitle ) {
-		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety );
+		console.log("skipping getSongIDfromTitle");
+//		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety );
 	} else {
 		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, catRadio );
 	}
 }
 
 function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety ) {
+	console.log("in getSongIDFromTitle");
 	var url = "http://" + apiHost + "/api/v4/song/search?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url, 
@@ -187,7 +190,7 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety ) {
 //			'limit': true,
 		}, function(data) {
 				console.log("=== in getSongIDFromTitle; received a response");
-				var response = data.response;
+/*				var response = data.response;
 				var songs = response.songs;
 				var song = songs[0];
 				
@@ -198,7 +201,7 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety ) {
 				} else {
 					alert("We can't find that song");
 				}
-			});
+*/			});
 }
 
 function displayEnterNew() {
@@ -255,7 +258,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		parms['seed_catalog'] = tpID;
 	}
 	
-	console.log( "---------------- playlist of type " + type );
+	console.log( "---------------- 	playlist of type " + type );
 	$.getJSON( url, 
 		parms,
 		function(data) {
@@ -352,15 +355,22 @@ function gatherArtistLinks( _artistID ) {
 			twitelem.text("None" );
 			fbelem.attr("href", url);
 			fbelem.text("None" );
+
+			var tweetText = $("div._recent_tweets");
+			tweetText.text("");
 			
 			if( forIDs ) {
 				for( var i = 0; i < forIDs.length; i++ ) {
 					var idBlock = forIDs[i];
 //					console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
 					if( "twitter" == idBlock.catalog ) {
-						url = "http://www.twitter.com/" + idBlock.foreign_id.substring(15);
+						var twHand = idBlock.foreign_id.substring(15)
+						url = "http://www.twitter.com/" + twHand;
 						twitelem.attr("href", url);
-						twitelem.text(idBlock.foreign_id.substring(15));
+						twitelem.text( twHand );
+						
+						retrieveTweets( twHand );
+						
 					}
 					if( "facebook" == idBlock.catalog ) {
 						url = "http://www.facebook.com/pages/music/" + idBlock.foreign_id.substring(16);
@@ -373,6 +383,27 @@ function gatherArtistLinks( _artistID ) {
 	});
 	
 }
+
+function retrieveTweets( _tid ) {
+	console.log( "in retrieveTweets for " + _tid )
+	var url = "http://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&count=3";
+
+	$.getJSON( url, 
+		{
+			"screen_name": _tid
+		},
+		function(data) {
+			console.log("retrieved tweets");
+			var tweetText = $("div._recent_tweets");
+			tweetText.text("");
+			
+			for( var i = 0; i < data.length; i++ ) {
+				console.log( data[i].text );
+				tweetText.html( tweetText.html() + data[i].text + "<br />");
+			}
+		} );
+}
+
 function skipTrack() {
 	disablePlayerControls();
 //	console.log("in skipTrack");

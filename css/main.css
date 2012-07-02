@@ -63,3 +63,8 @@ input[type='range'] {-webkit-appearance: slider-horizontal;}
     font-size: 9px;
     padding: 1px;
 }
+
+#tabs a {
+	display:inline-block;
+	width:100px;
+}
