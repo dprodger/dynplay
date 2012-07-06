@@ -38,7 +38,6 @@ var NowPlayingView = Backbone.View.extend({
         return this;
     },
     updateView: function() {
-		console.log("--------- in updateView");
         this.render();
     }
 });

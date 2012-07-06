@@ -40,7 +40,7 @@ var Artist = Backbone.Model.extend({
 				if( forIDs ) {
 					for( var i = 0; i < forIDs.length; i++ ) {
 						var idBlock = forIDs[i];
-						console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
+//						console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
 						if( "twitter" == idBlock.catalog ) {
 							var twHand = idBlock.foreign_id.substring(15);
 							self.setTwitter( twHand );
@@ -52,9 +52,8 @@ var Artist = Backbone.Model.extend({
 					}
 				}
 				
-				console.log("in artist:gatherArtistLinks; response has completed");
+//				console.log("in artist:gatherArtistLinks; response has completed");
 				if( self.get("model") ) {
-					console.log("-- about to call self.model.change", self.get("model"));
 					self.get("model").dprChange();
 				}
 
