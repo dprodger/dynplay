@@ -15,6 +15,9 @@
 		<script src="sp://dynplay/js/backbone/backbone-min.js"></script>
 		<script src="sp://dynplay/js/rainbow-custom.min.js"></script>
 		<script src="sp://dynplay/js/enplayer.js"></script>
+		<script src="sp://dynplay/js/models/dynplay.js"></script>
+		<script src="sp://dynplay/js/views/nowPlaying.js"></script>
+		<script src="sp://dynplay/js/models/artist.js"></script>
 		<script src="sp://dynplay/js/models/song.js"></script>
 		
 		</script>
@@ -51,30 +54,6 @@
 					</div>
                     <h2>Now Playing</h2>
                     <div id="nowplaying">
-                        <div id="trackinfo" style="float: left; width:30%">
-                            <p id="np_artist">Artist: </p>
-                            <p id="np_song">Song: </p>
-                            <p id="np_year">Year: </p>
-                            <p id="np_album">Album: </p>
-                            <p>Twitter: <a id="_twiturl" href="http://www.twitter.com">http://www.twitter.com</a></p>
-                            <p>Facebook: <a id="_fburl" href="http://www.facebook.com">http://www.facebook.com</a></p>
-                        </div>
-                        <div id="np_cover" style="float: left;">
-                            <div id="cover_placeholder"></div>
-                        </div>
-                        <div id="control_buttons" style="float: left; margin-left: 10px;">
-                            <button class="button" id="_skip" onclick="skipTrack();">Skip</button><br />
-                            <button class="button" id="_favartist" onclick="favoriteArtist();">Favorite Artist</button><br />
-                            <button class="button" id="_favsong" onclick="favoriteSong();">Favorite Song</button><br />
-                            <button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button><br />
-                            <button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button><br />
-                            <button class="button" id="_bansong" onclick="banSong();">Ban Song</button><br />
-                        </div>
-                        <div style="clear:both;"></div>
-						<div id="social_updates">
-							<h4>Recent Tweets</h4>
-							<div class="_recent_tweets"></div>
-						</div>
                     </div>
 
                     <div id="controls">
@@ -143,4 +122,31 @@
             </div>
 		</div><!-- /wrapper-->
     </body>
+<!-- templates for various views -->
+<script type="text/template" id="now_playing_template">
+	<div id="trackinfo" style="float: left; width:30%">
+	    <p id="np_artist">Artist: <%= artistName %></p>
+	    <p id="np_song">Song: <%= songTitle %></p>
+	    <p id="np_year">Year: <%= songYear %></p>
+	    <p id="np_album">Album: <%= album %></p>
+	    <p>Twitter: <a id="_twiturl" href="http://www.twitter.com">http://www.twitter.com</a></p>
+	    <p>Facebook: <a id="_fburl" href="http://www.facebook.com">http://www.facebook.com</a></p>
+	</div>
+	<div id="np_cover" style="float: left;">
+	    <div id="cover_placeholder"></div>
+	</div>
+	<div id="control_buttons" style="float: left; margin-left: 10px;">
+	    <button class="button" id="_skip" onclick="skipTrack();">Skip</button><br />
+	    <button class="button" id="_favartist" onclick="favoriteArtist();">Favorite Artist</button><br />
+	    <button class="button" id="_favsong" onclick="favoriteSong();">Favorite Song</button><br />
+	    <button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button><br />
+	    <button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button><br />
+	    <button class="button" id="_bansong" onclick="banSong();">Ban Song</button><br />
+	</div>
+	<div style="clear:both;"></div>
+	<div id="social_updates">
+		<h4>Recent Tweets</h4>
+		<div class="_recent_tweets"></div>
+	</div>
+</script>
 </html>

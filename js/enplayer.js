@@ -8,6 +8,7 @@ var apiHost = "developer.echonest.com";
 var sessionId;
 
 var nowPlayingSong;	// song object
+var nowPlayingArtist;
 
 var activePlaylist;
 //AaronD testing
@@ -27,6 +28,9 @@ var tpID;
 function supportsLocalStorage() {
     return ('localStorage' in window) && window['localStorage'] !== null;
 }
+
+var nowPlayingView;
+var dynplayModel;
 
 function initialize() {
 	console.log("-=-=- In initialize() ");
@@ -86,6 +90,12 @@ function initialize() {
 	
 	// populate list of taste profiles
 	retrieveListOfProfiles();
+	
+	dynplayModel = new DynplayModel();
+	nowPlayingView = new NowPlayingView( { 
+		model: dynplayModel,
+		el: $("#nowplaying")
+		} );
 }
 
 function retrieveListOfProfiles() {
@@ -144,13 +154,9 @@ function handleArgs() {
 
 function setUpObserve() {
 	player.observe(models.EVENT.CHANGE, function(event) {
-//		console.log( "[[[ in observe" );
-
+		// when the below are both true, that's the signal from Spotify that we're at the end of a track
 		if( !player.curPos && !player.track ) {
-//			console.log( "Maybe this is the right time to get a new track!");
 			getNextSong();
-		} else {
-//			console.log( "I'm not yet ready for a new track");
 		}
 	});
 }
@@ -304,19 +310,28 @@ function actuallyPlayTrack( track, song ) {
 
 	player.play( track.data.uri, activePlaylist, 0 );
 	
+	nowPlayingArtist = new Artist;
+	nowPlayingArtist.artistID = song.artist_id;
+	nowPlayingArtist.artistName = song.artist_name;
+	
 	nowPlayingSong = new Song;
 	nowPlayingSong.songTitle = song.title;
 	nowPlayingSong.songID = song.id;
-	nowPlayingSong.artistName = song.artist_name;
-	nowPlayingSong.artistID = song.artist_id;
-	nowPlayingSong.spotifyTrackID = "";
+	nowPlayingSong.releaseYear = track.data.album.year;
+	nowPlayingSong.albumName = track.data.album.name;
+	nowPlayingSong.artist = nowPlayingArtist;
 	
-	updateNowPlaying( nowPlayingSong, track.data.album.year, track.data.album.name, track.data.album.cover);
+	updateNowPlaying( nowPlayingSong, track.data.album.cover);
 
 	if( tpID ) {
 		updateTasteProfileWithPlay( tpID, song.id );
 	}
-	gatherArtistLinks( song.artist_id );
+	
+    var twitelem = $("#trackinfo").find("#_twiturl");
+    var fbelem = $("#trackinfo").find("#_fburl");
+	
+	nowPlayingArtist.gatherArtistLinks( twitelem, fbelem );
+//	gatherArtistLinks( song.artist_id );
 	// reset the rating field
 	$("input[type=range]").val("5");
 
@@ -324,6 +339,7 @@ function actuallyPlayTrack( track, song ) {
 	$("#_play").attr("disabled",false);
 	
 }
+/*
 
 function gatherArtistLinks( _artistID ) {
 	var url = "http://" + apiHost + "/api/v4/artist/profile?api_key=" + apiKey + "&callback=?";
@@ -395,6 +411,7 @@ function retrieveTweets( _tid ) {
 			}
 		} );
 }
+*/
 
 function skipTrack() {
 	disablePlayerControls();
@@ -424,17 +441,17 @@ function banArtist() {
 		{
 			"session_id": sessionId,
 			"format": "jsonp",
-			"ban_artist": nowPlayingSong.artistID	// ban the most-recently returned artist
+			"ban_artist": nowPlayingSong.artist.artistID	// ban the most-recently returned artist
 		},
 		function(data) {
-			console.log("artist banned; EN Artist ID: " + nowPlayingSong.artistID + " (" + nowPlayingSong.artistName + ")");
+			console.log("artist banned; EN Artist ID: " + nowPlayingSong.artist.artistID + " (" + nowPlayingSong.artist.artistName + ")");
 // TODO -- when server support exists, pass through ban artists to Taste Profile
 //			updateTasteProfileWithBan( tpID, currentArtistID );
 			
 			var list = document.getElementById("banned_artists");
             var listitem = document.createElement("li");
-            listitem.setAttribute('id', nowPlayingSong.artistID );
-            listitem.innerHTML = nowPlayingSong.artistName + " (" + nowPlayingSong.artistID + ")";
+            listitem.setAttribute('id', nowPlayingSong.artist.artistID );
+            listitem.innerHTML = nowPlayingSong.artist.artistName + " (" + nowPlayingSong.artist.artistID + ")";
             list.appendChild( listitem );
 			
 			enablePlayerControls();
@@ -454,14 +471,16 @@ function favoriteArtist() {
 			"favorite_artist": "last"	// ban the most-recently returned artist
 		},
 		function(data) {
-			console.log("artist favorited; EN Artist ID: " + nowPlayingSong.artistID + " (" + nowPlayingSong.artistName + ")");
+			var artist = nowPlayingSong.artist;
+			
+			console.log("artist favorited; EN Artist ID: " + artist.artistID + " (" + artist.artistName + ")");
 // TODO -- when server support exists, pass through favorite artists to Taste Profile
 //			updateTasteProfileWithFavorite( tpID, currentArtistID );
 			
 			var list = document.getElementById("favorite_artists");
             var listitem = document.createElement("li");
-            listitem.setAttribute('id', nowPlayingSong.artistID );
-            listitem.innerHTML = nowPlayingSong.artistName;
+            listitem.setAttribute('id', artist.artistID );
+            listitem.innerHTML = artist.artistName;
             list.appendChild( listitem );
 			
 			enablePlayerControls();
@@ -487,7 +506,7 @@ function banSong() {
 			var list = document.getElementById("banned_songs");
             var listitem = document.createElement("li");
             listitem.setAttribute('id', nowPlayingSong.songID );
-            listitem.innerHTML = nowPlayingSong.songTitle + " by " + nowPlayingSong.artistName;
+            listitem.innerHTML = nowPlayingSong.songTitle + " by " + nowPlayingSong.artist.artistName;
             list.appendChild( listitem );
 			
 			enablePlayerControls();
@@ -513,7 +532,7 @@ function favoriteSong() {
 			var list = document.getElementById("favorite_songs");
             var listitem = document.createElement("li");
             listitem.setAttribute('id', nowPlayingSong.songID );
-            listitem.innerHTML = nowPlayingSong.songTitle + " by " + nowPlayingSong.artistName;
+            listitem.innerHTML = nowPlayingSong.songTitle + " by " + nowPlayingSong.artist.artistName;
             list.appendChild( listitem );
 
 			enablePlayerControls();			
@@ -566,7 +585,7 @@ function rateSong() {
 			var list = document.getElementById("rated_songs");
             var listitem = document.createElement("li");
             listitem.setAttribute('id', nowPlayingSong.songID );
-            listitem.innerHTML = nowPlayingSong.songTitle + " by " + nowPlayingSong.artistName + " rated " + rating;
+            listitem.innerHTML = nowPlayingSong.songTitle + " by " + nowPlayingSong.artist.artistName + " rated " + rating;
             list.appendChild( listitem );
 
 			enablePlayerControls();
@@ -576,21 +595,16 @@ function rateSong() {
 
 
 
-function updateNowPlaying( _nowPlayingSong, _year, _album, _cover) {
-	//var np = $("#nowplaying");
-    document.getElementById("np_artist").innerText = "Artist: " + _nowPlayingSong.artistName;
-    document.getElementById("np_song").innerText = "Song: " + _nowPlayingSong.songTitle;
-    document.getElementById("np_year").innerText = "Year: " + ((_year == 0) ? "Unknown" : _year);
-    document.getElementById("np_album").innerText = "Album: " + _album;
+function updateNowPlaying( _song, _cover) {
+	dynplayModel.artist = _song.artist;
+	dynplayModel.song = _song;
+	
+	nowPlayingView.updateView();
 
     var coverImg = new ui.SPImage(_cover);
     coverImg.node.setAttribute("id", "cover_placeholder");
     document.getElementById("np_cover").replaceChild(coverImg.node, document.getElementById("cover_placeholder"));
 
-    //np.find( "#np_artist").text( _artist );
-	//np.find( "#np_song").text( _title );
-	//np.find( "#np_year").text( _year );
-	
 	enablePlayerControls();
 }
 
