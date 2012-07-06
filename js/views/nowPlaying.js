@@ -5,19 +5,16 @@ var NowPlayingView = Backbone.View.extend({
 	events: {},
 	
 	initialize: function() {
-		console.log("in nowPlaying:initialize()");
-		this.model.bind('change', this.updateView, this);
+		this.model.on('change', this.updateView, this);
 		this.render();
 	},
 	render: function() {
-		if( this.model.artist ) {
-			console.log("*** we've got an artist; name is " + this.model.artist.artistName + " (" + this.model.artist.artistID + ")");
-
+		if( this.model.get("artist") && this.model.get("song")) {
 			var template = _.template( $("#now_playing_template").html(), { 
-				artistName: this.model.artist.artistName, 
-				songTitle: this.model.song.songTitle,
-				songYear: this.model.song.releaseYear,
-				album: this.model.song.albumName } );
+				artistName: this.model.get("artist").artistName, 
+				songTitle: this.model.get("song").songTitle,
+				songYear: this.model.get("song").releaseYear,
+				album: this.model.get("song").albumName } );
 			this.$el.html( template );
 		} else {
 			var template = _.template( $("#now_playing_template").html(), { 
@@ -34,5 +31,3 @@ var NowPlayingView = Backbone.View.extend({
 		this.render();
 	}
 });
-
-	
