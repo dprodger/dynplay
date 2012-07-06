@@ -80,6 +80,12 @@ var Artist = Backbone.Model.extend({
 
 				for( var i = 0; i < data.length; i++ ) {
 					console.log( data[i].text );
+					var img = "<img src='" + data[i].user.profile_image_url + "' />";
+					console.log("twitter avatar image is " + img );
+					
+					tweetText.html( tweetText.html() + img) ;
+					tweetText.html( tweetText.html() + data[i].user.name + "<br />" );
+					tweetText.html( tweetText.html() + "@" + data[i].user.screen_name + "<br />" );
 					tweetText.html( tweetText.html() + data[i].text + "<br />");
 				}
 			} );

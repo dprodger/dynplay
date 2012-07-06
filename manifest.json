@@ -35,6 +35,7 @@
 
 	"RequiredInterface": 1,
 	"RequiredPermissions": [
+		"http://*.twimg.com",
 	    "http://api.twitter.com",
 	    "http://o.scdn.co",
 	    "http://maps.googleapis.com",
