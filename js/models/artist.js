@@ -9,7 +9,13 @@ var Artist = Backbone.Model.extend({
 
 		this.artistTwitterID = _tid;
 		this.artistTwitterURL = url;
-		
+
+		if( _tid ) {
+			this.retrieveTweets();
+		} else {
+			var tweetText = $("div._recent_tweets");
+			tweetText.text("");	
+		}
 		this.get("model").dprChange();
 	},
 	setFacebook: function( _fid ) {
@@ -44,7 +50,7 @@ var Artist = Backbone.Model.extend({
 						if( "twitter" == idBlock.catalog ) {
 							var twHand = idBlock.foreign_id.substring(15);
 							self.setTwitter( twHand );
-						}
+						} 
 						if( "facebook" == idBlock.catalog ) {
 							url = idBlock.foreign_id.substring(16);
 							self.setFacebook( url );
@@ -60,13 +66,12 @@ var Artist = Backbone.Model.extend({
 		});
 	},
 	retrieveTweets: function() {
-/*
-		console.log( "in retrieveTweets for " + _tid )
+		console.log( "in retrieveTweets for " + this.artistTwitterID );
 		var url = "http://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&count=3";
 
 		$.getJSON( url, 
 			{
-				"screen_name": _tid
+				"screen_name": this.artistTwitterID
 			},
 			function(data) {
 				console.log("retrieved tweets");
@@ -79,5 +84,5 @@ var Artist = Backbone.Model.extend({
 				}
 			} );
 		
-*/	}	
+	}	
 })
