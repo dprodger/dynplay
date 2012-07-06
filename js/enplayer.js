@@ -33,7 +33,7 @@ var nowPlayingView;
 var dynplayModel;
 
 function initialize() {
-	console.log("-=-=- In initialize() ");
+//	console.log("-=-=- In initialize() ");
 	sp = getSpotifyApi(1);
     ui = sp.require("sp://import/scripts/ui");
 	models = sp.require('sp://import/scripts/api/models');
@@ -105,7 +105,6 @@ function retrieveListOfProfiles() {
 		{
 			'format':'jsonp'
 		}, function(data) {
-				console.log("=== in retrieveListOfProfiles; received a response");
 				var response = data.response;
 				var catalogs = response.catalogs;
 
@@ -162,7 +161,6 @@ function setUpObserve() {
 }
 
 function makePlaylist() {
-	console.log("in makePlaylist");
 	var artist = $("#_artist").val();
 	var songTitle = $("#_song_title").val();
 	var artistHot = $("#_artist_hot").val();
@@ -170,7 +168,6 @@ function makePlaylist() {
 	var variety = $("#_variety").val();
 	var catRadio = $("#_cat_radio").prop('checked');
 
-	console.log( "catRadio is " + catRadio );
 	if( songTitle ) {
 		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, catRadio );
 	} else {
@@ -255,7 +252,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		parms['seed_catalog'] = tpID;
 	}
 
-	console.log( "---------------- 	playlist of type " + type );
+
 	$.getJSON( url,
 		parms,
 		function(data) {
@@ -596,13 +593,11 @@ function rateSong() {
 
 
 function updateNowPlaying( _song, _cover) {
-    console.log(_song,_cover);
+
     dynplayModel.set({
         "artist": _song.artist,
         "song": _song
     });
-
-	//nowPlayingView.updateView();
 
     var coverImg = new ui.SPImage(_cover);
     coverImg.node.setAttribute("id", "cover_placeholder");
@@ -615,7 +610,7 @@ var trackCount = [];
 var validTracks = [];
 
 function findValidTrack( song, songID, tracks ) {
-	console.log("* in findValidTrack for " + songID + " and I have " + tracks.length + " tracks to check" );
+//	console.log("* in findValidTrack for " + songID + " and I have " + tracks.length + " tracks to check" );
 	trackCount[ songID ] = 0;
 
 	// set default so we know if none found
@@ -932,7 +927,7 @@ function skipExistingItem( _tpID, _soID ) {
 
 
 function addNewItem( _tpID, _soID ) {
-	console.log( "in addNewItem");
+//	console.log( "in addNewItem");
 	// create a taste profile and store the resulting Catalog ID in local storage
 	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
 
@@ -953,7 +948,7 @@ function addNewItem( _tpID, _soID ) {
 		},
 		function(data) {
 			var response = data.response;
-			console.log("ticket is " + response.ticket);
+//			console.log("ticket is " + response.ticket);
 
 	})
 	.error( function(){

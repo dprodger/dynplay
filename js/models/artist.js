@@ -20,7 +20,7 @@ var Artist = Backbone.Model.extend({
 		this.setFacebook( _facebook );
 	},
 	setTwitter: function( _tid ) {
-		console.log("in setTwitter, _tid = " + _tid );
+//		console.log("in setTwitter, _tid = " + _tid );
 		url = "http://www.twitter.com/" + _tid;
 
 		this.set({"artistTwitterID": _tid });
@@ -32,7 +32,7 @@ var Artist = Backbone.Model.extend({
 		}
 	},
 	setFacebook: function( _fid ) {
-		console.log("in setFacebook, _fid = " + _fid );
+//		console.log("in setFacebook, _fid = " + _fid );
 		url = "http://www.facebook.com/pages/music/" + _fid;
 		
 		this.set({"artistFacebookID": _fid });
@@ -44,7 +44,7 @@ var Artist = Backbone.Model.extend({
 		}
 	},
 	gatherArtistLinks: function( _twitElem, _fbElem ) {
-		console.log("in gatherArtistLinks; _aid is " + this.artistID);
+//		console.log("in gatherArtistLinks; _aid is " + this.artistID);
 		var url = "http://" + apiHost + "/api/v4/artist/profile?api_key=" + apiKey + "&callback=?";
 
 		var self = this;
@@ -65,15 +65,13 @@ var Artist = Backbone.Model.extend({
 				'bucket': ['id:twitter', 'id:facebook']
 			},
 			function(data) {
-				console.log("retrieved artist data");
-
 				var artist = data.response.artist;
 				var forIDs = artist.foreign_ids;
 
 				if( forIDs ) {
 					for( var i = 0; i < forIDs.length; i++ ) {
 						var idBlock = forIDs[i];
-						console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
+//						console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
 						if( "twitter" == idBlock.catalog ) {
 							var twHand = idBlock.foreign_id.substring(15);
 							self.setTwitter( twHand );
