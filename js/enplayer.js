@@ -888,3 +888,17 @@ function addNewItem( _tpID, _soID ) {
 		console.log( arguments )});
 }
 
+function displayTabs( _index ) {
+	var t = [];
+	for( var i =0; i <4; i++ ) {
+		t[i] = $("#tabarea_" + i );
+	}
+
+	for( var i = 0; i <4; i++ ) {
+		if( i == _index ) {
+			t[i].attr("style","display:block;");
+		} else {
+			t[i].attr("style","display:none;");
+		}
+	}
+}

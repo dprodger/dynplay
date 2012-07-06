@@ -62,10 +62,29 @@
                     </div>
 
                     <br /><br />
-					<div id="tabs"><a href="#">Playlist</a><a href="#">Biography</a><a href="#">Social</a><a href="#">Images</a></div>
-                    <h2>Playlist</h2>
-                    <div id="played-list">
-                    </div>
+					<div id="tabs"><a href="#" onclick="displayTabs(0);">Playlist</a><a href="#" onclick="displayTabs(1);">Biography</a><a href="#" onclick="displayTabs(2);">Social</a><a href="#"onclick=" displayTabs(3);">Images</a></div>
+                    
+					<div id="tabarea_0" style="display:block;">
+						<h2>Playlist</h2>
+	                    <div id="played-list">
+	                    </div>
+					</div>
+					<div id="tabarea_1" style="display:none;">
+						<h2>Biography</h2>
+	                    <div id="biography-region">
+	                    </div>
+					</div>
+					<div id="tabarea_2" style="display:none;">
+						<h2>Social</h2>
+	                    <div id="social-region">
+	                    </div>
+					</div>
+					<div id="tabarea_3" style="display:none;">
+						<h2>Images</h2>
+	                    <div id="images-region">
+	                    </div>
+					</div>
+					
                 </div>
             </div><!-- /index -->
 
