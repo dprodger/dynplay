@@ -1,62 +1,31 @@
 var Artist = Backbone.Model.extend({
 	defaults: function() {
-		return {
-			artistName: null,
-			artistID: null,
-			artistSpotifyID: null,
-			artistTwitterID: null,
-			artistTwitterURL: null,
-			artistFacebookID: null,
-			artistFacebookURL: null,
-			twitElem: null,
-			fbElem: null
-		};
+		return {};
 	},
-	initialize: function( _aid, _aname, _aspid, _twitter, _facebook ) {
-		this.set({"artistName": _aname });
-		this.set({"artistID": _aid});
-		this.set({"artistSpotifyID": _aspid});
-		this.setTwitter( _twitter );
-		this.setFacebook( _facebook );
-	},
+	initialize: function() {},
 	setTwitter: function( _tid ) {
 //		console.log("in setTwitter, _tid = " + _tid );
 		url = "http://www.twitter.com/" + _tid;
 
-		this.set({"artistTwitterID": _tid });
-		this.set({"artistTwitterURL": url});
+		this.artistTwitterID = _tid;
+		this.artistTwitterURL = url;
 		
-		if( this.twitElem ) {
-			this.twitElem.attr("href", url);
-			this.twitElem.text( url );		
-		}
+		this.get("model").dprChange();
 	},
 	setFacebook: function( _fid ) {
 //		console.log("in setFacebook, _fid = " + _fid );
 		url = "http://www.facebook.com/pages/music/" + _fid;
 		
-		this.set({"artistFacebookID": _fid });
-		this.set({"artistFacebookURL": url});
+		this.artistFacebookID = _fid;
+		this.artistFacebookURL = url;
 
-		if( this.fbElem ) {
-			this.fbElem.attr("href", url);
-			this.fbElem.text( url );		
-		}
+		this.get("model").dprChange();
 	},
-	gatherArtistLinks: function( _twitElem, _fbElem ) {
+	gatherArtistLinks: function() {
 //		console.log("in gatherArtistLinks; _aid is " + this.artistID);
 		var url = "http://" + apiHost + "/api/v4/artist/profile?api_key=" + apiKey + "&callback=?";
 
 		var self = this;
-		
-		this.set({"twitElem": _twitElem });
-		this.set({"fbElem": _fbElem });
-		
-		var href = "#";
-		_twitElem.attr("href", href);
-		_twitElem.text("None" );
-		_fbElem.attr("href", href);
-		_fbElem.text("None" );
 		
 		$.getJSON( url, 
 			{
@@ -71,7 +40,7 @@ var Artist = Backbone.Model.extend({
 				if( forIDs ) {
 					for( var i = 0; i < forIDs.length; i++ ) {
 						var idBlock = forIDs[i];
-//						console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
+						console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
 						if( "twitter" == idBlock.catalog ) {
 							var twHand = idBlock.foreign_id.substring(15);
 							self.setTwitter( twHand );
@@ -81,6 +50,12 @@ var Artist = Backbone.Model.extend({
 							self.setFacebook( url );
 						}
 					}
+				}
+				
+				console.log("in artist:gatherArtistLinks; response has completed");
+				if( self.get("model") ) {
+					console.log("-- about to call self.model.change", self.get("model"));
+					self.get("model").dprChange();
 				}
 
 		});

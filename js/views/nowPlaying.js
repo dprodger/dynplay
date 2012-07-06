@@ -1,12 +1,9 @@
 var NowPlayingView = Backbone.View.extend({
-
-
     className: "nowplaying",
 
     events: {},
 
     initialize: function() {
-        _.bindAll(this, 'render');
         this.model.bind('change', this.updateView, this);
         this.render();
     },
@@ -15,15 +12,15 @@ var NowPlayingView = Backbone.View.extend({
             artist = this.model.get("artist"),
             song = this.model.get("song");
 
-        console.log(this.model);
-
         if( artist && song ) {
 
             template = _.template( $("#now_playing_template").html(), {
                 artistName: artist.artistName,
                 songTitle:  song.songTitle,
                 songYear:   song.releaseYear,
-                album:      song.albumName } );
+                album:      song.albumName,
+ 				twitterUrl: artist.artistTwitterURL,
+				facebookUrl: artist.artistFacebookURL } );
 
             this.$el.html( template );
 
@@ -32,13 +29,16 @@ var NowPlayingView = Backbone.View.extend({
                 artistName: "",
                 songTitle: "",
                 songYear: "",
-                album: "" } );
+                album: "",
+ 				twitterUrl: "None",
+				facebookUrl: "None" } );
             this.$el.html( template );
         }
 
         return this;
     },
     updateView: function() {
+		console.log("--------- in updateView");
         this.render();
     }
 });

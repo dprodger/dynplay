@@ -96,6 +96,8 @@ function initialize() {
 		model: dynplayModel,
 		el: $("#nowplaying")
 	});
+	
+	dynplayModel.set({"myview": nowPlayingView});
 }
 
 function retrieveListOfProfiles() {
@@ -307,11 +309,15 @@ function actuallyPlayTrack( track, song ) {
 
 	player.play( track.data.uri, activePlaylist, 0 );
 
-	nowPlayingArtist = new Artist;
+	nowPlayingArtist = new Artist({
+		model:dynplayModel
+		});
 	nowPlayingArtist.artistID = song.artist_id;
 	nowPlayingArtist.artistName = song.artist_name;
 
-	nowPlayingSong = new Song;
+	nowPlayingSong = new Song({
+			model:dynplayModel
+		});
 	nowPlayingSong.songTitle = song.title;
 	nowPlayingSong.songID = song.id;
 	nowPlayingSong.releaseYear = track.data.album.year;
@@ -328,7 +334,6 @@ function actuallyPlayTrack( track, song ) {
     var fbelem = $("#trackinfo").find("#_fburl");
 
 	nowPlayingArtist.gatherArtistLinks( twitelem, fbelem );
-//	gatherArtistLinks( song.artist_id );
 	// reset the rating field
 	$("input[type=range]").val("5");
 
@@ -336,79 +341,6 @@ function actuallyPlayTrack( track, song ) {
 	$("#_play").attr("disabled",false);
 
 }
-/*
-
-function gatherArtistLinks( _artistID ) {
-	var url = "http://" + apiHost + "/api/v4/artist/profile?api_key=" + apiKey + "&callback=?";
-
-	$.getJSON( url,
-		{
-			"id": _artistID,
-			"format": "jsonp",
-			'bucket': ['id:twitter', 'id:facebook']
-		},
-		function(data) {
-//			console.log("retrieved artist data");
-
-			var artist = data.response.artist;
-			var forIDs = artist.foreign_ids;
-
-			url = "#";
-            var twitelem = $("#trackinfo").find("#_twiturl");
-            var fbelem = $("#trackinfo").find("#_fburl");
-			twitelem.attr("href", url);
-			twitelem.text("None" );
-			fbelem.attr("href", url);
-			fbelem.text("None" );
-
-			var tweetText = $("div._recent_tweets");
-			tweetText.text("");
-
-			if( forIDs ) {
-				for( var i = 0; i < forIDs.length; i++ ) {
-					var idBlock = forIDs[i];
-//					console.log("catalog is " + idBlock.catalog + " and foreign_id is " + idBlock.foreign_id);
-					if( "twitter" == idBlock.catalog ) {
-						var twHand = idBlock.foreign_id.substring(15)
-						url = "http://www.twitter.com/" + twHand;
-						twitelem.attr("href", url);
-						twitelem.text( twHand );
-
-						retrieveTweets( twHand );
-
-					}
-					if( "facebook" == idBlock.catalog ) {
-						url = "http://www.facebook.com/pages/music/" + idBlock.foreign_id.substring(16);
-						fbelem.attr("href", url);
-						fbelem.text("pages/music/" + idBlock.foreign_id.substring(16));
-					}
-				}
-			}
-
-	});
-
-}
-
-function retrieveTweets( _tid ) {
-	console.log( "in retrieveTweets for " + _tid )
-	var url = "http://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&count=3";
-
-	$.getJSON( url,
-		{
-			"screen_name": _tid
-		},
-		function(data) {
-			console.log("retrieved tweets");
-			var tweetText = $("div._recent_tweets");
-			tweetText.text("");
-
-			for( var i = 0; i < data.length; i++ ) {
-				console.log( data[i].text );
-				tweetText.html( tweetText.html() + data[i].text + "<br />");
-			}
-		} );
-}
-*/
 
 function skipTrack() {
 	disablePlayerControls();
