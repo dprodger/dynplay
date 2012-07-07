@@ -28,7 +28,7 @@ var Artist = Backbone.Model.extend({
 		this.get("model").dprChange();
 	},
 	gatherArtistLinks: function() {
-//		console.log("in gatherArtistLinks; _aid is " + this.artistID);
+		console.log("in gatherArtistLinks; _aid is " + this.artistID);
 		var url = "http://" + apiHost + "/api/v4/artist/profile?api_key=" + apiKey + "&callback=?";
 
 		var self = this;
@@ -37,7 +37,7 @@ var Artist = Backbone.Model.extend({
 			{
 				"id": this.artistID,
 				"format": "jsonp",
-				'bucket': ['id:twitter', 'id:facebook']
+				'bucket': ['id:twitter', 'id:facebook', 'urls']
 			},
 			function(data) {
 				var artist = data.response.artist;
@@ -58,7 +58,18 @@ var Artist = Backbone.Model.extend({
 					}
 				}
 				
-//				console.log("in artist:gatherArtistLinks; response has completed");
+				var urls = artist.urls;
+				console.log("artist urls is ", urls );
+				console.log("urls length is ", urls.length);
+				if( urls ) {
+					for( var i = 0; i < urls.length; i++ ) {
+						var urlBlock = urls[i];
+						console.log( "urlBlock " + i + " is", urlBlock );
+					}
+				} else {
+					console.log("nothing in artist/urls");
+				}
+				console.log("in artist:gatherArtistLinks; response has completed");
 				if( self.get("model") ) {
 					self.get("model").dprChange();
 				}
@@ -79,9 +90,7 @@ var Artist = Backbone.Model.extend({
 				tweetText.text("");
 
 				for( var i = 0; i < data.length; i++ ) {
-					console.log( data[i].text );
 					var img = "<img src='" + data[i].user.profile_image_url + "' />";
-					console.log("twitter avatar image is " + img );
 					
 					tweetText.html( tweetText.html() + img) ;
 					tweetText.html( tweetText.html() + data[i].user.name + "<br />" );

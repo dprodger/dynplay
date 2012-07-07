@@ -66,5 +66,22 @@ input[type='range'] {-webkit-appearance: slider-horizontal;}
 
 #tabs a {
 	display:inline-block;
-	width:100px;
+	width:160px;
+	font-size:24px;
+	font-style:bold;
+	background-color: #ffffff;
+	padding:10px;
+}
+
+#tabs a:hover {
+      background-color: #B3BA75;
+      color: #ffffff;
+      text-decoration: none;
+}
+
+.tab-regions {
+	background-color:#ffffff;
+	width:900px;
+	height:400px;
+	padding: 10px;
 }

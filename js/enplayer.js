@@ -32,6 +32,8 @@ function supportsLocalStorage() {
 var nowPlayingView;
 var dynplayModel;
 
+var numTabs = 5;
+
 function initialize() {
 //	console.log("-=-=- In initialize() ");
 	sp = getSpotifyApi(1);
@@ -97,16 +99,24 @@ function initialize() {
 		el: $("#nowplaying")
 	});
 	
+	artistUrlsView = new ArtistUrlsView({
+		model: dynplayModel,
+		el: $("#urls_regions")
+	})
+	
 	dynplayModel.set({"myview": nowPlayingView});
+	dynplayModel.set({"urlview": artistUrlsView});
 }
 
 function retrieveListOfProfiles() {
+    console.log("in retrieveListOfProfiles");
 	var url = "http://" + apiHost + "/api/v4/catalog/list?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url,
 		{
 			'format':'jsonp'
 		}, function(data) {
+		       console.log("in results for retrieve");
 				var response = data.response;
 				var catalogs = response.catalogs;
 
@@ -117,7 +127,7 @@ function retrieveListOfProfiles() {
 					var catalog =catalogs[ i ];
 
 //					console.log( "catalog ID: " + catalog.id + ", named " + catalog.name );
-//					catList.html( catList.html() + catalog.name + " (" + catalog.id + ") [" + catalog.type + ", " + catalog.total + "]<br />");
+					catList.html( catList.html() + catalog.name + " (" + catalog.id + ") [" + catalog.type + ", " + catalog.total + "]<br />");
 				}
 		});
 }
@@ -635,7 +645,7 @@ function createNewCatalog() {
 	$.post(url,
 		{
 			'type':'song',
-			'name':'dynplay_' + models.session.anonymousUserID
+			    'name':'dynplay_' + models.session.anonymousUserID + "_1"
 		},
 		function(data) {
 			var response = data.response;
@@ -890,11 +900,11 @@ function addNewItem( _tpID, _soID ) {
 
 function displayTabs( _index ) {
 	var t = [];
-	for( var i =0; i <4; i++ ) {
+	for( var i =0; i <numTabs; i++ ) {
 		t[i] = $("#tabarea_" + i );
 	}
 
-	for( var i = 0; i <4; i++ ) {
+	for( var i = 0; i < numTabs; i++ ) {
 		if( i == _index ) {
 			t[i].attr("style","display:block;");
 		} else {
