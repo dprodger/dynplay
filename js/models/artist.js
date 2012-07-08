@@ -28,7 +28,6 @@ var Artist = Backbone.Model.extend({
 		this.get("model").dprChange();
 	},
 	gatherArtistLinks: function() {
-		console.log("in gatherArtistLinks; _aid is " + this.artistID);
 		var url = "http://" + apiHost + "/api/v4/artist/profile?api_key=" + apiKey + "&callback=?";
 
 		var self = this;
@@ -59,17 +58,11 @@ var Artist = Backbone.Model.extend({
 				}
 				
 				var urls = artist.urls;
-				console.log("artist urls is ", urls );
-				console.log("urls length is ", urls.length);
 				if( urls ) {
-					for( var i = 0; i < urls.length; i++ ) {
-						var urlBlock = urls[i];
-						console.log( "urlBlock " + i + " is", urlBlock );
-					}
+					self.urls = urls;
 				} else {
 					console.log("nothing in artist/urls");
 				}
-				console.log("in artist:gatherArtistLinks; response has completed");
 				if( self.get("model") ) {
 					self.get("model").dprChange();
 				}

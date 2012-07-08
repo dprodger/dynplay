@@ -8,25 +8,34 @@ var ArtistUrlsView = Backbone.View.extend({
     },
     render: function() {
         var template;
-		var wUrl = "fake wiki url";
-		console.log("this.model", this.model);
-		if( this.model ) {
-			if( this.model.get("artist" )) {
-				wUrl = this.model.get("artist").artistName;
-			} else {
-				wUrl = "no artist yet";
-			}
+		
+		if( this.model.get("artist") && this.model.get("artist").urls ) {
+			urls = this.model.get("artist").urls;
+			template = _.template( $("#urls_template").html(), {
+				wikiUrl: urls.wikipedia_url,
+				lastUrl: urls.lastfm_url,
+				aolUrl: urls.aolmusic_url,
+				myspaceUrl: urls.myspace_url,
+				amazonUrl: urls.amazon_url,
+				itunesUrl: urls.itunes_url,
+				mbUrl: urls.mb_url
+	 		} );
+		} else {
+			template = _.template( $("#urls_template").html(), {
+				wikiUrl: "None",
+ 				lastUrl: "None",
+ 				aolUrl: "None",
+ 				myspaceUrl: "None",
+ 				amazonUrl: "None",
+ 				itunesUrl: "None",
+ 				mbUrl: "None"
+	 		} );
 		}
-		template = _.template( $("#urls_template").html(), {
-			wikiUrl: wUrl,
-			lastUrl: "fake last url",
- 		} );
 
 		this.$el.html( template );
         return this;
     },
 	updateView: function() {
-		console.log("in artistUrls updateView");
 		this.render();
 	}
 });
