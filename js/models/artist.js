@@ -86,9 +86,11 @@ var Artist = Backbone.Model.extend({
 						var bio = bios[i];
 						if( bio.site == "wikipedia") {
 							self.wikiBio = bio.text;
+							self.wikiUrl = bio.url;
 						}
 						if( bio.site == "last.fm") {
 							self.lastBio = bio.text;
+							self.lastUrl = bio.url;
 						}
 					}
 				}

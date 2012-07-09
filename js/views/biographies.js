@@ -13,12 +13,16 @@ var BiographiesView = Backbone.View.extend({
 			var artist = this.model.get("artist");
 			template = _.template( $("#biographies_template").html(), {
 				wikiBio: artist.wikiBio,
-				lastBio: artist.lastBio
+				wikiUrl: artist.wikiUrl,
+				lastBio: artist.lastBio,
+				lastUrl: artist.lastUrl
 	 		} );
 		} else {
 			template = _.template( $("#biographies_template").html(), {
 				wikiBio: "None",
-				lastBio: "None"
+				wikiUrl: "#",
+				lastBio: "None",
+				lastUrl: "#"
 	 		} );
 		}
 
