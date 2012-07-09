@@ -115,14 +115,14 @@ function initialize() {
 }
 
 function retrieveListOfProfiles() {
-    console.log("in retrieveListOfProfiles");
+//    console.log("in retrieveListOfProfiles");
 	var url = "http://" + apiHost + "/api/v4/catalog/list?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url,
 		{
 			'format':'jsonp'
 		}, function(data) {
-		       console.log("in results for retrieve");
+//		       console.log("in results for retrieve");
 				var response = data.response;
 				var catalogs = response.catalogs;
 

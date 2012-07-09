@@ -7,14 +7,13 @@ var BiographiesView = Backbone.View.extend({
         this.render();
     },
     render: function() {
-		console.log("in biographies:render");
        var template;
 		
-		if( this.model.get("artist") && this.model.get("artist").biographies ) {
-			biographies = this.model.get("artist").biographies;
+		if( this.model.get("artist") && this.model.get("artist") ) {
+			var artist = this.model.get("artist");
 			template = _.template( $("#biographies_template").html(), {
-				wikiBio: biographies.wiki_bio,
-				lastBio: biographies.last_bio
+				wikiBio: artist.wikiBio,
+				lastBio: artist.lastBio
 	 		} );
 		} else {
 			template = _.template( $("#biographies_template").html(), {
@@ -27,7 +26,6 @@ var BiographiesView = Backbone.View.extend({
         return this;
     },
 	updateView: function() {
-		console.log("in biographies:updateView");
 		this.render();
 	}
 });

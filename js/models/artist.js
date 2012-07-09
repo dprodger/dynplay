@@ -29,7 +29,6 @@ var Artist = Backbone.Model.extend({
 	},
 	gatherArtistLinks: function() {
 		var url = "http://" + apiHost + "/api/v4/artist/profile?api_key=" + apiKey + "&callback=?";
-
 		var self = this;
 		
 		$.getJSON( url, 
@@ -70,9 +69,7 @@ var Artist = Backbone.Model.extend({
 		});
 	},
 	gatherArtistBios: function() {
-		console.log("in gatherArtistBios");
 		var url = "http://" + apiHost + "/api/v4/artist/biographies?api_key=" + apiKey + "&callback=?";
-
 		var self = this;
 
 		$.getJSON( url, 
@@ -82,41 +79,26 @@ var Artist = Backbone.Model.extend({
 				'license': 'cc-by-sa'
 			},
 			function(data) {
-				console.log("in response to gatherArtistBios");
 				var bios = data.response.biographies;
 				
 				if( bios ) {
 					for( var i = 0; i < bios.length; i++ ) {
 						var bio = bios[i];
-						console.log("bio is ", bio );
-/*
-						if( "twitter" == idBlock.catalog ) {
-							var twHand = idBlock.foreign_id.substring(15);
-							self.setTwitter( twHand );
-						} 
-						if( "facebook" == idBlock.catalog ) {
-							url = idBlock.foreign_id.substring(16);
-							self.setFacebook( url );
+						if( bio.site == "wikipedia") {
+							self.wikiBio = bio.text;
 						}
-*/
+						if( bio.site == "last.fm") {
+							self.lastBio = bio.text;
+						}
 					}
 				}
 
-/*
-				var urls = artist.urls;
-				if( urls ) {
-					self.urls = urls;
-				} else {
-					console.log("nothing in artist/urls");
-				}
-				if( self.get("model") ) {
+				if( self.get("model")) {
 					self.get("model").dprChange();
 				}
-*/
 		});
 	},
 	retrieveTweets: function() {
-		console.log( "in retrieveTweets for " + this.artistTwitterID );
 		var url = "http://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&count=3";
 
 		$.getJSON( url, 
@@ -124,7 +106,6 @@ var Artist = Backbone.Model.extend({
 				"screen_name": this.artistTwitterID
 			},
 			function(data) {
-				console.log("retrieved tweets");
 				var tweetText = $("div._recent_tweets");
 				tweetText.text("");
 
