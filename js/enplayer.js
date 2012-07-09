@@ -104,8 +104,14 @@ function initialize() {
 		el: $("#urls_regions")
 	})
 	
+	biographiesView = new BiographiesView({
+		model: dynplayModel,
+		el: $("#biographies_regions")
+	})
+	
 	dynplayModel.set({"myview": nowPlayingView});
 	dynplayModel.set({"urlview": artistUrlsView});
+	dynplayModel.set({"bioview":biographiesView});
 }
 
 function retrieveListOfProfiles() {
@@ -340,10 +346,8 @@ function actuallyPlayTrack( track, song ) {
 		updateTasteProfileWithPlay( tpID, song.id );
 	}
 
-    var twitelem = $("#trackinfo").find("#_twiturl");
-    var fbelem = $("#trackinfo").find("#_fburl");
-
-	nowPlayingArtist.gatherArtistLinks( twitelem, fbelem );
+	nowPlayingArtist.gatherArtistLinks();
+	nowPlayingArtist.gatherArtistBios();
 	// reset the rating field
 	$("input[type=range]").val("5");
 

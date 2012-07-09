@@ -14,5 +14,6 @@ var DynplayModel = Backbone.Model.extend({
 	dprChange: function() {
 		this.get("myview").updateView();
 		this.get("urlview").updateView();
+		this.get("bioview").updateView();
 	}
 });

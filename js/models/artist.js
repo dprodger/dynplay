@@ -69,6 +69,52 @@ var Artist = Backbone.Model.extend({
 
 		});
 	},
+	gatherArtistBios: function() {
+		console.log("in gatherArtistBios");
+		var url = "http://" + apiHost + "/api/v4/artist/biographies?api_key=" + apiKey + "&callback=?";
+
+		var self = this;
+
+		$.getJSON( url, 
+			{
+				"id": this.artistID,
+				"format": "jsonp",
+				'license': 'cc-by-sa'
+			},
+			function(data) {
+				console.log("in response to gatherArtistBios");
+				var bios = data.response.biographies;
+				
+				if( bios ) {
+					for( var i = 0; i < bios.length; i++ ) {
+						var bio = bios[i];
+						console.log("bio is ", bio );
+/*
+						if( "twitter" == idBlock.catalog ) {
+							var twHand = idBlock.foreign_id.substring(15);
+							self.setTwitter( twHand );
+						} 
+						if( "facebook" == idBlock.catalog ) {
+							url = idBlock.foreign_id.substring(16);
+							self.setFacebook( url );
+						}
+*/
+					}
+				}
+
+/*
+				var urls = artist.urls;
+				if( urls ) {
+					self.urls = urls;
+				} else {
+					console.log("nothing in artist/urls");
+				}
+				if( self.get("model") ) {
+					self.get("model").dprChange();
+				}
+*/
+		});
+	},
 	retrieveTweets: function() {
 		console.log( "in retrieveTweets for " + this.artistTwitterID );
 		var url = "http://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&count=3";

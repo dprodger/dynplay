@@ -20,6 +20,7 @@
         <script src="sp://dynplay/js/models/song.js"></script>
 		<script src="sp://dynplay/js/views/nowPlaying.js"></script>
 		<script src="sp://dynplay/js/views/artistUrls.js"></script>
+		<script src="sp://dynplay/js/views/biographies.js"></script>
 
 		</script>
 
@@ -63,7 +64,7 @@
 	                    </div>
 					</div>
 					<div class="tab-regions" id="tabarea_1" style="display:none;">
-	                    <div id="biography-region">
+	                    <div id="biographies-region">
 	                    </div>
 					</div>
 					<div class="tab-regions" id="tabarea_2" style="display:none;">
@@ -180,4 +181,13 @@
 	
 </ul>
 </script>
+<script type="text/template" id="biographies_template">
+<h3>Wikipedia</h3>
+<p><%= wikiBio %></p>
+<h3>Last.fm</h3>
+<p><%= lastBio %></p>
+</script>
+
+
+
 </html>
