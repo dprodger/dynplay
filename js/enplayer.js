@@ -268,7 +268,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 	$.getJSON( url,
 		parms,
 		function(data) {
-//			console.log("=== in makePlaylist callback; received a response");
+			console.log("=== in makePlaylist callback; received a response");
 			var response = data.response;
 			sessionId = response.session_id;
 			$("#_session_id").val(sessionId);

@@ -14,7 +14,7 @@ h1 {font-size:2em;}
 
 /* data entry section */
 #_enter_seeds {
-	width:100%; 
+	width:880px; 
 	background-color:#B3BA75;
 	font-family:Verdana;
 	color: #000000;
@@ -25,7 +25,7 @@ h1 {font-size:2em;}
 	padding-bottom: 5px;
 }
 #_display_seeds {
-	width:100%; 
+	width:880px; 
 	background-color:#B3BA75;
 	color: #000000;
 	height:80px;
@@ -70,7 +70,7 @@ input[type='range'] {-webkit-appearance: slider-horizontal;}
 	font-size:24px;
 	font-style:bold;
 	background-color: #ffffff;
-	padding:10px;
+	padding: 10px;
 }
 
 #tabs a:hover {
@@ -81,7 +81,13 @@ input[type='range'] {-webkit-appearance: slider-horizontal;}
 
 .tab-regions {
 	background-color:#ffffff;
-	width:900px;
+	width:880px;
 	height:400px;
 	padding: 10px;
+}
+
+.now_playing_class {
+	background-color:#e0dddd;
+	width:880px;
+	padding:10px;
 }
