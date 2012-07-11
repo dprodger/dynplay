@@ -213,7 +213,10 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, cat
                 console.log("=== looking for song: " + songTitle + " and did not get any songs back!");
                 alert("We can't find that song");
             }
-        });
+        })
+		.error( function( jqXHR, textStatus, errorThrown) {
+			console.log( "getSongIDFromTitle error:" + textStatus + " " + errorThrown );
+		});
 }
 
 function displayEnterNew() {
@@ -285,6 +288,9 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 			$("a._history_url").attr("href", "http://developer.echonest.com");
 			console.log( "Session ID = " + sessionId );
 			getNextSong();
+		})
+		.error( function( jqXHR, textStatus, errorThrown) {
+			console.log( "innerGeneratePlaylist error:" + textStatus + " " + errorThrown );
 		});
 }
 
@@ -305,7 +311,11 @@ function getNextSong() {
 
 			console.log("=== Looking for song " + currentSong.id + "; title " + currentSong.title + " by artist: " + currentSong.artist_name );
 			getSpotifyTracks( currentSong, currentSong.id, tracks );
+		})
+		.error( function( jqXHR, textStatus, errorThrown) {
+			console.log( "getNextSong error:" + textStatus + " " + errorThrown );
 		});
+		
 }
 
 
@@ -371,7 +381,11 @@ function skipTrack() {
 			console.log("song skipped; EN Song ID: " + nowPlayingSong.songID );
 			updateTasteProfileWithSkip( tpID, nowPlayingSong.songID );
 			getNextSong();
+		})
+		.error( function( jqXHR, textStatus, errorThrown) {
+			console.log( "skipTrack error:" + textStatus + " " + errorThrown );
 		});
+		
 }
 
 function banArtist() {
@@ -672,7 +686,7 @@ function createNewCatalog() {
 			}
 	})
 	.success( function() { console.log( "in success function")})
-	.error( function(){
+	.error( function( ){
 		console.log( "in error function");
 		console.log( arguments )});
 }

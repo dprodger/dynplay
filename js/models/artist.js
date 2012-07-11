@@ -35,7 +35,7 @@ var Artist = Backbone.Model.extend({
 			{
 				"id": this.artistID,
 				"format": "jsonp",
-				'bucket': ['id:twitter', 'id:facebook', 'urls']
+				'bucket': ['id:twitter', 'id:facebook', 'urls', 'artist_location']
 			},
 			function(data) {
 				var artist = data.response.artist;
@@ -62,10 +62,16 @@ var Artist = Backbone.Model.extend({
 				} else {
 					console.log("nothing in artist/urls");
 				}
+
+				var location = artist.artist_location;
+				if( location ) {
+					self.location = location.location;
+				}
+
 				if( self.get("model") ) {
 					self.get("model").dprChange();
 				}
-
+				
 		});
 	},
 	gatherArtistBios: function() {
