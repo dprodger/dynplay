@@ -1,4 +1,4 @@
-/*jshint sub: true */
+/*jshint sub: true jquery: true */
 
 var enToSpotIds = {};
 
@@ -44,8 +44,8 @@ function initialize() {
 
 	player = models.player;
 
-	setUpObserve();
-	activePlaylist = new models.Playlist();
+    setUpObserve();
+    activePlaylist = new models.Playlist();
 //	console.log( "activePlaylist now exists; it's " + activePlaylist.length + " long ");
 
     //AaronD: testing playlist view...
@@ -53,34 +53,34 @@ function initialize() {
     playedList.node.classList.add("sp-light");
     document.getElementById("played-list").appendChild(playedList.node);
 
-	application.observe(models.EVENT.ARGUMENTSCHANGED, handleArgs);
+    application.observe(models.EVENT.ARGUMENTSCHANGED, handleArgs);
 
-	if( !localStorage["apiKey"]) {
-		localStorage["apiKey"] = apiKey;
-	} else {
-		apiKey = localStorage["apiKey"];
-	}
+    if (!localStorage["apiKey"]) {
+        localStorage["apiKey"] = apiKey;
+    } else {
+        apiKey = localStorage["apiKey"];
+    }
 
-	if( !localStorage["apiHost"]) {
-		localStorage["apiHost"] = apiHost;
-	} else {
-		apiHost = localStorage["apiHost"];
-	}
+    if (!localStorage["apiHost"]) {
+        localStorage["apiHost"] = apiHost;
+    } else {
+        apiHost = localStorage["apiHost"];
+    }
 
-	if( !localStorage["tpID"]) {
-		tpID = null;
-	} else {
-		tpID = localStorage["tpID"];
-		var siteURL = "http://"+apiHost+"/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID + "&results=100";
-		$('._en_catalog_site').show().children().attr('href', siteURL );
-	}
-	$("#_api_key").val(localStorage["apiKey"]);
-	$("#_host").val(localStorage["apiHost"]);
+    if (!localStorage["tpID"]) {
+        tpID = null;
+    } else {
+        tpID = localStorage["tpID"];
+        var siteURL = "http://" + apiHost + "/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID + "&results=100";
+        $('._en_catalog_site').show().children().attr('href', siteURL);
+    }
+    $("#_api_key").val(localStorage["apiKey"]);
+    $("#_host").val(localStorage["apiHost"]);
 
     //Select the Artist field and allow Enter to Submit - quickstart FTW!
-    $(document).ready(function() {
-        $("#param_form").keydown(function(event) {
-            if(event.keyCode == 13){
+    $(document).ready(function () {
+        $("#param_form").keydown(function (event) {
+            if (event.keyCode === 13) {
                 makePlaylist();
                 return false;
             }
@@ -88,54 +88,54 @@ function initialize() {
         $("#_artist").select();
     });
 
-	$("#_catalog_id").val( tpID );
+    $("#_catalog_id").val(tpID);
 
-	// populate list of taste profiles
-	retrieveListOfProfiles();
+    // populate list of taste profiles
+    retrieveListOfProfiles();
 
-	dynplayModel = new DynplayModel();
-	nowPlayingView = new NowPlayingView({
-		model: dynplayModel,
-		el: $("#nowplaying")
-	});
-	
-	artistUrlsView = new ArtistUrlsView({
-		model: dynplayModel,
-		el: $("#urls_regions")
-	})
-	
-	biographiesView = new BiographiesView({
-		model: dynplayModel,
-		el: $("#biographies_regions")
-	})
-	
-	dynplayModel.set({"myview": nowPlayingView});
-	dynplayModel.set({"urlview": artistUrlsView});
-	dynplayModel.set({"bioview":biographiesView});
+    dynplayModel = new DynplayModel();
+    nowPlayingView = new NowPlayingView({
+        model:dynplayModel,
+        el:$("#nowplaying")
+    });
+
+    artistUrlsView = new ArtistUrlsView({
+        model:dynplayModel,
+        el:$("#urls_regions")
+    });
+
+    biographiesView = new BiographiesView({
+        model:dynplayModel,
+        el:$("#biographies_regions")
+    });
+
+    dynplayModel.set({"myview":nowPlayingView});
+    dynplayModel.set({"urlview":artistUrlsView});
+    dynplayModel.set({"bioview":biographiesView});
 }
 
 function retrieveListOfProfiles() {
 //    console.log("in retrieveListOfProfiles");
-	var url = "http://" + apiHost + "/api/v4/catalog/list?api_key=" + apiKey + "&callback=?";
+    var url = "http://" + apiHost + "/api/v4/catalog/list?api_key=" + apiKey + "&callback=?";
 
-	$.getJSON( url,
-		{
-			'format':'jsonp'
-		}, function(data) {
-//		       console.log("in results for retrieve");
-				var response = data.response;
-				var catalogs = response.catalogs;
+    $.getJSON(url,
+        {
+            'format':'jsonp'
+        }, function (data) {
+//          console.log("in results for retrieve");
+            var response = data.response;
+            var catalogs = response.catalogs;
 
-				var catList = $("div._en_tp_list");
-				catList.text("");
+            var catList = $("div._en_tp_list");
+            catList.text("");
 
-				for( var i = 0; i < catalogs.length; i++ ) {
-					var catalog =catalogs[ i ];
+            for (var i = 0; i < catalogs.length; i++) {
+                var catalog = catalogs[ i ];
 
 //					console.log( "catalog ID: " + catalog.id + ", named " + catalog.name );
-					catList.html( catList.html() + catalog.name + " (" + catalog.id + ") [" + catalog.type + ", " + catalog.total + "]<br />");
-				}
-		});
+                catList.html(catList.html() + catalog.name + " (" + catalog.id + ") [" + catalog.type + ", " + catalog.total + "]<br />");
+            }
+        });
 }
 
 function updateConfig() {
@@ -152,21 +152,21 @@ function updateConfig() {
 }
 
 function handleArgs() {
-	var args = application.arguments;
-	$(".section").hide();	// Hide all sections
-	$("#"+args[0]).show();	// Show current section
+    var args = application.arguments;
+    $(".section").hide();	// Hide all sections
+    $("#" + args[0]).show();	// Show current section
 
-	// If there are multiple arguments, handle them accordingly
-	if(args[1]) {
-		switch(args[0]) {
-			case "search":
-				searchInput(args);
-				break;
-			case "social":
-				socialInput(args[1]);
-				break;
-		}
-	}
+    // If there are multiple arguments, handle them accordingly
+    if (args[1]) {
+        switch (args[0]) {
+            case "search":
+                searchInput(args);
+                break;
+            case "social":
+                socialInput(args[1]);
+                break;
+        }
+    }
 }
 
 function setUpObserve() {
@@ -330,40 +330,42 @@ function clearPlaylist(playlist) {
 }
 
 
-function actuallyPlayTrack( track, song ) {
-	activePlaylist.add( track );
+function actuallyPlayTrack(track, song) {
+    activePlaylist.add(track);
 
-	player.play( track.data.uri, activePlaylist, 0 );
+    player.play(track.data.uri, activePlaylist, 0);
 
-	nowPlayingArtist = new Artist({
-		model:dynplayModel
-		});
-	nowPlayingArtist.artistID = song.artist_id;
-	nowPlayingArtist.artistName = song.artist_name;
+    nowPlayingArtist = new Artist({
+        model:dynplayModel
+    });
+    nowPlayingArtist.artistID = song.artist_id;
+    nowPlayingArtist.artistName = song.artist_name;
 
-	nowPlayingSong = new Song({
-			model:dynplayModel
-		});
-	nowPlayingSong.songTitle = song.title;
-	nowPlayingSong.songID = song.id;
-	nowPlayingSong.releaseYear = track.data.album.year;
-	nowPlayingSong.albumName = track.data.album.name;
-	nowPlayingSong.artist = nowPlayingArtist;
+    nowPlayingSong = new Song({
+        model:dynplayModel
+    });
+    nowPlayingSong.songTitle = song.title;
+    nowPlayingSong.songID = song.id;
+    nowPlayingSong.releaseYear = track.data.album.year;
+    nowPlayingSong.albumName = track.data.album.name;
 
-	updateNowPlaying( nowPlayingSong, track.data.album.cover);
 
-	if( tpID ) {
-		updateTasteProfileWithPlay( tpID, song.id );
-	}
+    nowPlayingSong.albumCover = track.data.album.cover;
+    nowPlayingSong.artist = nowPlayingArtist;
 
-	nowPlayingArtist.gatherArtistLinks();
-	nowPlayingArtist.gatherArtistBios();
-	// reset the rating field
-	$("input[type=range]").val("5");
+    updateNowPlaying(nowPlayingSong);
 
-	// re-enable the make new playlist button
-	$("#_play").attr("disabled",false);
+    if (tpID) {
+        updateTasteProfileWithPlay(tpID, song.id);
+    }
 
+    nowPlayingArtist.gatherArtistLinks();
+    nowPlayingArtist.gatherArtistBios();
+    // reset the rating field
+    $("input[type=range]").val("5");
+
+    // re-enable the make new playlist button
+    $("#_play").attr("disabled", false);
 }
 
 function skipTrack() {
@@ -552,16 +554,16 @@ function rateSong() {
 
 
 
-function updateNowPlaying( _song, _cover) {
+function updateNowPlaying(_song) {
 
     dynplayModel.set({
         "artist": _song.artist,
         "song": _song
     });
 
-    var coverImg = new ui.SPImage(_cover);
-    coverImg.node.setAttribute("id", "cover_placeholder");
-    document.getElementById("np_cover").replaceChild(coverImg.node, document.getElementById("cover_placeholder"));
+    //var coverImg = new ui.SPImage(_cover);
+    //coverImg.node.setAttribute("id", "cover_placeholder");
+    //document.getElementById("np_cover").replaceChild(coverImg.node, document.getElementById("cover_placeholder"));
 
 	enablePlayerControls();
 }
@@ -576,64 +578,66 @@ function findValidTrack( song, songID, tracks ) {
 	// set default so we know if none found
 	enToSpotIds[ songID ] = null;
 
-	for(var i = 0; i < tracks.length; i++ ) {
-		trackCount[ songID ]++;
+    for (var i = 0; i < tracks.length; i++) {
+        trackCount[ songID ]++;
 //		console.log( "*** songID = " + songID + "; trackCount is " + trackCount[ songID ] );
-		var _trackID = tracks[i].foreign_id.replace("spotify-WW", "spotify");
+        var _trackID = tracks[i].foreign_id.replace("spotify-WW", "spotify");
 
         //TODO: should t be used?
-		var t = models.Track.fromURI( _trackID, function(track) {
+        var t = models.Track.fromURI(_trackID, function (track) {
 //			console.log( "--- in inner function for songID = " + songID + "; trackCount is " + trackCount[ songID ] );
 
-			trackCount[ songID ]--;
+            trackCount[ songID ]--;
 //			console.log( "track " + track.uri + "; is playable? " + track.playable + "; album year is " + track.album.year );
 
-			if( track.playable) {
-				var _uri = track.uri;
-				var _year = track.album.year;
-				var _title = track.name;
-				var _album = track.album.name;
+            if (track.playable) {
+                var _uri = track.uri;
+                var _year = track.album.year;
+                var _title = track.name;
+                var _album = track.album.name;
 
-				if( validTracks[songID] ) {
-					if( validTracks[songID].year > track.album.year) {
-						validTracks[songID] = { "id":_uri, "year":_year , "title":_title, "album":_album, "spot_track":track };
+                if (validTracks[songID]) {
+                    if (validTracks[songID].year > track.album.year) {
+                        validTracks[songID] = { "id":_uri, "year":_year, "title":_title, "album":_album, "spot_track":track };
 //						console.log("track: " + track.uri + "is the new best track for song " + songID );
-					}
+                    }
 
-				} else {
-					validTracks[songID] = { "id":_uri, "year":_year , "title":_title, "album":_album, "spot_track":track };
+                } else {
+                    validTracks[songID] = { "id":_uri, "year":_year, "title":_title, "album":_album, "spot_track":track };
 //					console.log("track: " + track.uri + "is the new best track for song " + songID );
-				}
-				enToSpotIds[ songID ] = validTracks[songID].id;
-			}
-		} );
-	}
+                }
+                enToSpotIds[ songID ] = validTracks[songID].id;
+            }
+        });
+    }
 
 	// wait for the finish
 	waitForTrackCompletion( song, songID );
 }
 
-function waitForTrackCompletion( song, songID ) {
-	if( trackCount[ songID ] < 1 ) {
-		processAllTracksComplete( song, songID );
-	} else {
-	    setTimeout( function(){ waitForTrackCompletion( song, songID )}, 500 );
+function waitForTrackCompletion(song, songID) {
+    if (trackCount[ songID ] < 1) {
+        processAllTracksComplete(song, songID);
+    } else {
+        setTimeout(function () {
+            waitForTrackCompletion(song, songID)
+        }, 500);
     }
 }
 
-function processAllTracksComplete( _song, _songID ) {
+function processAllTracksComplete(_song, _songID) {
 //	console.log( "all tracks have been processed");
-	if( validTracks[ _songID ]) {
-		var trackID = validTracks[ _songID ].id;
-		console.log( "--------------- best track is " + trackID + " for song " + _songID );
+    if (validTracks[ _songID ]) {
+        var trackID = validTracks[ _songID ].id;
+        console.log("--------------- best track is " + trackID + " for song " + _songID);
 
-		 actuallyPlayTrack( validTracks[ _songID ].spot_track, _song );
-	} else {
-		console.log( "--------------- No tracks are available and valid for that song; getting the next one...");
-		unplaySong( _song );
+        actuallyPlayTrack(validTracks[ _songID ].spot_track, _song);
+    } else {
+        console.log("--------------- No tracks are available and valid for that song; getting the next one...");
+        unplaySong(_song);
 //TODO move getNextSong into unplaySong() response, to avoid server-side locking f'ups.
 //		getNextSong();
-	}
+    }
 }
 
 function updatePlayerControls( state ) {
@@ -746,7 +750,7 @@ function deleteExistingCatalog() {
 			localStorage["tpID"] = null;
 
 			$("#_catalog_id").val( tpID );
-	})
+	});
 }
 
 function updateTasteProfileWithPlay( _tpID, _soID ) {
@@ -826,107 +830,107 @@ function retrieveTPItem( _tpID, _soID, _existFunc, _noExistFunc ) {
 			}});
 }
 
-function playExistingItem( _tpID, _soID ) {
+function playExistingItem(_tpID, _soID) {
 //	console.log( "in updateTasteProfileWithPlay");
-	// create a taste profile and store the resulting Catalog ID in local storage
-	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
+    // create a taste profile and store the resulting Catalog ID in local storage
+    var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
 
-	var updateBlock = {};
-	updateBlock.action = "play";
-	updateBlock.item = {
-		"item_id":_soID,
-	}
-	var thelist = [ updateBlock ];
+    var updateBlock = {};
+    updateBlock.action = "play";
+    updateBlock.item = {
+        "item_id":_soID
+    };
+    var thelist = [ updateBlock ];
 
-	$.post(url,
-		{
-			'id':_tpID,
-			'data_type':'json',
-			'data':JSON.stringify(thelist)
-		},
-		function(data) {
-			var response = data.response;
-			//TODO deal with errors somehow
+    $.post(url,
+        {
+            'id':_tpID,
+            'data_type':'json',
+            'data':JSON.stringify(thelist)
+        },
+        function (data) {
+            var response = data.response;
+            //TODO deal with errors somehow
 //			console.log("ticket is " + response.ticket);
 
-	})
-	.error( function(){
-		console.log( "in error function");
-		console.log( arguments )});
+        })
+        .error(function () {
+            console.log("in error function");
+            console.log(arguments);
+        });
 }
 
-function skipExistingItem( _tpID, _soID ) {
+function skipExistingItem(_tpID, _soID) {
 //	console.log( "in skipExistingItem");
-	// create a taste profile and store the resulting Catalog ID in local storage
-	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
+    // create a taste profile and store the resulting Catalog ID in local storage
+    var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
 
-	var updateBlock = {};
-	updateBlock.action = "skip";
-	updateBlock.item = {
-		"item_id":_soID,
-	}
-	var thelist = [ updateBlock ];
+    var updateBlock = {};
+    updateBlock.action = "skip";
+    updateBlock.item = {
+        "item_id":_soID
+    };
+    var thelist = [ updateBlock ];
 
-	$.post(url,
-		{
-			'id':_tpID,
-			'data_type':'json',
-			'data':JSON.stringify(thelist)
-		},
-		function(data) {
-			var response = data.response;
-			//TODO deal with errors somehow
+    $.post(url,
+        {
+            'id':_tpID,
+            'data_type':'json',
+            'data':JSON.stringify(thelist)
+        },
+        function (data) {
+            var response = data.response;
+            //TODO deal with errors somehow
 
 //			console.log("ticket is " + response.ticket);
 
-	})
-	.error( function(){
-		console.log( "in error function");
-		console.log( arguments )});
+        })
+        .error(function () {
+            console.log("in error function");
+            console.log(arguments);
+        });
 }
 
 
-function addNewItem( _tpID, _soID ) {
+function addNewItem(_tpID, _soID) {
 //	console.log( "in addNewItem");
-	// create a taste profile and store the resulting Catalog ID in local storage
-	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
+    // create a taste profile and store the resulting Catalog ID in local storage
+    var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
 
-	var updateBlock = {};
-	updateBlock.action = "update";
-	updateBlock.item = {
-		"item_id":_soID,
-		"song_id":_soID,
-		"play_count":1
-	}
-	var thelist = [ updateBlock ];
+    var updateBlock = {};
+    updateBlock.action = "update";
+    updateBlock.item = {
+        "item_id":_soID,
+        "song_id":_soID,
+        "play_count":1
+    };
+    var thelist = [ updateBlock ];
 
-	$.post(url,
-		{
-			'id':_tpID,
-			'data_type':'json',
-			'data':JSON.stringify(thelist)
-		},
-		function(data) {
-			var response = data.response;
+    $.post(url,
+        {
+            'id':_tpID,
+            'data_type':'json',
+            'data':JSON.stringify(thelist)
+        },
+        function (data) {
+            var response = data.response;
 //			console.log("ticket is " + response.ticket);
 
-	})
-	.error( function(){
-		console.log( "in error function");
-		console.log( arguments )});
+        })
+        .error(function () {
+            console.log("in error function");
+            console.log(arguments);
+        });
 }
 
-function displayTabs( _index ) {
-	var t = [];
-	for( var i =0; i <numTabs; i++ ) {
-		t[i] = $("#tabarea_" + i );
-	}
-
-	for( var i = 0; i < numTabs; i++ ) {
-		if( i == _index ) {
-			t[i].attr("style","display:block;");
-		} else {
-			t[i].attr("style","display:none;");
-		}
-	}
+function displayTabs(_index) {
+    var t = [];
+    for (var i = 0; i < numTabs; i++) {
+        t[i] = $("#tabarea_" + i);
+        if (i === _index) {
+            t[i].attr("style", "display:block;");
+        } else {
+            t[i].attr("style", "display:none;");
+        }
+    }
 }

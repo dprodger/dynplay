@@ -1,37 +1,37 @@
 var BiographiesView = Backbone.View.extend({
-    className: "biographies-region",
+    className:"biographies-region",
 
-    events: {},
+    events:{},
 
-    initialize: function() {
+    initialize:function () {
         this.render();
     },
-    render: function() {
-       var template;
-		
-		if( this.model.get("artist") && this.model.get("artist") ) {
-			var artist = this.model.get("artist");
-			template = _.template( $("#biographies_template").html(), {
-				wikiBio: artist.wikiBio,
-				wikiUrl: artist.wikiUrl,
-				lastBio: artist.lastBio,
-				lastUrl: artist.lastUrl,
-				location: artist.location
-	 		} );
-		} else {
-			template = _.template( $("#biographies_template").html(), {
-				wikiBio: "None",
-				wikiUrl: "#",
-				lastBio: "None",
-				lastUrl: "#",
-				location: "Unknown"
-	 		} );
-		}
+    render:function () {
+        var template;
 
-		this.$el.html( template );
+        if (this.model.get("artist") && this.model.get("artist")) {
+            var artist = this.model.get("artist");
+            template = _.template($("#biographies_template").html(), {
+                wikiBio:artist.wikiBio,
+                wikiUrl:artist.wikiUrl,
+                lastBio:artist.lastBio,
+                lastUrl:artist.lastUrl,
+                location:artist.location
+            });
+        } else {
+            template = _.template($("#biographies_template").html(), {
+                wikiBio:"None",
+                wikiUrl:"#",
+                lastBio:"None",
+                lastUrl:"#",
+                location:"Unknown"
+            });
+        }
+
+        this.$el.html(template);
         return this;
     },
-	updateView: function() {
-		this.render();
-	}
+    updateView:function () {
+        this.render();
+    }
 });

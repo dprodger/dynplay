@@ -46,7 +46,7 @@ h1 {font-size:2em;}
 input[type='range'] {-webkit-appearance: slider-horizontal;}
 
 .sp-list { height: 400px; }
-#cover_placeholder {
+#np_cover .image {
     width: 100px;
     height: 100px;
     margin-left: 10px;
