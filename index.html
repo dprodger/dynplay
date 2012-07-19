@@ -121,10 +121,10 @@
                 <br />
                 <br />
 				<h2>Taste Profile Configuration</h2>
-				<button class="button" id="_create_new_catalog" onclick="createNewCatalog();">Create New Taste Profile</button>
-                <button class="button" id="_delete_existing_catalog" onclick="deleteExistingCatalog();">Delete Existing Taste Profile</button>
+				Current Taste Profile: <span id="_catalog_name">None<span> <span id="_catalog_id">(None)</span><br /> 
+                <button class="button" id="_delete_existing_catalog" onclick="deleteExistingCatalog();">Delete Current Taste Profile</button>
 
-                <br /><label for="_catalog_id" style="width:200px;border:1px #ff0000;">Catalog ID:</label><input type="text" id="_catalog_id" placeholder="" size="50"/><br />
+<!--                 <br /><label for="_catalog_id" style="width:200px;border:1px #ff0000;">Catalog ID:</label><input type="text" id="_catalog_id" placeholder="" size="50"/><br /> -->
 
 				<div class="_en_catalog_site">
 					<a href="">Open Catalog/Read in Browser</a>
@@ -132,6 +132,9 @@
 
 				<br /><br /><h3>List of Taste Profiles</h3>
 				<div class="_en_tp_list">I am here</div>
+				<br />
+				<br /><label for="_new_cat_name" style="width:200px;border:1px #ff0000;">New Profile Name:</label><input type="text" id="_new_cat_name" placeholder="" size="50"/><br />
+				<button class="button" id="_create_new_catalog" onclick="createNewCatalog();">Create New Taste Profile</button>
 
             </div>
 		</div><!-- /wrapper-->
@@ -169,7 +172,7 @@
 	
     <div id="controls">
 		Rate this song:<br/>
-		Hate (0)<input type="range" name="_song_rating" min="0" max="10" value="" onclick="rateSong();"/>Love (10)<br/>
+		Hate (1)<input type="range" name="_song_rating" min="1" max="10" value="" onclick="rateSong();"/>Love (10)<br/>
     </div>
 
 	

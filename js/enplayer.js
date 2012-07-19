@@ -70,9 +70,12 @@ function initialize() {
     if (!localStorage["tpID"]) {
         tpID = null;
     } else {
+		updateCurrentTasteProfileID( localStorage[ "tpID"]);
+/*
         tpID = localStorage["tpID"];
         var siteURL = "http://" + apiHost + "/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID + "&results=100";
         $('._en_catalog_site').show().children().attr('href', siteURL);
+*/
     }
     $("#_api_key").val(localStorage["apiKey"]);
     $("#_host").val(localStorage["apiHost"]);
@@ -133,9 +136,25 @@ function retrieveListOfProfiles() {
                 var catalog = catalogs[ i ];
 
 //					console.log( "catalog ID: " + catalog.id + ", named " + catalog.name );
-                catList.html(catList.html() + catalog.name + " (" + catalog.id + ") [" + catalog.type + ", " + catalog.total + "]<br />");
+                catList.html(catList.html() + "<a href='#' onclick='selectProfile(\"" + catalog.id + "\");'>" + catalog.name + " (" + catalog.id + ") [" + catalog.type + ", " + catalog.total + "]</a><br />");
             }
         });
+}
+
+function selectProfile( _catID ) {
+	console.log("switching to use taste profile ID: " + _catID );
+	updateCurrentTasteProfileID( _catID );
+}
+
+function updateCurrentTasteProfileID( _catID ) {
+	console.log("in updateCurrentTasteProfileID");
+	tpID = _catID;
+	localStorage["tpID"] = tpID;
+
+	$("#_catalog_id").text( "(" + tpID + ")" );
+
+	var siteURL = "http://"+apiHost+"/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID + "&results=100";
+	$('._en_catalog_site').show().children().attr('href', siteURL );	
 }
 
 function updateConfig() {
@@ -662,12 +681,15 @@ function disablePlayerControls() {
 function createNewCatalog() {
 	console.log( "in createNewCatalog");
 	// create a taste profile and store the resulting Catalog ID in local storage
+	
+	var newName = $("#_new_cat_name").val();
+	console.log("catalog name to use is " + newName );
 	var url = "http://" + apiHost + "/api/v4/catalog/create?api_key=" + apiKey;
 
 	$.post(url,
 		{
 			'type':'song',
-			    'name':'dynplay_' + models.session.anonymousUserID + "_1"
+			    'name':newName
 		},
 		function(data) {
 			var response = data.response;
@@ -675,16 +697,12 @@ function createNewCatalog() {
 			console.log("cat id is " + response.id );
 
 			if( response.id ) {
-				tpID = response.id;
-				localStorage["tpID"] = tpID;
-
-				$("#_catalog_id").val( tpID );
-
-				var siteURL = "http://"+apiHost+"/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID + "&results=100";
-				$('._en_catalog_site').show().children().attr('href', siteURL );
+				updateCurrentTasteProfileID( response.id );
 
 				// add catalog-level custom data
 				attachCustomAttrsToCatalog( tpID );
+				
+			    retrieveListOfProfiles();				
 			} else {
 				console.log("Error in creating new taste profile");
 			}
@@ -728,6 +746,9 @@ function attachCustomAttrsToCatalog( _tpID ) {
 
 }
 function deleteExistingCatalog() {
+	alert("Disabling delete for now -- need to add confirmation box");
+	return;
+	
 	console.log( "in deleteExistingCatalog");
 	console.log( "attempting to delete Catalog with ID: " + tpID );
 
