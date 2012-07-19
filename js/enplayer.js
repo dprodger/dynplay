@@ -123,7 +123,8 @@ function retrieveListOfProfiles() {
 
     $.getJSON(url,
         {
-            'format':'jsonp'
+            'format':'jsonp',
+			'results':100
         }, function (data) {
 //          console.log("in results for retrieve");
             var response = data.response;
@@ -142,12 +143,10 @@ function retrieveListOfProfiles() {
 }
 
 function selectProfile( _catID ) {
-	console.log("switching to use taste profile ID: " + _catID );
 	updateCurrentTasteProfileID( _catID );
 }
 
 function updateCurrentTasteProfileID( _catID ) {
-	console.log("in updateCurrentTasteProfileID");
 	tpID = _catID;
 	localStorage["tpID"] = tpID;
 
@@ -296,7 +295,6 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 	$.getJSON( url,
 		parms,
 		function(data) {
-			console.log("=== in makePlaylist callback; received a response");
 			var response = data.response;
 			sessionId = response.session_id;
 			$("#_session_id").val(sessionId);
@@ -679,11 +677,9 @@ function disablePlayerControls() {
 }
 
 function createNewCatalog() {
-	console.log( "in createNewCatalog");
 	// create a taste profile and store the resulting Catalog ID in local storage
 	
 	var newName = $("#_new_cat_name").val();
-	console.log("catalog name to use is " + newName );
 	var url = "http://" + apiHost + "/api/v4/catalog/create?api_key=" + apiKey;
 
 	$.post(url,
@@ -693,8 +689,6 @@ function createNewCatalog() {
 		},
 		function(data) {
 			var response = data.response;
-			console.log("name is " + response.name);
-			console.log("cat id is " + response.id );
 
 			if( response.id ) {
 				updateCurrentTasteProfileID( response.id );
@@ -707,7 +701,6 @@ function createNewCatalog() {
 				console.log("Error in creating new taste profile");
 			}
 	})
-	.success( function() { console.log( "in success function")})
 	.error( function( ){
 		console.log( "in error function");
 		console.log( arguments )});
