@@ -97,6 +97,7 @@
                         <br /><br /><b>Banned Songs:</b><br />
                         <ul id="banned_songs"></ul>
                     </div>
+					<br /><br /><h2>Favorite Items</h2>
                     <div id="favorited">
                         <b>Favorite Artists:</b><br />
                         <ul id="favorite_artists"></ul>
@@ -110,30 +111,25 @@
 
             <div id="config" class="section" style="display:none;">
                 <h1>Dynamic Playlist Configuration</h1>
-                <p>Here is where parameters on the overall configuration can be changed</p>
-
-                <label for="_api_key" style="width:200px;border: 3px #ff0000;">API Key:</label><input type="text" id="_api_key" placeholder="" size="36"/><br />
-                <label for="_host" style="width:200px;border:1px #ff0000;">Host:</label><input type="text" id="_host" placeholder="" size="50"/>
-                <br /><br />
+				<h2>System Configuration</h2>
+                <label for="_api_key" style="width:200px;border: 3px #ff0000;">API Key:</label><input type="text" id="_api_key" placeholder="" size="36"/>
+				<label for="_host" style="width:200px;border:1px #ff0000;">Host:</label><input type="text" id="_host" placeholder="" size="50"/>
                 <button class="button" id="_save_config" onclick="updateConfig();">Update Configuration!</button>
 
                 <br />
                 <br />
                 <br />
 				<h2>Taste Profile Configuration</h2>
-				Current Taste Profile: <span id="_catalog_name">None<span> <span id="_catalog_id">(None)</span><br /> 
-                <button class="button" id="_delete_existing_catalog" onclick="deleteExistingCatalog();">Delete Current Taste Profile</button>
+				<h3>Current Profile</h3>
+				Current Taste Profile: <span id="_catalog_name">None<span> <span id="_catalog_id">(None)</span>&nbsp;&nbsp;<a href="#" class="_en_catalog_site">View Raw Catalog</a>
+<!--                <button class="button" id="_delete_existing_catalog" onclick="deleteExistingCatalog();">Delete Current Taste Profile</button> -->
 
-<!--                 <br /><label for="_catalog_id" style="width:200px;border:1px #ff0000;">Catalog ID:</label><input type="text" id="_catalog_id" placeholder="" size="50"/><br /> -->
-
-				<div class="_en_catalog_site">
-					<a href="">Open Catalog/Read in Browser</a>
-				</div>
-
-				<br /><br /><h3>List of Taste Profiles</h3>
+				<br /><br /><h3>Other Taste Profiles</h3>
+				<p>Select a different taste profile to begin logging session information to the new profile.</p><br />
 				<div class="_en_tp_list">I am here</div>
 				<br />
-				<br /><label for="_new_cat_name" style="width:200px;border:1px #ff0000;">New Profile Name:</label><input type="text" id="_new_cat_name" placeholder="" size="50"/><br />
+				<br />
+				<h3>Create New Taste Profile</h3><label for="_new_cat_name" style="width:200px;border:1px #ff0000;">New Profile Name:</label><input type="text" id="_new_cat_name" placeholder="" size="50"/>
 				<button class="button" id="_create_new_catalog" onclick="createNewCatalog();">Create New Taste Profile</button>
 
             </div>
