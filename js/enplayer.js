@@ -408,6 +408,41 @@ function skipTrack() {
 		
 }
 
+function steer( _attr, _dest ) {
+	disablePlayerControls();
+	console.log("in steer: attr = " + _attr + "; towards: " + _dest );
+	
+	var parms = {
+		"format": "jsonp",
+		"session_id": sessionId,
+	};
+	
+	if( _attr == "tempo" ) {
+		if( _dest == "slower") {
+			parms['target_tempo'] = 60;
+		} else {
+			parms['target_tempo'] = 180;
+		}
+	}
+	
+	if( _attr == "energy" ) {
+		if( _dest == "lower") {
+			parms['target_energy'] = 0.10;
+		} else {
+			parms['target_energy'] = 0.90;
+		}
+	}
+
+	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/steer?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url,
+		parms,
+		function(data) {
+			console.log("in steer results" );
+			enablePlayerControls();
+		});
+}
+
 function banArtist() {
 	disablePlayerControls();
 
