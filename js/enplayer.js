@@ -71,11 +71,6 @@ function initialize() {
         tpID = null;
     } else {
 		updateCurrentTasteProfileID( localStorage[ "tpID"]);
-/*
-        tpID = localStorage["tpID"];
-        var siteURL = "http://" + apiHost + "/api/v4/catalog/read?api_key=" + apiKey + "&id=" + tpID + "&results=100";
-        $('._en_catalog_site').show().children().attr('href', siteURL);
-*/
     }
     $("#_api_key").val(localStorage["apiKey"]);
     $("#_host").val(localStorage["apiHost"]);
