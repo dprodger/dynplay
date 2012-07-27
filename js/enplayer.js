@@ -276,7 +276,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		"variety": variety,
 		"type": type
 	};
-	if( !catRadio ) {
+	if( artist ) {
 		parms['artist'] = artist;
 	}
 	if( songID ) {
