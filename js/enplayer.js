@@ -199,15 +199,16 @@ function makePlaylist() {
 	var songHot = $("#_song_hot").val();
 	var variety = $("#_variety").val();
 	var catRadio = $("#_cat_radio").prop('checked');
+	var adventurous = $("#_adventurous").val();
 
 	if( songTitle ) {
-		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, catRadio );
+		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, catRadio, adventurous );
 	} else {
-		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, catRadio );
+		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, catRadio, adventurous );
 	}
 }
 
-function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, catRadio ) {
+function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, catRadio, adventurous ) {
 	var url = "http://" + apiHost + "/api/v4/song/search?api_key=" + apiKey + "&callback=?";
 
     $.getJSON(url,
@@ -222,7 +223,7 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, cat
             if (songs && songs.length > 0) {
                 var song = songs[0];
                 //console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")");
-                innerGeneratePlaylist(artist, song.id, song.title, artistHot, songHot, variety, catRadio);
+                innerGeneratePlaylist(artist, song.id, song.title, artistHot, songHot, variety, catRadio, adventurous);
             } else {
                 console.log("=== looking for song: " + songTitle + " and did not get any songs back!");
                 alert("We can't find that song");
@@ -251,7 +252,7 @@ function displayMakePlaylist( artist, songName ) {
 }
 
 //TODO this is gross -- I should rethink how I'm passing shit around -- but I just want to get the titles correct
-function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety, catRadio ) {
+function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety, catRadio, adventurous ) {
 	displayMakePlaylist( artist, songTitle );
 	// disable the makePlaylist button
 	$("#_play").attr("disabled",true);
@@ -285,6 +286,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 
 	if( tpID ) {
 		parms['seed_catalog'] = tpID;
+		parms['adventurousness'] = adventurous;
 	}
 
 
