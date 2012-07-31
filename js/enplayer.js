@@ -198,9 +198,11 @@ function makePlaylist() {
 	var artistHot = $("#_artist_hot").val();
 	var songHot = $("#_song_hot").val();
 	var variety = $("#_variety").val();
-	var catRadio = $("#_cat_radio").prop('checked');
 	var adventurous = $("#_adventurous").val();
 
+	var myRadio = $('input[name=cat_type]');
+	var catRadio = myRadio.filter(':checked').val();
+	
 	if( songTitle ) {
 		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, catRadio, adventurous );
 	} else {
@@ -260,7 +262,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 
 	clearPlaylist( activePlaylist );
 	var type = "";
-	if( catRadio ) {
+	if( catRadio == "seed" || catRadio == "cat") {
 		type = 'catalog-radio';
 	} else if( songID ) {
 		type = 'song-radio';
@@ -277,10 +279,11 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		"variety": variety,
 		"type": type
 	};
-	if( artist ) {
+	if( artist && !("cat" == catRadio ) ) {
 		parms['artist'] = artist;
 	}
-	if( songID ) {
+
+	if( songID && !("cat" == catRadio ) ) {
 		parms['song_id'] = songID;
 	}
 
@@ -288,7 +291,6 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		parms['seed_catalog'] = tpID;
 		parms['adventurousness'] = adventurous;
 	}
-
 
 	$.getJSON( url,
 		parms,
