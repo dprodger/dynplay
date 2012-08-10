@@ -15,12 +15,14 @@
 		<script src="sp://dynplay/js/backbone/backbone-min.js"></script>
 		<script src="sp://dynplay/js/rainbow-custom.min.js"></script>
 		<script src="sp://dynplay/js/enplayer.js"></script>
+		<script src="sp://dynplay/js/echonestsync.js"></script>
 		<script src="sp://dynplay/js/models/dynplay.js"></script>
         <script src="sp://dynplay/js/models/artist.js"></script>
         <script src="sp://dynplay/js/models/song.js"></script>
 		<script src="sp://dynplay/js/views/nowPlaying.js"></script>
 		<script src="sp://dynplay/js/views/artistUrls.js"></script>
 		<script src="sp://dynplay/js/views/biographies.js"></script>
+		<script src="sp://dynplay/js/raphael-min.js"></script>
 
         <script>
         	jQuery.ajaxSettings.traditional = true;
@@ -139,6 +141,43 @@
 				<button class="button" id="_create_new_catalog" onclick="createNewCatalog();">Create New Taste Profile</button>
 
             </div>
+
+            <div id="stats" class="section" style="display:none;">
+				<h3>Section Breaks</h3>
+				Section Breaks<br />
+				<div id="all_scts" style="height:100px;">
+					
+					<div id="section_0" style="height:100px; width=100px; background-color:#445566; display:inline-block;"></div>
+					<div id="section_1" style="height:100px; width=100px; background-color:#446666; display:inline-block;"></div>
+					<div id="section_2" style="height:100px; width=100px; background-color:#447766; display:inline-block;"></div>
+				</div>
+				<h3>Stats</h3>
+				<li id="pos" />
+				<li id="seg-num" />
+				<li id="seg-time" />
+				<li id="bar" />
+				<li id="beat" />
+				<li id="section" />
+				<li id="seg-dur" />
+				<li id="seg-conf" />
+				<li id="seg-loud" />
+				<li id="seg-pitch" />
+				<li id="seg-timbre" />
+				<br />
+				
+<!--
+		    var pos = $("#pos");
+		    var snum = $("#seg-num");
+		    var stime = $("#seg-time");
+		    var sbar = $("#bar");
+		    var sbeat = $("#beat");
+		    var sdur = $("#seg-dur");
+		    var sconf = $("#seg-conf");
+		    var sloud = $("#seg-loud");
+		    var spitch = $("#seg-pitch");
+		    var stimbre = $("#seg-timbre");
+-->
+			</div>
 		</div><!-- /wrapper-->
     </body>
 <!-- templates for various views -->

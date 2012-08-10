@@ -25,6 +25,14 @@ var player;
 // taste profile ID for this user
 var tpID;
 
+// holds what level of taste-profile use we are implementing for this session
+var catState;
+
+var CAT_NONE = "none";
+var CAT_UPDATE = "update";
+var CAT_SEED = "seed";
+var CAT_CAT = "cat";
+
 function supportsLocalStorage() {
     return ('localStorage' in window) && window['localStorage'] !== null;
 }
@@ -33,6 +41,8 @@ var nowPlayingView;
 var dynplayModel;
 
 var numTabs = 5;
+
+var curAnalysis = null;
 
 function initialize() {
 //	console.log("-=-=- In initialize() ");
@@ -201,16 +211,16 @@ function makePlaylist() {
 	var adventurous = $("#_adventurous").val();
 
 	var myRadio = $('input[name=cat_type]');
-	var catRadio = myRadio.filter(':checked').val();
+	catState = myRadio.filter(':checked').val();
 	
 	if( songTitle ) {
-		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, catRadio, adventurous );
+		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous );
 	} else {
-		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, catRadio, adventurous );
+		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, adventurous );
 	}
 }
 
-function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, catRadio, adventurous ) {
+function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous ) {
 	var url = "http://" + apiHost + "/api/v4/song/search?api_key=" + apiKey + "&callback=?";
 
     $.getJSON(url,
@@ -225,7 +235,7 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, cat
             if (songs && songs.length > 0) {
                 var song = songs[0];
                 //console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")");
-                innerGeneratePlaylist(artist, song.id, song.title, artistHot, songHot, variety, catRadio, adventurous);
+                innerGeneratePlaylist(artist, song.id, song.title, artistHot, songHot, variety, adventurous);
             } else {
                 console.log("=== looking for song: " + songTitle + " and did not get any songs back!");
                 alert("We can't find that song");
@@ -254,7 +264,7 @@ function displayMakePlaylist( artist, songName ) {
 }
 
 //TODO this is gross -- I should rethink how I'm passing shit around -- but I just want to get the titles correct
-function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety, catRadio, adventurous ) {
+function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety, adventurous ) {
 	displayMakePlaylist( artist, songTitle );
 	// disable the makePlaylist button
 	$("#_play").attr("disabled",true);
@@ -262,7 +272,8 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 
 	clearPlaylist( activePlaylist );
 	var type = "";
-	if( catRadio == "seed" || catRadio == "cat") {
+			
+	if( catState == CAT_SEED || catState == CAT_CAT ) {
 		type = 'catalog-radio';
 	} else if( songID ) {
 		type = 'song-radio';
@@ -279,11 +290,11 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		"variety": variety,
 		"type": type
 	};
-	if( artist && !("cat" == catRadio ) ) {
+	if( artist && !(CAT_CAT == catState ) ) {
 		parms['artist'] = artist;
 	}
 
-	if( songID && !("cat" == catRadio ) ) {
+	if( songID && !(CAT_CAT == catState ) ) {
 		parms['song_id'] = songID;
 	}
 
@@ -311,8 +322,22 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		});
 }
 
+function disableSectionBlocks() {
+	refreshTimer = false;
+	
+	if( paper ) {
+		paper = null;
+	}
+	
+	if( curBox ) {
+		curBox = null;
+	}
+}
+
 function getNextSong() {
 	var url = "http://" + apiHost + "/api/v4/playlist/dynamic/next?api_key=" + apiKey + "&callback=?";
+	
+	disableSectionBlocks();
 
 	$.getJSON( url,
 		{
@@ -345,6 +370,8 @@ function clearPlaylist(playlist) {
 		playlist.data.remove(0);
 	}
 }
+
+var paulFunc = null;
 
 
 function actuallyPlayTrack(track, song) {
@@ -383,6 +410,35 @@ function actuallyPlayTrack(track, song) {
 
     // re-enable the make new playlist button
     $("#_play").attr("disabled", false);
+
+	fetchSongInfo( track );
+	refreshTimer = true;
+	setTimeout( updateSegInfo, 5000 );
+}
+
+
+var curBox = null;
+
+function updateSegInfo() {
+	if( paulFunc ) {
+		window["paulFunc"]();
+		if( !curBox ) {
+			curBox = paper.rect( 0, 0, 5, 75 );
+			curBox.attr("fill","#ffffff");
+		}
+		
+		var curPos = player.position/1000;
+		curPos = curPos * avgWidth;
+		
+		curBox.attr("x", curPos );
+	} else {
+		console.log("paulFunc is null");
+	}
+	
+	if( refreshTimer && player.playing ) {
+		
+		setTimeout( updateSegInfo, 1000 );
+	}
 }
 
 function skipTrack() {
@@ -982,4 +1038,78 @@ function displayTabs(_index) {
             t[i].attr("style", "display:none;");
         }
     }
+}
+
+function fetchSongInfo(track) {
+    console.log('Getting song info for ' + track.name + ' by '  + track.artists[0].name);
+    var url = 'http://' + apiHost + '/api/v4/track/profile?api_key=' + apiKey + '&callback=?';
+
+	var track_id = track.uri.replace( "spotify", "spotify-WW" )
+	
+    $.getJSON(url, { id: track_id, format:'jsonp', bucket : 'audio_summary'}, function(data) {
+        if (data && data.response) {
+            console.log("");
+            fetchAnalysis(data.response.track);
+            if( !paulFunc ) {
+//            	console.log("No paulFunc; creating a new one");
+	            paulFunc = showSegmentInfo(data.response.track);
+            } 
+        } else {
+            console.log("trouble getting results");
+        }
+    });
+}
+
+var paper = null;
+var refreshTimer = false;
+
+var avgWidth;
+
+function drawSectionBreaks() {
+	if( cur_analysis ) {
+		var sections = cur_analysis.sections;
+	    var l = sections.length;
+
+	    //TODO -- get this from the div programmatically	    
+	    var totalSize = 800;
+	    var songLength = cur_analysis.track.duration;
+
+	    var segLength = totalSize / songLength;
+	    avgWidth = totalSize / songLength;
+
+		paper = Raphael( 50, 100, totalSize, 75 );
+		
+		var boxes = [];
+		var curX = 0;
+		var colors = [ "#00FF00", "#FF0000", "#0000FF" ];
+
+		for ( var i = 0; i < l; i++ ) {
+			var myWidth = sections[ i ].duration * avgWidth;
+			var box = paper.rect( curX, 0, myWidth, 75 );
+			curX = curX + myWidth;
+
+			var color =  colors[ i % 3 ];
+
+			box.attr("fill", color);
+			box.attr("title","duration: "+ sections[i])
+			//boxes.add(box);			
+		}
+	} else {
+		console.log("in drawSectionBreaks, but no cur_analysis");
+	}
+}
+function fetchAnalysis(track) {
+    console.log('Getting analysis info for ' + track.title + ' by '  + track.artist);
+    var url = 'http://labs.echonest.com/3dServer/analysis?callback=?';
+
+    cur_analysis = null;
+    $.getJSON(url, { url: track.audio_summary.analysis_url}, function(data) {
+        if ('meta' in data) {
+            console.log("Got the analysis");
+            cur_analysis = data;
+            drawSectionBreaks();
+        } else {
+            console.log("trouble getting analysis");
+        }
+    });
 }

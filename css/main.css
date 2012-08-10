@@ -91,3 +91,11 @@ input[type='range'] {-webkit-appearance: slider-horizontal;}
 	width:880px;
 	padding:10px;
 }
+
+#sections {
+	width:800px;
+	height:100px;
+	border:1px;
+	background-color:#B3BA75;
+
+}

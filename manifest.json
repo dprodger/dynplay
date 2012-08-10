@@ -30,6 +30,12 @@
 			"title": {
 				"en": "Configuration"
 			}
+        },
+		{
+			"arguments": "stats",
+			"title": {
+				"en": "Statistics"
+			}
         }
 	],
 
@@ -48,6 +54,7 @@
 	    "http://amsterdam.last.fm",
 	    "http://ws.audioscrobbler.com/",
 	    "http://developer.echonest.com",
+	    "http://labs.echonest.com",
 		"http://dogfoodsimilar.sandpit.us"
 	],
 	"SupportedLanguages": [
