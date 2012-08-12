@@ -326,6 +326,7 @@ function disableSectionBlocks() {
 	refreshTimer = false;
 	
 	if( paper ) {
+		paper.remove();
 		paper = null;
 	}
 	
@@ -423,14 +424,18 @@ function updateSegInfo() {
 	if( paulFunc ) {
 		window["paulFunc"]();
 		if( !curBox ) {
-			curBox = paper.rect( 0, 0, 5, 75 );
-			curBox.attr("fill","#ffffff");
+			if( paper ) {}
+				curBox = paper.rect( 0, 0, 5, 75 );
+				curBox.attr("fill","#ffffff");
+			}
 		}
 		
-		var curPos = player.position/1000;
-		curPos = curPos * avgWidth;
+		if( curBox ) {
+			var curPos = player.position/1000;
+			curPos = curPos * avgWidth;
 		
-		curBox.attr("x", curPos );
+			curBox.attr("x", curPos );
+		}
 	} else {
 		console.log("paulFunc is null");
 	}
@@ -1077,7 +1082,7 @@ function drawSectionBreaks() {
 	    var segLength = totalSize / songLength;
 	    avgWidth = totalSize / songLength;
 
-		paper = Raphael( 50, 100, totalSize, 75 );
+		paper = Raphael( document.getElementById("break_section"), totalSize, 75 );
 		
 		var boxes = [];
 		var curX = 0;
