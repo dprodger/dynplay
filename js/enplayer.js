@@ -424,7 +424,7 @@ function updateSegInfo() {
 	if( paulFunc ) {
 		window["paulFunc"]();
 		if( !curBox ) {
-			if( paper ) {}
+			if( paper ) {
 				curBox = paper.rect( 0, 0, 5, 75 );
 				curBox.attr("fill","#ffffff");
 			}
