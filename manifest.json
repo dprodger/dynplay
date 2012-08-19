@@ -41,6 +41,7 @@
 
 	"RequiredInterface": 1,
 	"RequiredPermissions": [
+		"http://*.sandpit.us",
 		"http://*.twimg.com",
 	    "http://api.twitter.com",
 	    "http://o.scdn.co",
@@ -54,8 +55,7 @@
 	    "http://amsterdam.last.fm",
 	    "http://ws.audioscrobbler.com/",
 	    "http://developer.echonest.com",
-	    "http://labs.echonest.com",
-		"http://dogfoodsimilar.sandpit.us"
+	    "http://labs.echonest.com"
 	],
 	"SupportedLanguages": [
 		"en"
