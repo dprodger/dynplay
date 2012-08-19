@@ -298,10 +298,18 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		parms['song_id'] = songID;
 	}
 
-	if( tpID ) {
+	if( catState == CAT_SEED || catState == CAT_CAT ) {
 		parms['seed_catalog'] = tpID;
 		parms['adventurousness'] = adventurous;
 	}
+	
+	
+//TODO implement this once session_catalog is working correctly
+/*
+	if( catState != CAT_NONE ) {
+		parms['session_catalog'] = tpID;
+	}
+*/
 
 	$.getJSON( url,
 		parms,
@@ -400,7 +408,7 @@ function actuallyPlayTrack(track, song) {
 
     updateNowPlaying(nowPlayingSong);
 
-    if (tpID) {
+    if (shouldUpdateTP()) {
         updateTasteProfileWithPlay(tpID, song.id);
     }
 
@@ -446,6 +454,10 @@ function updateSegInfo() {
 	}
 }
 
+function shouldUpdateTP() {
+	return( tpID && catState != CAT_NONE );
+}
+
 function skipTrack() {
 	disablePlayerControls();
 //	console.log("in skipTrack");
@@ -459,7 +471,9 @@ function skipTrack() {
 		},
 		function(data) {
 			console.log("song skipped; EN Song ID: " + nowPlayingSong.songID );
-			updateTasteProfileWithSkip( tpID, nowPlayingSong.songID );
+		    if (shouldUpdateTP()) {
+				updateTasteProfileWithSkip( tpID, nowPlayingSong.songID );
+			}
 			getNextSong();
 		})
 		.error( function( jqXHR, textStatus, errorThrown) {
@@ -573,8 +587,9 @@ function banSong() {
 		},
 		function(data) {
 			console.log("song banned; EN Song ID: " + nowPlayingSong.songID );
-			updateTasteProfileWithBan( tpID, nowPlayingSong.songID );
-
+		    if (shouldUpdateTP()) {
+				updateTasteProfileWithBan( tpID, nowPlayingSong.songID );
+			}
 			var list = document.getElementById("banned_songs");
             var listitem = document.createElement("li");
             listitem.setAttribute('id', nowPlayingSong.songID );
@@ -599,7 +614,9 @@ function favoriteSong() {
 		},
 		function(data) {
 			console.log("song favorited; EN Song ID: " + nowPlayingSong.songID );
-			updateTasteProfileWithFavorite( tpID, nowPlayingSong.songID );
+		    if (shouldUpdateTP()) {
+				updateTasteProfileWithFavorite( tpID, nowPlayingSong.songID );
+			}
 
 			var list = document.getElementById("favorite_songs");
             var listitem = document.createElement("li");
@@ -653,7 +670,10 @@ function rateSong() {
 		function(data) {
 			console.log("song rated; EN Song ID: " + nowPlayingSong.songID + "; rating is " + rating );
 
-			updateTasteProfileWithRating( tpID, nowPlayingSong.songID, rating );
+		    if (shouldUpdateTP()) {
+				updateTasteProfileWithRating( tpID, nowPlayingSong.songID, rating );
+			}
+			
 			var list = document.getElementById("rated_songs");
             var listitem = document.createElement("li");
             listitem.setAttribute('id', nowPlayingSong.songID );
@@ -1046,17 +1066,15 @@ function displayTabs(_index) {
 }
 
 function fetchSongInfo(track) {
-    console.log('Getting song info for ' + track.name + ' by '  + track.artists[0].name);
+//    console.log('Getting song info for ' + track.name + ' by '  + track.artists[0].name);
     var url = 'http://' + apiHost + '/api/v4/track/profile?api_key=' + apiKey + '&callback=?';
 
 	var track_id = track.uri.replace( "spotify", "spotify-WW" )
 	
     $.getJSON(url, { id: track_id, format:'jsonp', bucket : 'audio_summary'}, function(data) {
         if (data && data.response) {
-            console.log("");
             fetchAnalysis(data.response.track);
             if( !paulFunc ) {
-//            	console.log("No paulFunc; creating a new one");
 	            paulFunc = showSegmentInfo(data.response.track);
             } 
         } else {
@@ -1104,13 +1122,12 @@ function drawSectionBreaks() {
 	}
 }
 function fetchAnalysis(track) {
-    console.log('Getting analysis info for ' + track.title + ' by '  + track.artist);
+//    console.log('Getting analysis info for ' + track.title + ' by '  + track.artist);
     var url = 'http://labs.echonest.com/3dServer/analysis?callback=?';
 
     cur_analysis = null;
     $.getJSON(url, { url: track.audio_summary.analysis_url}, function(data) {
         if ('meta' in data) {
-            console.log("Got the analysis");
             cur_analysis = data;
             drawSectionBreaks();
         } else {

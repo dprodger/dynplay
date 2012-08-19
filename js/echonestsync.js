@@ -128,7 +128,7 @@ function showSegmentInfo() {
         if (t) {
             var thisTrack = t.track;
             if (lastTrack == null || lastTrack.uri != thisTrack.uri) {
-                console.log("track is a new track; fetching new analysis");
+                //console.log("track is a new track; fetching new analysis");
                 lastTrack = thisTrack;
                 //fetchSongInfo(thisTrack);
             }
@@ -153,7 +153,7 @@ function showSegmentInfo() {
                 }
                 stimbre.text(timbre);
             } else {
-				console.log("No seg");
+				//console.log("No seg");
 			}
 
             if (isBar(time)) {
