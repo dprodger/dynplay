@@ -1135,3 +1135,69 @@ function fetchAnalysis(track) {
         }
     });
 }
+
+var catArt = {};
+var catArtPlays = {};
+
+var curStart = 0;
+
+function generateCatalogStats() {
+	var url = "http://" + apiHost + "/api/v4/catalog/read?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url,
+		{
+			'id': tpID,
+			'format':'jsonp',
+			'results':100,
+			'start': curStart
+		}, function(data) {
+			console.log("=== in generateCatalogStats; received a response");
+			var response = data.response;
+			var catalog = response.catalog;
+			var total = catalog.total
+			var items = catalog.items;
+
+			var countLine = total + " total artists<br />";
+			$("#_most_played_artists").html( countLine );
+			if( items && items.length > 0) {
+				console.log("there are", items.length, "items ");
+				for( i = 0; i < items.length; i++ ) {
+					item = items[i];
+					if( catArt[ item.artist_name ]) {
+						catArt[ item.artist_name ] = catArt[ item.artist_name ] + 1;
+						catArtPlays[ item.artist_name ] = catArtPlays[ item.artist_name] + item.play_count;
+					} else {
+						catArt[ item.artist_name ] = 1;
+						catArtPlays[ item.artist_name ] = item.play_count;
+					}
+				}
+				console.log("catArt", catArt);
+				if( items.length == 100 ) {
+					curStart = curStart + 100;
+					generateCatalogStats();
+				} else {
+					allDoneGenerate();
+				}
+			}
+		});	
+}
+
+function allDoneGenerate() {
+	console.log("in allDoneGenerate");
+	
+	var sortable = [];
+	for( var art in catArt ) {
+		sortable.push( [art, catArt[art]]);
+	}
+	sortable.sort( function( a, b ) { return b[1] - a[1] });
+	
+	for( i = 0; i < sortable.length; i++ ) {
+		var art = sortable[ i ][ 0 ];
+		var count = sortable[ i ][ 1 ];
+		console.log("Artist: ", art, " Count: ", count);
+		var text = $("#_most_played_artists").html();
+		
+		$("#_most_played_artists").html( text + art + ": Songs: " + count + " Total Plays: " + catArtPlays[ art ] + "<br />");
+	}
+	
+}

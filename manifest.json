@@ -11,7 +11,7 @@
 	},
 	"BundleIdentifier": "dynplay",
 	"BundleType": "Application",
-	"BundleVersion": "0.1",
+	"BundleVersion": "0.2",
 	"DefaultTabs": [
 		{
 			"arguments": "index",
@@ -35,6 +35,12 @@
 			"arguments": "stats",
 			"title": {
 				"en": "Statistics"
+			}
+        },
+		{
+			"arguments": "acoustic",
+			"title": {
+				"en": "Acoustic"
 			}
         }
 	],
