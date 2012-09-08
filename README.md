@@ -12,6 +12,8 @@ Installation
 1. Edit index.html to put in your own EN ID
 1. Open Spotify
 1. Navigate to spotify:app:dynplay
+1. Go to the configuration panel, and enter your own API key (if you don't want to be limited to the test key). If desired, 
+create a catalog as well (Taste Profile) or select one from your pre-existing set.
 
 Notes
 =====
