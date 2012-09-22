@@ -7,7 +7,8 @@ var Song = Backbone.Model.extend({
             spotifyTrackID:null,
             releaseYear:null,
             albumName:null,
-            albumCover:null
+            albumCover:null,
+			hotttnesss:null
         };
     },
     initialize:function (_sid, _stitle, _artist, _spid, _ryear) {

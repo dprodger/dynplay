@@ -204,13 +204,20 @@
         tmpNode = coverImg = null;
         %>
 	</div>
-	<div id="control_buttons" style="float: left; margin-left: 10px;">
+	<div id="control_buttons" style="float: left; margin-left: 10px; width="40%">
 	    <button class="button" id="_skip" onclick="skipTrack();">Skip</button><br />
 	    <button class="button" id="_favartist" onclick="favoriteArtist();">Favorite Artist</button><br />
 	    <button class="button" id="_favsong" onclick="favoriteSong();">Favorite Song</button><br />
 	    <button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button><br />
 	    <button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button><br />
 	    <button class="button" id="_bansong" onclick="banSong();">Ban Song</button><br />
+	</div>
+	<div id="song_facts" style="float: left; margin-left: 10px; width="30%">
+		<p id="art_fam">Artist Familiarity: <%= artFam %></p>
+		<p id="art_hot">Artist Hotttnesss: <%= artHot %></p>
+		<p id="song_hot">Song Hotttnesss: <%= songHot %></p>
+		<p id="song_energy">Energy: </p>
+		<p id="song_tempo">Tempo: </p>
 	</div>
 	<div style="clear:both;"></div>
 	
@@ -220,8 +227,15 @@
     </div>
 
 	<br /><h3>Steering</h3>
+	<b>Acoustic Steering</b><br/>
 	Energy: <a href="#" onclick="steer('energy','lower');">Lower</a>&nbsp;&nbsp;<a href="#" onclick="steer('energy','higher');">Higher</a><br />
 	Tempo: <a href="#" onclick="steer('tempo','slower');">Slower</a>&nbsp;&nbsp;<a href="#" onclick="steer('tempo','faster');">Faster</a><br />
+	<b>Cultural Steering</b><br/>
+	Artist Familiarity: <a href="#" onclick="steer('artist_familiarity','lower');">Lower</a>&nbsp;&nbsp;<a href="#" onclick="steer('artist_familiarity','higher');">Higher</a><br />
+	Artist Hotttness: <a href="#" onclick="steer('artist_hotttnesss','lower');">Lower</a>&nbsp;&nbsp;<a href="#" onclick="steer('artist_hotttnesss','higher');">Higher</a><br />
+	Song Hotttness: <a href="#" onclick="steer('song_hotttnesss','lower');">Lower</a>&nbsp;&nbsp;<a href="#" onclick="steer('song_hotttnesss','higher');">Higher</a><br />
+	
+	
 </script>
 <script type="text/template" id="urls_template">
 <ul>

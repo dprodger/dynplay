@@ -283,7 +283,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 
 	var parms = {
 		"format": "jsonp",
-		'bucket': ['tracks', 'id:spotify-WW'],
+		'bucket': ['tracks', 'id:spotify-WW',"artist_hotttnesss","artist_familiarity","song_hotttnesss"],
 		"limit": true,
 		"artist_min_hotttnesss": artistHot,
 		"song_min_hotttnesss": songHot,
@@ -393,6 +393,9 @@ function actuallyPlayTrack(track, song) {
     });
     nowPlayingArtist.artistID = song.artist_id;
     nowPlayingArtist.artistName = song.artist_name;
+	nowPlayingArtist.familiarity = song.artist_familiarity;
+	nowPlayingArtist.hotttnesss = song.artist_hotttnesss;
+	
 
     nowPlayingSong = new Song({
         model:dynplayModel
@@ -401,6 +404,7 @@ function actuallyPlayTrack(track, song) {
     nowPlayingSong.songID = song.id;
     nowPlayingSong.releaseYear = track.data.album.year;
     nowPlayingSong.albumName = track.data.album.name;
+	nowPlayingSong.hotttnesss = song.song_hotttnesss;
 
 
     nowPlayingSong.albumCover = track.data.album.cover;
@@ -504,6 +508,30 @@ function steer( _attr, _dest ) {
 			parms['target_energy'] = 0.10;
 		} else {
 			parms['target_energy'] = 0.90;
+		}
+	}
+
+	if( _attr == "artist_familiarity" ) {
+		if( _dest == "lower") {
+			parms['target_artist_familiarity'] = 0.10;
+		} else {
+			parms['target_artist_familiarity'] = 0.90;
+		}
+	}
+
+	if( _attr == "artist_hotttnesss" ) {
+		if( _dest == "lower") {
+			parms['target_artist_hotttnesss'] = 0.10;
+		} else {
+			parms['target_artist_hotttnesss'] = 0.90;
+		}
+	}
+
+	if( _attr == "song_hotttnesss" ) {
+		if( _dest == "lower") {
+			parms['target_song_hotttnesss'] = 0.10;
+		} else {
+			parms['target_song_hotttnesss'] = 0.90;
 		}
 	}
 
