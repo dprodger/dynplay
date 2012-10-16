@@ -559,8 +559,7 @@ function banArtist() {
 		},
 		function(data) {
 			console.log("artist banned; EN Artist ID: " + nowPlayingSong.artist.artistID + " (" + nowPlayingSong.artist.artistName + ")");
-// TODO -- when server support exists, pass through ban artists to Taste Profile
-//			updateTasteProfileWithBan( tpID, currentArtistID );
+			updateTasteProfileWithBan( tpID, nowPlayingSong.artist.artistID );
 
 			var list = document.getElementById("banned_artists");
             var listitem = document.createElement("li");
@@ -588,8 +587,7 @@ function favoriteArtist() {
 			var artist = nowPlayingSong.artist;
 
 			console.log("artist favorited; EN Artist ID: " + artist.artistID + " (" + artist.artistName + ")");
-// TODO -- when server support exists, pass through favorite artists to Taste Profile
-//			updateTasteProfileWithFavorite( tpID, currentArtistID );
+			updateTasteProfileWithFavorite( tpID, nowPlayingSong.artist.artistID );
 
 			var list = document.getElementById("favorite_artists");
             var listitem = document.createElement("li");
@@ -828,7 +826,7 @@ function createNewCatalog() {
 
 	$.post(url,
 		{
-			'type':'song',
+			'type':'general',
 			    'name':newName
 		},
 		function(data) {
@@ -935,6 +933,13 @@ function updateTasteProfileWithRating( _tpID, _soID, _rating ) {
 }
 
 function updateTasteProfileWithBan( _tpID, _itemID ) {
+	// read the taste profile to see if the item exists
+	
+	retrieveTPItem( _tpID, _itemID, banExistingItem, banNewItem );
+}
+
+function banExistingItem( _tpID, _itemID ) {
+	console.log("in banExistingItem");
 	var url = "http://" + apiHost + "/api/v4/catalog/ban?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url,
@@ -949,7 +954,41 @@ function updateTasteProfileWithBan( _tpID, _itemID ) {
 		});
 }
 
+function banNewItem( _tpID, _itemID ) {
+	console.log("in banNewItem");
+   var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
+
+    var updateBlock = {};
+    updateBlock.action = "update";
+    updateBlock.item = {
+        "item_id":_itemID,
+		"banned":true
+    };
+
+	if( _itemID.substr(0, 2) == "AR" ) {
+		updateBlock.item["artist_id"] = _itemID;
+	} else {
+		updateBlock.item["song_id"] = _itemID;
+	}
+    var thelist = [ updateBlock ];
+
+    $.post(url,
+        {
+            'id':_tpID,
+            'data_type':'json',
+            'data':JSON.stringify(thelist)
+        },
+        function (data) {
+            var response = data.response;
+            //TODO deal with errors somehow
+//			console.log("ticket is " + response.ticket);
+
+        });
+}
+
 function updateTasteProfileWithFavorite( _tpID, _itemID ) {
+	retrieveTPItem( _tpID, _itemID, favoriteExistingItem, favoriteNewItem );
+	
 	var url = "http://" + apiHost + "/api/v4/catalog/favorite?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url,
@@ -963,6 +1002,55 @@ function updateTasteProfileWithFavorite( _tpID, _itemID ) {
 			//TODO - deal with errors somehow
 		});
 }
+
+function favoriteExistingItem( _tpID, _itemID ) {
+	console.log("in favoriteExistingItem");
+	var url = "http://" + apiHost + "/api/v4/catalog/favorite?api_key=" + apiKey + "&callback=?";
+
+	$.getJSON( url,
+		{
+			'id': _tpID,
+			'item': _itemID,
+			'favorite':'true',
+			'format':'jsonp'
+		}, function(data) {
+			var response = data.response;
+			//TODO - deal with errors somehow
+		});
+}
+
+function favoriteNewItem( _tpID, _itemID ) {
+	console.log("in favoriteNewItem");
+   var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
+
+    var updateBlock = {};
+    updateBlock.action = "update";
+    updateBlock.item = {
+        "item_id":_itemID,
+		"favorite":true
+    };
+
+	if( _itemID.substr(0, 2) == "AR" ) {
+		updateBlock.item["artist_id"] = _itemID;
+	} else {
+		updateBlock.item["song_id"] = _itemID;
+	}
+    var thelist = [ updateBlock ];
+
+    $.post(url,
+        {
+            'id':_tpID,
+            'data_type':'json',
+            'data':JSON.stringify(thelist)
+        },
+        function (data) {
+            var response = data.response;
+            //TODO deal with errors somehow
+//			console.log("ticket is " + response.ticket);
+
+        });
+}
+
 
 function retrieveTPItem( _tpID, _soID, _existFunc, _noExistFunc ) {
 	var url = "http://" + apiHost + "/api/v4/catalog/read?api_key=" + apiKey + "&callback=?";
