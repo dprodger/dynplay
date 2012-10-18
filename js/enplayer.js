@@ -283,7 +283,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 
 	var parms = {
 		"format": "jsonp",
-		'bucket': ['tracks', 'id:spotify-WW',"artist_hotttnesss","artist_familiarity","song_hotttnesss"],
+		'bucket': ['tracks', 'id:spotify-WW',"artist_hotttnesss","artist_familiarity","song_hotttnesss","audio_summary"],
 		"limit": true,
 		"artist_min_hotttnesss": artistHot,
 		"song_min_hotttnesss": songHot,
@@ -405,6 +405,12 @@ function actuallyPlayTrack(track, song) {
     nowPlayingSong.releaseYear = track.data.album.year;
     nowPlayingSong.albumName = track.data.album.name;
 	nowPlayingSong.hotttnesss = song.song_hotttnesss;
+	nowPlayingSong.energy  = song.audio_summary.energy;
+	nowPlayingSong.danceability  = song.audio_summary.danceability;
+	nowPlayingSong.liveness  = song.audio_summary.liveness;
+	nowPlayingSong.speechiness  = song.audio_summary.speechiness;
+	nowPlayingSong.tempo  = song.audio_summary.tempo;
+	
 
 
     nowPlayingSong.albumCover = track.data.album.cover;

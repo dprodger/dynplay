@@ -213,11 +213,14 @@
 	    <button class="button" id="_bansong" onclick="banSong();">Ban Song</button><br />
 	</div>
 	<div id="song_facts" style="float: left; margin-left: 10px; width="30%">
-		<p id="art_fam">Artist Familiarity: <%= artFam %></p>
-		<p id="art_hot">Artist Hotttnesss: <%= artHot %></p>
-		<p id="song_hot">Song Hotttnesss: <%= songHot %></p>
-		<p id="song_energy">Energy: </p>
-		<p id="song_tempo">Tempo: </p>
+		<p id="art_fam">Artist Familiarity: <%= artFam.toFixed(2) %></p>
+		<p id="art_hot">Artist Hotttnesss: <%= artHot.toFixed(2) %></p>
+		<p id="song_hot">Song Hotttnesss: <%= songHot.toFixed(2) %></p>
+		<p id="song_energy">Energy: <%= songEnergy.toFixed(2) %></p>
+		<p id="song_danceability">Danceability: <%= songDance.toFixed(2) %></p>
+		<p id="song_tempo">Tempo: <%= songTempo.toFixed(0) %></p>
+		<p id="song_live">Liveness: <%= songLive.toFixed(2) %></p>
+		<p id="song_speech">Speechiness: <%= songSpeech.toFixed(2) %></p>
 	</div>
 	<div style="clear:both;"></div>
 	

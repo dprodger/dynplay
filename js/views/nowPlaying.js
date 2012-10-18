@@ -24,7 +24,12 @@ var NowPlayingView = Backbone.View.extend({
                 facebookUrl:artist.artistFacebookURL ? artist.artistFacebookURL : "None",
 				artHot:artist.hotttnesss,
 				artFam:artist.familiarity,
-				songHot:song.hotttnesss
+				songHot:song.hotttnesss,
+				songEnergy:song.energy,
+				songDance:song.danceability,
+				songTempo:song.tempo,
+				songLive:song.liveness,
+				songSpeech:song.speechiness
             });
 
             this.$el.html(template);
@@ -38,9 +43,14 @@ var NowPlayingView = Backbone.View.extend({
                 cover:"",
                 twitterUrl:"None",
                 facebookUrl:"None",
-				artHot:"",
-				artFam:"",
-				songHot:""
+				artHot:0,
+				artFam:0,
+				songHot:0,
+				songEnergy:0,
+				songTempo:0,
+				songLive:0,
+				songSpeech:0,
+				songDance:0
             });
             this.$el.html(template);
         }
