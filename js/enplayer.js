@@ -475,7 +475,9 @@ function updateSegInfo() {
 }
 
 function shouldUpdateTP() {
-	return( tpID && catState != CAT_NONE );
+	// with new Session Catalog stuff, this is entirely unnecessary
+	return false;
+//	return( tpID && catState != CAT_NONE );
 }
 
 function skipTrack() {
@@ -575,8 +577,10 @@ function banArtist() {
 		},
 		function(data) {
 			console.log("artist banned; EN Artist ID: " + nowPlayingSong.artist.artistID + " (" + nowPlayingSong.artist.artistName + ")");
-			updateTasteProfileWithBan( tpID, nowPlayingSong.artist.artistID );
-
+			if( shouldUpdateTP() ) {
+				updateTasteProfileWithBan( tpID, nowPlayingSong.artist.artistID );
+			}
+			
 			var list = document.getElementById("banned_artists");
             var listitem = document.createElement("li");
             listitem.setAttribute('id', nowPlayingSong.artist.artistID );
@@ -603,8 +607,9 @@ function favoriteArtist() {
 			var artist = nowPlayingSong.artist;
 
 			console.log("artist favorited; EN Artist ID: " + artist.artistID + " (" + artist.artistName + ")");
-			updateTasteProfileWithFavorite( tpID, nowPlayingSong.artist.artistID );
-
+			if( shouldUpdateTP() ) {
+				updateTasteProfileWithFavorite( tpID, nowPlayingSong.artist.artistID );
+			}
 			var list = document.getElementById("favorite_artists");
             var listitem = document.createElement("li");
             listitem.setAttribute('id', artist.artistID );
