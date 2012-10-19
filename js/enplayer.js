@@ -283,7 +283,8 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 
 	var parms = {
 		"format": "jsonp",
-		'bucket': ['tracks', 'id:spotify-WW',"artist_hotttnesss","artist_familiarity","song_hotttnesss","audio_summary"],
+		// TODO when bug is fixed, re-enable audio_summary bucket
+		'bucket': ['tracks', 'id:spotify-WW',"artist_hotttnesss","artist_familiarity","song_hotttnesss" ], // ,"audio_summary"],
 		"limit": true,
 		"artist_min_hotttnesss": artistHot,
 		"song_min_hotttnesss": songHot,
@@ -405,12 +406,21 @@ function actuallyPlayTrack(track, song) {
     nowPlayingSong.releaseYear = track.data.album.year;
     nowPlayingSong.albumName = track.data.album.name;
 	nowPlayingSong.hotttnesss = song.song_hotttnesss;
-	nowPlayingSong.energy  = song.audio_summary.energy;
-	nowPlayingSong.danceability  = song.audio_summary.danceability;
-	nowPlayingSong.liveness  = song.audio_summary.liveness;
-	nowPlayingSong.speechiness  = song.audio_summary.speechiness;
-	nowPlayingSong.tempo  = song.audio_summary.tempo;
 	
+	// ensure that we work whether or not we get audio summary attributes
+	if( song.audiosummary ) {
+		nowPlayingSong.energy  = song.audio_summary.energy;
+		nowPlayingSong.danceability  = song.audio_summary.danceability;
+		nowPlayingSong.liveness  = song.audio_summary.liveness;
+		nowPlayingSong.speechiness  = song.audio_summary.speechiness;
+		nowPlayingSong.tempo  = song.audio_summary.tempo;
+	} else {
+		nowPlayingSong.energy  = 0;
+		nowPlayingSong.danceability  = 0;
+		nowPlayingSong.liveness  = 0;
+		nowPlayingSong.speechiness  = 0;
+		nowPlayingSong.tempo  = 0;
+	}	
 
 
     nowPlayingSong.albumCover = track.data.album.cover;
