@@ -283,8 +283,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 
 	var parms = {
 		"format": "jsonp",
-		// TODO when bug is fixed, re-enable audio_summary bucket
-		'bucket': ['tracks', 'id:spotify-WW',"artist_hotttnesss","artist_familiarity","song_hotttnesss" ], // ,"audio_summary"],
+		'bucket': ['tracks', 'id:spotify-WW',"artist_hotttnesss","artist_familiarity","song_hotttnesss", "audio_summary"],
 		"limit": true,
 		"artist_min_hotttnesss": artistHot,
 		"song_min_hotttnesss": songHot,
@@ -304,13 +303,9 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		parms['adventurousness'] = adventurous;
 	}
 	
-	
-//TODO implement this once session_catalog is working correctly
-/*
 	if( catState != CAT_NONE ) {
 		parms['session_catalog'] = tpID;
 	}
-*/
 
 	$.getJSON( url,
 		parms,
@@ -408,7 +403,7 @@ function actuallyPlayTrack(track, song) {
 	nowPlayingSong.hotttnesss = song.song_hotttnesss;
 	
 	// ensure that we work whether or not we get audio summary attributes
-	if( song.audiosummary ) {
+	if( song.audio_summary ) {
 		nowPlayingSong.energy  = song.audio_summary.energy;
 		nowPlayingSong.danceability  = song.audio_summary.danceability;
 		nowPlayingSong.liveness  = song.audio_summary.liveness;
@@ -610,6 +605,7 @@ function favoriteArtist() {
 			if( shouldUpdateTP() ) {
 				updateTasteProfileWithFavorite( tpID, nowPlayingSong.artist.artistID );
 			}
+			
 			var list = document.getElementById("favorite_artists");
             var listitem = document.createElement("li");
             listitem.setAttribute('id', artist.artistID );
@@ -931,14 +927,17 @@ function deleteExistingCatalog() {
 }
 
 function updateTasteProfileWithPlay( _tpID, _soID ) {
+	console.log("in updateTPWithPlay call");
 	retrieveTPItem( _tpID, _soID, playExistingItem, addNewItem );
 }
 
 function updateTasteProfileWithSkip( _tpID, _soID ) {
+	console.log("in updateTPWithSkip call");
 	skipExistingItem( _tpID, _soID );
 }
 
 function updateTasteProfileWithRating( _tpID, _soID, _rating ) {
+	console.log("in updateTPWithRating call");
 	var url = "http://" + apiHost + "/api/v4/catalog/rate?api_key=" + apiKey + "&callback=?";
 
 	$.getJSON( url,
