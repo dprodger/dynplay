@@ -9,7 +9,6 @@ Installation
 1. Ensure you have a Developer account: https://developer.spotify.com/technologies/apps/#developer-account
 1. Ensure you have a ~/Spotify directory
 1. Clone this repo into ~/Spotify/dynplay
-1. Edit index.html to put in your own EN ID
 1. Open Spotify
 1. Navigate to spotify:app:dynplay
 1. Go to the configuration panel, and enter your own API key (if you don't want to be limited to the test key). If desired, 
