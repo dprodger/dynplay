@@ -53,6 +53,8 @@
 	                        <label for="_artist_hot">Artist Hot Min:</label><input type="text" id="_artist_hot" placeholder="0.0" size="4"/>
 	                        <label for="_song_hot">Song Hot Min:</label><input type="text" id="_song_hot" placeholder="0.0" size="4"/>
 	                        <label for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/>
+	                        <label for="_xmas">Christmas:</label><input type="text" id="_xmas" value="" size="4"/>
+	                        <label for="_live">Live:</label><input type="text" id="_live" value="" size="4"/>
 		                    <button class="button" id="_play" onclick="makePlaylist(); return false;">Let's go</button>
 	                    </form>
 					</div>
@@ -211,6 +213,8 @@
 	    <button class="button" id="_spotstar" onclick="spotifyStar();">Spotify Star</button><br />
 	    <button class="button" id="_banartist" onclick="banArtist();">Ban Artist</button><br />
 	    <button class="button" id="_bansong" onclick="banSong();">Ban Song</button><br />
+	    <button class="button" id="_notxmas" onclick="makeNotXmas();">Not Xmas</button><br />
+	    <button class="button" id="_notlive" onclick="makeNotLive();">Not Live</button><br />
 	</div>
 	<div id="song_facts" style="float: left; margin-left: 10px; width="30%">
 		<p id="art_fam">Artist Familiarity: <%= artFam.toFixed(2) %></p>

@@ -2,6 +2,9 @@
 
 var enToSpotIds = {};
 
+var notLiveCatalog = "CASLJIE13AD15256D5";
+var notXmasCatalog = "CAFLGVM13AD1529B16";
+
 var apiKey = "N6E4NIOVYMTHNDM8J";
 var apiHost = "developer.echonest.com";
 
@@ -209,18 +212,20 @@ function makePlaylist() {
 	var songHot = $("#_song_hot").val();
 	var variety = $("#_variety").val();
 	var adventurous = $("#_adventurous").val();
+	var xmas = $("#_xmas").val();
+	var live = $("#_live").val();
 
 	var myRadio = $('input[name=cat_type]');
 	catState = myRadio.filter(':checked').val();
 	
 	if( songTitle ) {
-		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous );
+		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live );
 	} else {
-		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, adventurous );
+		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, adventurous, xmas, live );
 	}
 }
 
-function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous ) {
+function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live ) {
 	var url = "http://" + apiHost + "/api/v4/song/search?api_key=" + apiKey + "&callback=?";
 
     $.getJSON(url,
@@ -235,7 +240,7 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adv
             if (songs && songs.length > 0) {
                 var song = songs[0];
                 //console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")");
-                innerGeneratePlaylist(artist, song.id, song.title, artistHot, songHot, variety, adventurous);
+                innerGeneratePlaylist(artist, song.id, song.title, artistHot, songHot, variety, adventurous, xmas, live);
             } else {
                 console.log("=== looking for song: " + songTitle + " and did not get any songs back!");
                 alert("We can't find that song");
@@ -264,7 +269,7 @@ function displayMakePlaylist( artist, songName ) {
 }
 
 //TODO this is gross -- I should rethink how I'm passing shit around -- but I just want to get the titles correct
-function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety, adventurous ) {
+function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety, adventurous, xmas, live ) {
 	displayMakePlaylist( artist, songTitle );
 	// disable the makePlaylist button
 	$("#_play").attr("disabled",true);
@@ -306,6 +311,18 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 	if( catState != CAT_NONE ) {
 		parms['session_catalog'] = tpID;
 	}
+
+	songTypeParms = new Array();
+	
+	if( live ) {
+		songTypeParms.push("live:"+live);
+	}
+	
+	if(xmas) {
+		songTypeParms.push("christmas:"+xmas);
+	}
+	
+	parms['song_type'] = songTypeParms;
 
 	$.getJSON( url,
 		parms,
@@ -641,6 +658,16 @@ function banSong() {
 
 			enablePlayerControls();
 		});
+}
+
+function makeNotXmas() {
+	console.log("marking this song ID as not xmas: ", nowPlayingSong.songID );
+	updateTasteProfileWithPlay( notXmasCatalog, nowPlayingSong.songID );
+}
+
+function makeNotLive() {
+	console.log("marking this song ID as not live: ", nowPlayingSong.songID );
+	updateTasteProfileWithPlay( notLiveCatalog, nowPlayingSong.songID );
 }
 
 function favoriteSong() {
