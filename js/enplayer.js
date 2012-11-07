@@ -212,6 +212,10 @@ function makePlaylist() {
 	var songTitle = $("#_song_title").val();
 	var artistHot = $("#_artist_hot").val();
 	var songHot = $("#_song_hot").val();
+	var songMinSpeech = $("#_song_speech_min").val();
+	var songMaxSpeech = $("#_song_speech_max").val();
+	var songMinLive = $("#_song_live_min").val();
+	var songMaxLive = $("#_song_live_max").val();
 	var variety = $("#_variety").val();
 	var adventurous = $("#_adventurous").val();
 	var xmas = $("#_xmas").val();
@@ -221,13 +225,13 @@ function makePlaylist() {
 	catState = myRadio.filter(':checked').val();
 	
 	if( songTitle ) {
-		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live );
+		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live, songMinSpeech, songMaxSpeech, songMinLive, songMaxLive );
 	} else {
-		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, adventurous, xmas, live );
+		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, adventurous, xmas, live, songMinSpeech, songMaxSpeech, songMinLive, songMaxLive );
 	}
 }
 
-function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live ) {
+function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live, songMinSpeech, songMaxSpeech ) {
 	var url = "http://" + apiHost + "/api/v4/song/search?api_key=" + apiKey + "&callback=?";
 
     $.getJSON(url,
@@ -242,7 +246,7 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adv
             if (songs && songs.length > 0) {
                 var song = songs[0];
                 //console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")");
-                innerGeneratePlaylist(artist, song.id, song.title, artistHot, songHot, variety, adventurous, xmas, live);
+                innerGeneratePlaylist(artist, song.id, song.title, artistHot, songHot, variety, adventurous, xmas, live, songMinSpeech, songMaxSpeech);
             } else {
                 console.log("=== looking for song: " + songTitle + " and did not get any songs back!");
                 alert("We can't find that song");
@@ -271,7 +275,7 @@ function displayMakePlaylist( artist, songName ) {
 }
 
 //TODO this is gross -- I should rethink how I'm passing shit around -- but I just want to get the titles correct
-function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety, adventurous, xmas, live ) {
+function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety, adventurous, xmas, live, songMinSpeech, songMaxSpeech, songMinLive, songMaxLive ) {
 	displayMakePlaylist( artist, songTitle );
 	// disable the makePlaylist button
 	$("#_play").attr("disabled",true);
@@ -303,6 +307,22 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 
 	if( songID && !(CAT_CAT == catState ) ) {
 		parms['song_id'] = songID;
+	}
+
+	if( songMinSpeech ) {
+		parms['min_speechiness'] = songMinSpeech;
+	}
+
+	if( songMaxSpeech ) {
+		parms['max_speechiness'] = songMaxSpeech;
+	}
+
+	if( songMinLive ) {
+		parms['min_liveness'] = songMinLive;
+	}
+
+	if( songMaxLive ) {
+		parms['max_liveness'] = songMaxLive;
 	}
 
 	if( catState == CAT_SEED || catState == CAT_CAT ) {
