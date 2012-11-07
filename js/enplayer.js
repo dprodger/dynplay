@@ -2,12 +2,14 @@
 
 var enToSpotIds = {};
 
-var notLiveCatalog = "CASLJIE13AD15256D5";
-var notXmasCatalog = "CAFLGVM13AD1529B16";
+var notLiveCatalog = "CADSBXA13ADB6A2861";
+var notXmasCatalog = "CALUXSG13ADB61C093";
 
 var apiKey = "N6E4NIOVYMTHNDM8J";
 var apiHost = "developer.echonest.com";
 
+// API Key needed to update the QA catalogs for bad live tracks, and bad xmas tracks
+var qaCatalogUpdateKey = "KNZZERLRFBHPTVCRG";
 var sessionId;
 
 var nowPlayingSong;	// song object
@@ -662,12 +664,12 @@ function banSong() {
 
 function makeNotXmas() {
 	console.log("marking this song ID as not xmas: ", nowPlayingSong.songID );
-	updateTasteProfileWithPlay( notXmasCatalog, nowPlayingSong.songID );
+	updateTasteProfileWithBan( notXmasCatalog, nowPlayingSong.songID, qaCatalogUpdateKey );
 }
 
 function makeNotLive() {
 	console.log("marking this song ID as not live: ", nowPlayingSong.songID );
-	updateTasteProfileWithPlay( notLiveCatalog, nowPlayingSong.songID );
+	updateTasteProfileWithBan( notLiveCatalog, nowPlayingSong.songID, qaCatalogUpdateKey );
 }
 
 function favoriteSong() {
@@ -979,15 +981,18 @@ function updateTasteProfileWithRating( _tpID, _soID, _rating ) {
 		});
 }
 
-function updateTasteProfileWithBan( _tpID, _itemID ) {
+function updateTasteProfileWithBan( _tpID, _itemID, _overrideCat ) {
 	// read the taste profile to see if the item exists
 	
-	retrieveTPItem( _tpID, _itemID, banExistingItem, banNewItem );
+	retrieveTPItem( _tpID, _itemID, banExistingItem, banNewItem, _overrideCat );
 }
 
-function banExistingItem( _tpID, _itemID ) {
+function banExistingItem( _tpID, _itemID, _overrideCat  ) {
+	var theKey = apiKey;
+	if( _overrideCat ) { theKey = _overrideCat; }
+	
 	console.log("in banExistingItem");
-	var url = "http://" + apiHost + "/api/v4/catalog/ban?api_key=" + apiKey + "&callback=?";
+	var url = "http://" + apiHost + "/api/v4/catalog/ban?api_key=" + theKey + "&callback=?";
 
 	$.getJSON( url,
 		{
@@ -1001,9 +1006,12 @@ function banExistingItem( _tpID, _itemID ) {
 		});
 }
 
-function banNewItem( _tpID, _itemID ) {
+function banNewItem( _tpID, _itemID, _overrideCat ) {
+	var theKey = apiKey;
+	if( _overrideCat ) { theKey = _overrideCat; }
+	
 	console.log("in banNewItem");
-   var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + apiKey;
+  	var url = "http://" + apiHost + "/api/v4/catalog/update?api_key=" + theKey;
 
     var updateBlock = {};
     updateBlock.action = "update";
@@ -1099,8 +1107,11 @@ function favoriteNewItem( _tpID, _itemID ) {
 }
 
 
-function retrieveTPItem( _tpID, _soID, _existFunc, _noExistFunc ) {
-	var url = "http://" + apiHost + "/api/v4/catalog/read?api_key=" + apiKey + "&callback=?";
+function retrieveTPItem( _tpID, _soID, _existFunc, _noExistFunc, _overrideCat ) {
+	var theKey = apiKey;
+	if(_overrideCat) { theKey = _overrideCat; }
+
+	var url = "http://" + apiHost + "/api/v4/catalog/read?api_key=" + theKey + "&callback=?";
 
 	$.getJSON( url,
 		{
@@ -1116,10 +1127,10 @@ function retrieveTPItem( _tpID, _soID, _existFunc, _noExistFunc ) {
 			if( items && items.length > 0) {
 				var item = items[0];
 //				console.log(" item was found");
-				_existFunc( _tpID, _soID );
+				_existFunc( _tpID, _soID, _overrideCat );
 			} else {
 //				console.log("item was not found");
-				_noExistFunc( _tpID, _soID );
+				_noExistFunc( _tpID, _soID, _overrideCat );
 			}});
 }
 
