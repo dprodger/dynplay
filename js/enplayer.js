@@ -223,6 +223,10 @@ function makePlaylist() {
 	audioParms[ 'song_energy_max' ] = $("#_song_energy_max").val();
 	audioParms[ 'song_dance_min' ] = $("#_song_dance_min").val();
 	audioParms[ 'song_dance_max' ] = $("#_song_dance_max").val();
+	audioParms[ 'song_loud_min' ] = $("#_song_loud_min").val();
+	audioParms[ 'song_loud_max' ] = $("#_song_loud_max").val();
+	audioParms[ 'song_duration_min' ] = $("#_song_duration_min").val();
+	audioParms[ 'song_duration_max' ] = $("#_song_duration_max").val();
 
 	var artistHot = $("#_artist_hot").val();
 	var songHot = $("#_song_hot").val();
@@ -239,7 +243,6 @@ function makePlaylist() {
 	if( songTitle ) {
 		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live, audioParms );
 	} else {
-		console.log("in innerGenerate");
 		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, adventurous, xmas, live, audioParms );
 	}
 }
@@ -362,6 +365,22 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 
 	if( audioParams['song_dance_max'] ) {
 		parms['max_danceability'] = audioParams['song_dance_max'];
+	}
+
+	if( audioParams['song_loud_min'] ) {
+		parms['min_loudness'] = audioParams['song_loud_min'];
+	}
+
+	if( audioParams['song_loud_max'] ) {
+		parms['max_loudness'] = audioParams['song_loud_max'];
+	}
+
+	if( audioParams['song_duration_min'] ) {
+		parms['min_duration'] = audioParams['song_duration_min'];
+	}
+
+	if( audioParams['song_duration_max'] ) {
+		parms['max_duration'] = audioParams['song_duration_max'];
 	}
 
 	if( catState == CAT_SEED || catState == CAT_CAT ) {

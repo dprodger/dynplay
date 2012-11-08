@@ -49,6 +49,8 @@
 							<input type="radio" name="cat_type" id="_cat_type" value="seed" style="-webkit-appearance:radio !important;" checked>Artist/Song Seed
 							<input type="radio" name="cat_type" id="_cat_type" value="cat" style="-webkit-appearance:radio !important;">Catalog Only
 							<br />
+							<br />
+							<div id="cultural_parms" style="float: left; width:50%">
 							Cultural Attributes<br />
 	                        <label class="form-params">Artist Hotttnesss </label>
 							<label for="_artist_hot_min">Min:</label><input type="text" id="_artist_hot_min" placeholder="0.0" size="4"/>
@@ -71,6 +73,8 @@
 							<input type="radio" name="_live" id="_live" value="true" style="-webkit-appearance:radio !important;">Live
 							<input type="radio" name="_live" id="_live" value="false" style="-webkit-appearance:radio !important;">Not Live
 							<input type="radio" name="_live" id="_live" value="any" style="-webkit-appearance:radio !important;">Ignore<br />
+							</div>
+							<div id="acoustic_parms" style="float: left; width: 50%">
 							Acoustic Attributes<br />
 	                        <label class="form-params">Speechiness </label>
 							<label for="_song_speech_min">Min:</label><input type="text" id="_song_speech_min" placeholder="0.0" size="4"/>
@@ -79,15 +83,22 @@
 	                        <label for="_song_live_min">Min:</label><input type="text" id="_song_live_min" placeholder="0.0" size="4"/>
 	                        <label for="_song_live_max">Max:</label><input type="text" id="_song_live_max" placeholder="0.7" size="4"/>	<br />
 	                        <label class="form-params">Tempo </label>
-	                        <label for="_song_tempo_min">Min:</label><input type="text" id="_song_tempo_min" placeholder="0.0" size="4"/>
-	                        <label for="_song_tempo_max">Max:</label><input type="text" id="_song_tempo_max" placeholder="0.7" size="4"/>	<br />
+	                        <label for="_song_tempo_min">Min:</label><input type="text" id="_song_tempo_min" placeholder="0" size="4"/>
+	                        <label for="_song_tempo_max">Max:</label><input type="text" id="_song_tempo_max" placeholder="240" size="4"/>	<br />
 	                        <label class="form-params">Energy </label>
 	                        <label for="_song_energy_min">Min:</label><input type="text" id="_song_energy_min" placeholder="0.0" size="4"/>
-	                        <label for="_song_energy_max">Max:</label><input type="text" id="_song_energy_max" placeholder="0.7" size="4"/>	<br />
+	                        <label for="_song_energy_max">Max:</label><input type="text" id="_song_energy_max" placeholder="1.0" size="4"/>	<br />
 	                        <label class="form-params">Danceability </label>
 	                        <label for="_song_dance_min">Min:</label><input type="text" id="_song_dance_min" placeholder="0.0" size="4"/>
-	                        <label for="_song_dance_max">Max:</label><input type="text" id="_song_dance_max" placeholder="0.7" size="4"/>	<br />
+	                        <label for="_song_dance_max">Max:</label><input type="text" id="_song_dance_max" placeholder="1.0" size="4"/>	<br />
+	                        <label class="form-params">Loudness </label>
+	                        <label for="_song_loud_min">Min:</label><input type="text" id="_song_loud_min" placeholder="0.0" size="4"/>
+	                        <label for="_song_loud_max">Max:</label><input type="text" id="_song_loud_max" placeholder="1.0" size="4"/>	<br />
+	                        <label class="form-params">Duration (sec) </label>
+	                        <label for="_song_duration_min">Min:</label><input type="text" id="_song_duration_min" placeholder="0" size="4"/>
+	                        <label for="_song_duration_max">Max:</label><input type="text" id="_song_duration_max" placeholder="360" size="4"/>	<br />
 		                    <button class="button" id="_play" onclick="makePlaylist(); return false;">Let's go</button>
+							</div>
 	                    </form>
 					</div>
 					<div id="_display_seeds" style="display:none;">
