@@ -48,17 +48,36 @@
 							<input type="radio" name="cat_type" id="_cat_type" value="update" style="-webkit-appearance:radio !important;">Update Only
 							<input type="radio" name="cat_type" id="_cat_type" value="seed" style="-webkit-appearance:radio !important;" checked>Artist/Song Seed
 							<input type="radio" name="cat_type" id="_cat_type" value="cat" style="-webkit-appearance:radio !important;">Catalog Only
-	                        &nbsp;&nbsp;&nbsp;&nbsp;<label for="_adventurous">Catalog Adventurousness:</label><input type="text" id="_adventurous" size="4" value="0.2"/>
 							<br />
-	                        <label for="_artist_hot">Artist Hot Min:</label><input type="text" id="_artist_hot" placeholder="0.0" size="4"/>
-	                        <label for="_song_hot">Song Hot Min:</label><input type="text" id="_song_hot" placeholder="0.0" size="4"/>
-	                        <label for="_song_speech_min">Speech Min:</label><input type="text" id="_song_speech_min" placeholder="0.0" size="4"/>
-	                        <label for="_song_speech_max">Speech Max:</label><input type="text" id="_song_speech_max" placeholder="0.7" size="4"/>
-	                        <label for="_song_live_min">Live Min:</label><input type="text" id="_song_live_min" placeholder="0.0" size="4"/>
-	                        <label for="_song_live_max">Live Max:</label><input type="text" id="_song_live_max" placeholder="0.7" size="4"/>	<br />
-	                        <label for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/>
-	                        <label for="_xmas">Christmas:</label><input type="text" id="_xmas" value="" size="4"/>
-	                        <label for="_live">Live:</label><input type="text" id="_live" value="" size="4"/>
+							Cultural Attributes<br />
+	                        <label class="form-params">Artist Hotttnesss </label>
+							<label for="_artist_hot_min">Min:</label><input type="text" id="_artist_hot_min" placeholder="0.0" size="4"/>
+							<label for="_artist_hot_max">Max:</label><input type="text" id="_artist_hot_max" placeholder="0.0" size="4"/>
+							<br />
+	                        <label class="form-params">Song Hotttnesss </label>
+							<label for="_song_hot_min">Min:</label><input type="text" id="_song_hot_min" placeholder="0.0" size="4"/>
+							<label for="_song_hot_max">Max:</label><input type="text" id="_song_hot_max" placeholder="0.0" size="4"/>
+							<br />
+	                        <label class="form-params" for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/><br />
+							<label class="form-params" for="_adventurous">Adventurousness:</label><input type="text" id="_adventurous" size="4" value="0.2"/><br />
+	                        <label class="form-params" for="_xmas">Christmas:</label><input type="text" id="_xmas" value="" size="4"/><br />
+	                        <label class="form-params" for="_live">Live:</label><input type="text" id="_live" value="" size="4"/><br />
+							Acoustic Attributes<br />
+	                        <label class="form-params">Speechiness </label>
+							<label for="_song_speech_min">Min:</label><input type="text" id="_song_speech_min" placeholder="0.0" size="4"/>
+	                        <label for="_song_speech_max">Max:</label><input type="text" id="_song_speech_max" placeholder="0.7" size="4"/><br />
+	                        <label class="form-params">Liveness </label>
+	                        <label for="_song_live_min">Min:</label><input type="text" id="_song_live_min" placeholder="0.0" size="4"/>
+	                        <label for="_song_live_max">Max:</label><input type="text" id="_song_live_max" placeholder="0.7" size="4"/>	<br />
+	                        <label class="form-params">Tempo </label>
+	                        <label for="_song_tempo_min">Min:</label><input type="text" id="_song_tempo_min" placeholder="0.0" size="4"/>
+	                        <label for="_song_tempo_max">Max:</label><input type="text" id="_song_tempo_max" placeholder="0.7" size="4"/>	<br />
+	                        <label class="form-params">Energy </label>
+	                        <label for="_song_energy_min">Min:</label><input type="text" id="_song_energy_min" placeholder="0.0" size="4"/>
+	                        <label for="_song_energy_max">Max:</label><input type="text" id="_song_energy_max" placeholder="0.7" size="4"/>	<br />
+	                        <label class="form-params">Danceability </label>
+	                        <label for="_song_dance_min">Min:</label><input type="text" id="_song_dance_min" placeholder="0.0" size="4"/>
+	                        <label for="_song_dance_max">Max:</label><input type="text" id="_song_dance_max" placeholder="0.7" size="4"/>	<br />
 		                    <button class="button" id="_play" onclick="makePlaylist(); return false;">Let's go</button>
 	                    </form>
 					</div>

@@ -210,12 +210,22 @@ function setUpObserve() {
 function makePlaylist() {
 	var artist = $("#_artist").val();
 	var songTitle = $("#_song_title").val();
+	
+	// gather the acoustic search parameters
+	var audioParms = {};
+	audioParms[ 'song_live_min' ] = $("#_song_live_min").val();
+	audioParms[ 'song_live_max' ] = $("#_song_live_max").val();
+	audioParms[ 'song_speech_min' ] = $("#_song_speech_min").val();
+	audioParms[ 'song_speech_max' ] = $("#_song_speech_max").val();
+	audioParms[ 'song_tempo_min' ] = $("#_song_tempo_min").val();
+	audioParms[ 'song_tempo_max' ] = $("#_song_tempo_max").val();
+	audioParms[ 'song_energy_min' ] = $("#_song_energy_min").val();
+	audioParms[ 'song_energy_max' ] = $("#_song_energy_max").val();
+	audioParms[ 'song_dance_min' ] = $("#_song_dance_min").val();
+	audioParms[ 'song_dance_max' ] = $("#_song_dance_max").val();
+
 	var artistHot = $("#_artist_hot").val();
 	var songHot = $("#_song_hot").val();
-	var songMinSpeech = $("#_song_speech_min").val();
-	var songMaxSpeech = $("#_song_speech_max").val();
-	var songMinLive = $("#_song_live_min").val();
-	var songMaxLive = $("#_song_live_max").val();
 	var variety = $("#_variety").val();
 	var adventurous = $("#_adventurous").val();
 	var xmas = $("#_xmas").val();
@@ -223,15 +233,15 @@ function makePlaylist() {
 
 	var myRadio = $('input[name=cat_type]');
 	catState = myRadio.filter(':checked').val();
-	
 	if( songTitle ) {
-		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live, songMinSpeech, songMaxSpeech, songMinLive, songMaxLive );
+		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live, audioParms );
 	} else {
-		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, adventurous, xmas, live, songMinSpeech, songMaxSpeech, songMinLive, songMaxLive );
+		console.log("in innerGenerate");
+		innerGeneratePlaylist( artist, null, null, artistHot, songHot, variety, adventurous, xmas, live, audioParms );
 	}
 }
 
-function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live, songMinSpeech, songMaxSpeech ) {
+function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live, audioParams ) {
 	var url = "http://" + apiHost + "/api/v4/song/search?api_key=" + apiKey + "&callback=?";
 
     $.getJSON(url,
@@ -246,7 +256,7 @@ function getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adv
             if (songs && songs.length > 0) {
                 var song = songs[0];
                 //console.log("=== looking for song: " + songTitle + " and got: " + song.id + " (" + song.title + ")");
-                innerGeneratePlaylist(artist, song.id, song.title, artistHot, songHot, variety, adventurous, xmas, live, songMinSpeech, songMaxSpeech);
+                innerGeneratePlaylist(artist, song.id, song.title, artistHot, songHot, variety, adventurous, xmas, live, audioParams );
             } else {
                 console.log("=== looking for song: " + songTitle + " and did not get any songs back!");
                 alert("We can't find that song");
@@ -275,7 +285,7 @@ function displayMakePlaylist( artist, songName ) {
 }
 
 //TODO this is gross -- I should rethink how I'm passing shit around -- but I just want to get the titles correct
-function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety, adventurous, xmas, live, songMinSpeech, songMaxSpeech, songMinLive, songMaxLive ) {
+function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, variety, adventurous, xmas, live, audioParams ) {
 	displayMakePlaylist( artist, songTitle );
 	// disable the makePlaylist button
 	$("#_play").attr("disabled",true);
@@ -283,7 +293,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 
 	clearPlaylist( activePlaylist );
 	var type = "";
-			
+
 	if( catState == CAT_SEED || catState == CAT_CAT ) {
 		type = 'catalog-radio';
 	} else if( songID ) {
@@ -301,6 +311,7 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		"variety": variety,
 		"type": type
 	};
+
 	if( artist && !(CAT_CAT == catState ) ) {
 		parms['artist'] = artist;
 	}
@@ -309,20 +320,45 @@ function innerGeneratePlaylist( artist, songID, songTitle, artistHot, songHot, v
 		parms['song_id'] = songID;
 	}
 
-	if( songMinSpeech ) {
-		parms['min_speechiness'] = songMinSpeech;
+
+	if( audioParams['song_speech_min'] ) {
+		parms['min_speechiness'] = audioParams['song_speech_min'];
 	}
 
-	if( songMaxSpeech ) {
-		parms['max_speechiness'] = songMaxSpeech;
+	if( audioParams['song_speech_max'] ) {
+		parms['max_speechiness'] = audioParams['song_speech_max'];
 	}
 
-	if( songMinLive ) {
-		parms['min_liveness'] = songMinLive;
+	if( audioParams['song_live_min'] ) {
+		parms['min_liveness'] = audioParams['song_live_min'];
 	}
 
-	if( songMaxLive ) {
-		parms['max_liveness'] = songMaxLive;
+	if( audioParams['song_live_max'] ) {
+		parms['max_liveness'] = audioParams['song_live_max'];
+	}
+
+	if( audioParams['song_tempo_min'] ) {
+		parms['min_tempo'] = audioParams['song_tempo_min'];
+	}
+
+	if( audioParams['song_tempo_max'] ) {
+		parms['max_tempo'] = audioParams['song_tempo_max'];
+	}
+
+	if( audioParams['song_energy_min'] ) {
+		parms['min_energy'] = audioParams['song_energy_min'];
+	}
+
+	if( audioParams['song_energy_max'] ) {
+		parms['max_energy'] = audioParams['song_energy_max'];
+	}
+
+	if( audioParams['song_dance_min'] ) {
+		parms['min_danceability'] = audioParams['song_dance_min'];
+	}
+
+	if( audioParams['song_dance_max'] ) {
+		parms['max_danceability'] = audioParams['song_dance_max'];
 	}
 
 	if( catState == CAT_SEED || catState == CAT_CAT ) {
