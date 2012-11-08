@@ -228,11 +228,14 @@ function makePlaylist() {
 	var songHot = $("#_song_hot").val();
 	var variety = $("#_variety").val();
 	var adventurous = $("#_adventurous").val();
-	var xmas = $("#_xmas").val();
-	var live = $("#_live").val();
+	var xmasRadio = $('input[name=_xmas]');
+	var xmas = xmasRadio.filter(':checked').val();
+	var liveRadio = $('input[name=_live]');
+	var live = liveRadio.filter(':checked').val();
 
 	var myRadio = $('input[name=cat_type]');
 	catState = myRadio.filter(':checked').val();
+
 	if( songTitle ) {
 		getSongIDFromTitle( artist, songTitle, artistHot, songHot, variety, adventurous, xmas, live, audioParms );
 	} else {

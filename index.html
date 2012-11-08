@@ -60,8 +60,17 @@
 							<br />
 	                        <label class="form-params" for="_variety">Variety:</label><input type="text" id="_variety" placeholder="0.3" size="4"/><br />
 							<label class="form-params" for="_adventurous">Adventurousness:</label><input type="text" id="_adventurous" size="4" value="0.2"/><br />
-	                        <label class="form-params" for="_xmas">Christmas:</label><input type="text" id="_xmas" value="" size="4"/><br />
-	                        <label class="form-params" for="_live">Live:</label><input type="text" id="_live" value="" size="4"/><br />
+
+	                        <label class="form-params" for="_xmas">Christmas:</label>
+							<input type="radio" name="_xmas" id="_xmas" value="" style="-webkit-appearance:radio !important;" checked>Default
+							<input type="radio" name="_xmas" id="_xmas" value="true" style="-webkit-appearance:radio !important;">Xmas
+							<input type="radio" name="_xmas" id="_xmas" value="false" style="-webkit-appearance:radio !important;">Not Xmas
+							<input type="radio" name="_xmas" id="_xmas" value="any" style="-webkit-appearance:radio !important;">Ignore<br />
+	                        <label class="form-params" for="_live">Live:</label>
+							<input type="radio" name="_live" id="_live" value="" style="-webkit-appearance:radio !important;" checked>Default
+							<input type="radio" name="_live" id="_live" value="true" style="-webkit-appearance:radio !important;">Live
+							<input type="radio" name="_live" id="_live" value="false" style="-webkit-appearance:radio !important;">Not Live
+							<input type="radio" name="_live" id="_live" value="any" style="-webkit-appearance:radio !important;">Ignore<br />
 							Acoustic Attributes<br />
 	                        <label class="form-params">Speechiness </label>
 							<label for="_song_speech_min">Min:</label><input type="text" id="_song_speech_min" placeholder="0.0" size="4"/>
