@@ -1391,6 +1391,9 @@ function fetchAnalysis(track) {
 var catArt = {};
 var catArtPlays = {};
 
+var bannedArtists = {};
+var favoriteArtists = {};
+
 var curStart = 0;
 
 function generateCatalogStats() {
@@ -1422,6 +1425,22 @@ function generateCatalogStats() {
 						catArt[ item.artist_name ] = 1;
 						catArtPlays[ item.artist_name ] = item.play_count;
 					}
+					if( item.banned ) {
+						if( item.song_id ) {
+							
+						} else {
+							console.log("banned artist ", item.artist_name );
+							bannedArtists[ item.artist_name ] = 1;
+						}
+					}
+					if( item.favorite ) {
+						if( item.song_id ) {
+							
+						} else {
+							console.log("favorite artist ", item.artist_name );
+							favoriteArtists[ item.artist_name ] = 1;
+						}
+					}
 				}
 				console.log("catArt", catArt);
 				if( items.length == 100 ) {
@@ -1438,10 +1457,13 @@ function allDoneGenerate() {
 	console.log("in allDoneGenerate");
 	
 	var sortable = [];
+	$("#_most_played_artists").html("");
+
 	for( var art in catArt ) {
 		sortable.push( [art, catArt[art]]);
 	}
 	sortable.sort( function( a, b ) { return b[1] - a[1] });
+
 	
 	for( i = 0; i < sortable.length; i++ ) {
 		var art = sortable[ i ][ 0 ];
@@ -1450,6 +1472,36 @@ function allDoneGenerate() {
 		var text = $("#_most_played_artists").html();
 		
 		$("#_most_played_artists").html( text + art + ": Songs: " + count + " Total Plays: " + catArtPlays[ art ] + "<br />");
+	}
+		
+	sortable = [];
+	$("#_banned_artists").html("");
+	for( var art in bannedArtists ) {
+		sortable.push( [art, bannedArtists[art]]);
+	}
+	sortable.sort( function( a, b ) { return b[0] - a[0] });
+	
+	for( i = 0; i < sortable.length; i++ ) {
+		var art = sortable[ i ][ 0 ];
+		console.log("Artist: ", art );
+		var text = $("#_banned_artists").html();
+		
+		$("#_banned_artists").html( text + art + "<br />");
+	}
+	
+	sortable = [];
+	$("#_favorite_artists").html("");
+	for( var art in favoriteArtists ) {
+		sortable.push( [art, favoriteArtists[art]]);
+	}
+	sortable.sort( function( a, b ) { return b[0] - a[0] });
+	
+	for( i = 0; i < sortable.length; i++ ) {
+		var art = sortable[ i ][ 0 ];
+		console.log("Artist: ", art );
+		var text = $("#_favorite_artists").html();
+		
+		$("#_favorite_artists").html( text + art + "<br />");
 	}
 	
 }
